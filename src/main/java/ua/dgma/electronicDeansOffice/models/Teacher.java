@@ -5,32 +5,30 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 import java.util.Set;
 
+
 @Entity
-@Table(name = "Teacher")
 @Data
 @NoArgsConstructor
+@Table(name = "Teachers")
 public class Teacher extends Person {
 
-    @Id
     @NonNull
-    @NotEmpty(message = "Staff number cannot be empty")
-    @Min(
-            value = 0,
-            message = "Staff number number cannot be less than 0 characters"
+    @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
+    @OneToOne
+    @JoinColumn(
+            nullable = false,
+            referencedColumnName = "name"
     )
-    @Column(nullable = false)
-    private Long staffNumber;
+    private Department department;
 
-    @NonNull
     @OneToMany(mappedBy = "curator")
     private Set<StudentGroup> studentGroup;
 
     @NonNull
-    @OneToMany(mappedBy = "teacher")
-    private List<Grade> grades;
+    @NotEmpty(message = "The field |TEACHER'S JOURNAL| cannot be empty!")
+    @OneToOne(mappedBy = "teacher")
+    private TeachersJournal journal;
 }

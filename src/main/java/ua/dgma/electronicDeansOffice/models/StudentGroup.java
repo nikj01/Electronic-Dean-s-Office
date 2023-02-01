@@ -5,21 +5,17 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "StudentGroup")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@Table(name = "StundentGroups")
 public class StudentGroup implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @NonNull
-    @NotBlank(message = "Group may not be blank")
+    @NotBlank(message = "The field |NAME| cannot be empty!")
     @Size(
             min = 1,
             max = 255
@@ -31,16 +27,31 @@ public class StudentGroup implements Serializable {
     private String name;
 
     @NonNull
-    @NotNull(message = "Student list cannot be empty")
-    @OneToMany(
-            mappedBy = "studentGroupId",
-            cascade = CascadeType.ALL
+    @NotEmpty(message = "The field |GROUP LEADER| cannot be empty!")
+    @OneToOne
+    @JoinColumn(
+            unique = true,
+            referencedColumnName = "uid"
     )
-    private List<Student> studentList;
+    private Student groupLeader;
+
+    /*
+    *   SET OR LIST???
+    */
+    @OneToMany(mappedBy = "studentGroupId")
+    private Set<Student> students;
 
     @NonNull
-    @NotEmpty(message = "Curator staff name cannot be empty")
+    @NotEmpty(message = "The field |CURATOR| cannot be empty!")
+    @ManyToOne
+    @JoinColumn //  Idk can be a group without a curator
+    private Teacher curator;
+
+
+    @NonNull
+    @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Teacher curator;
+    private Department department;
+
 }

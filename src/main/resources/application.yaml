@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Electronic Deanery
+  profiles:
+    include: dev
