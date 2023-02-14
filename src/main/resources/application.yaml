@@ -3,3 +3,4 @@ spring:
     name: Electronic Deanery
   profiles:
     include: dev
+
