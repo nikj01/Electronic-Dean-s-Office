@@ -1,46 +1,28 @@
-package ua.dgma.electronicDeansOffice.models;
+package ua.dgma.electronicDeansOffice.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
 
+public class PersonDTO {
 
-@Entity
-@Data
-@NoArgsConstructor
-@RequiredArgsConstructor
-@Table(name = "Persons")
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Person {
-
-    @Id
     @NonNull
     @NotEmpty(message = "The field |UID| cannot be empty!")
-    @Column(
-            nullable = false,
-            unique = true
-    )
+
     private Long uid;
 
     @NonNull
     @NotBlank(message = "The field |SURNAME| cannot be empty!")
-    @Column(nullable = false)
     private String surname;
 
     @NonNull
     @NotBlank(message = "The field |NAME| cannot be empty!")
-    @Column(nullable = false)
     private String name;
 
     @NonNull
     @NotBlank(message = "The field |PATRONYMIC| cannot be empty!")
-    @Column(nullable = false)
     private String patronymic;
 
     @NonNull
@@ -48,13 +30,6 @@ public class Person {
     private String email;
 
     @NonNull
-    @NotEmpty(message = "The filed |ROLE| cannot be empty!")
-    @Column(nullable = false)
-    private PersonRole role;
-
-    @NonNull
     @NotEmpty(message = "The field |DATE OF BIRTH| cannot be empty!")
-    @Column(nullable = false)
     private Date dateOfBirth;
-
 }

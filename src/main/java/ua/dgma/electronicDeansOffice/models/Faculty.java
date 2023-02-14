@@ -3,6 +3,7 @@ package ua.dgma.electronicDeansOffice.models;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Table(name = "Faculties")
+@ToString
 public class Faculty implements Serializable {
 
     @Id

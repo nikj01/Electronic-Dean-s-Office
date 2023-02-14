@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "Students")
 public class Student extends Person {
 
@@ -21,6 +22,6 @@ public class Student extends Person {
             referencedColumnName = "name",
             nullable = false
     )
-    private StudentGroup studentGroupId;
+    private StudentGroup studentGroup;
 
 }

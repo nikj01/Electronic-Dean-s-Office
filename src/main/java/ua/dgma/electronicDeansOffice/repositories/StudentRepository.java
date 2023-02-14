@@ -1,6 +1,7 @@
 package ua.dgma.electronicDeansOffice.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import ua.dgma.electronicDeansOffice.models.PersonRole;
 import ua.dgma.electronicDeansOffice.models.Student;
 
 import java.util.List;
@@ -10,7 +11,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     Optional<Student> findByUid(Long uid);
 
-    List<Student> findStudentByGroupName(String group);
+    List<Student> findByRole(PersonRole personRole);
+
+    List<Student> findStudentsByStudentGroup(String group);
 
     void deleteByUid(Long uid);
 }

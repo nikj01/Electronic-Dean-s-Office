@@ -38,7 +38,7 @@ public class StudentGroup implements Serializable {
     /*
     *   SET OR LIST???
     */
-    @OneToMany(mappedBy = "studentGroupId")
+    @OneToMany(mappedBy = "studentGroup")
     private Set<Student> students;
 
     @NonNull

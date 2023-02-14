@@ -3,6 +3,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.dgma.electronicDeansOffice.models.PersonRole;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 
@@ -24,8 +25,12 @@ public class StudentServiceImpl {
         return foundStudent.orElse(null);
     }
 
+    public List<Student> findAllStudents(){
+        return repository.findByRole(PersonRole.STUDENT);
+    }
+
     public List<Student> findAllStudentsByGroup(String group){
-        return repository.findStudentByGroupName(group);
+        return repository.findStudentsByStudentGroup(group);
     }
 
     @Transactional
@@ -44,6 +49,5 @@ public class StudentServiceImpl {
     public void deleteStudent(Long uid){
         repository.deleteByUid(uid);
     }
-
 
 }
