@@ -1,7 +1,6 @@
-package ua.dgma.electronicDeansOffice.dto;
+package ua.dgma.electronicDeansOffice.dtos;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
 
@@ -11,7 +10,6 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 public class StudentDTO extends PersonDTO{
 
-    @NonNull
     @NotEmpty(message = "The field |STUDENT GROUP| group cannot be empty!")
-    private StudentGroup studentGroupId;
+    private StudentGroupDTO studentGroup;
 }

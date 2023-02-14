@@ -1,9 +1,6 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -15,6 +12,7 @@ import java.sql.Date;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode
 @Table(name = "Persons")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Person {
@@ -50,7 +48,7 @@ public class Person {
     @NonNull
     @NotEmpty(message = "The filed |ROLE| cannot be empty!")
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     private PersonRole role;
 
     @NonNull

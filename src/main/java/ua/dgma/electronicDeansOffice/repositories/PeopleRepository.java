@@ -7,7 +7,8 @@ import ua.dgma.electronicDeansOffice.models.Person;
 import java.util.Optional;
 
 @Repository
-public interface PersonRepository extends JpaRepository<Person, Long> {
+public interface PeopleRepository<T extends Person> extends JpaRepository<T, Long> {
 
-    Optional<Person> findByUid(Long uid);
+//    Optional<Person> getPersonByUid(Long uid);
+    Optional<T> getByUid(Long uid);
 }

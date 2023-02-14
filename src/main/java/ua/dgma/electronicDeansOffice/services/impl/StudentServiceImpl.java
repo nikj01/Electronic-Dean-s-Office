@@ -3,51 +3,32 @@ package ua.dgma.electronicDeansOffice.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.dgma.electronicDeansOffice.models.PersonRole;
 import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
+import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class StudentServiceImpl {
+public class StudentServiceImpl implements PeopleService<Student> {
 
-    private final StudentRepository repository;
+    private final PeopleRepository<Student> repository;
+
     @Autowired
-    public StudentServiceImpl(StudentRepository repository) {
+    public StudentServiceImpl(PeopleRepository repository) {
         this.repository = repository;
     }
 
-    public Student findOne(Long uid){
-        Optional<Student> foundStudent = repository.findByUid(uid);
+//    @Override
+//    public Student findStudentByUid(Long uid) {
+//        Optional<Student> foundStudent = repository.getByUid(uid);
+//        return foundStudent.orElse(null);
+//    }
+
+    @Override
+    public Student findOneByUid(Long uid) {
+        Optional<Student> foundStudent = repository.getByUid(uid);
         return foundStudent.orElse(null);
     }
-
-    public List<Student> findAllStudents(){
-        return repository.findByRole(PersonRole.STUDENT);
-    }
-
-    public List<Student> findAllStudentsByGroup(String group){
-        return repository.findStudentsByStudentGroup(group);
-    }
-
-    @Transactional
-    public void saveStudent(Student student){
-        repository.save(student);
-    }
-
-    @Transactional
-    public void updateStudent(Long uid, Student updatedStudent){
-        Student studentToBeUpdated = repository.findByUid(uid).get();
-        updatedStudent.setUid(uid);
-        repository.save(updatedStudent);
-    }
-
-    @Transactional
-    public void deleteStudent(Long uid){
-        repository.deleteByUid(uid);
-    }
-
 }
