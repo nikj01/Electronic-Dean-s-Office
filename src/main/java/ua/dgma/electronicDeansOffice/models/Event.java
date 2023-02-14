@@ -36,6 +36,7 @@ public class Event {
     @NonNull
     @NotEmpty(message = "The field |EVENT TYPE| cannot be empty!")
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EventType eventType;
 
 

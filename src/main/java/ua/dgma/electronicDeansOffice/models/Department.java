@@ -3,16 +3,19 @@ package ua.dgma.electronicDeansOffice.models;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "Departments")
 public class Department implements Serializable {
 
@@ -32,5 +35,5 @@ public class Department implements Serializable {
     private Faculty faculty;
 
     @OneToMany(mappedBy = "department")
-    private Set<StudentGroup> studentGroups;
+    private Set<StudentGroup> studentGroups = new HashSet<>();
 }

@@ -50,6 +50,7 @@ public class Person {
     @NonNull
     @NotEmpty(message = "The filed |ROLE| cannot be empty!")
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private PersonRole role;
 
     @NonNull

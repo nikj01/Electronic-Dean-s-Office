@@ -40,7 +40,8 @@ INSERT INTO Persons (uid, date_of_birth, email, name, patronymic, role, surname)
 (501, '1975-10-29', 'dw_email_2@gmail.com', 'dw_02 name', 'dw_02 patr', 2, 'dw_02 sur'),
 (502, '1980-05-13', 'dw_email_3@gmail.com', 'dw_03 name', 'dw_03 patr', 2, 'dw_03 sur'),
 
-(12723903, '2001-11-03', 'nik.jurawlyow2001@gmail.com', 'Mykyta', 'Olehovych', 0, 'Zhuravlov'),
+(12723903, '2001-11-03', 'nik.jurawlyow2001@gmail.com', 'Mykyta', 'Olehovych', 'ROOT', 'Zhuravlov'),
+-- (12723903, '2001-11-03', 'nik.jurawlyow2001@gmail.com', 'Mykyta', 'Olehovych', 0, 'Zhuravlov'),
 (12723904, '2001-07-01', 'st_email_04@gmail.com', 'st_04 name', 'st_04 patr', 4, 'st_04 sur'),
 (12723905, '2001-09-06', 'st_email_05@gmail.com', 'st_05 name', 'st_05 patr', 4, 'st_05 sur'),
 (12723906, '2001-09-11', 'st_email_06@gmail.com', 'st_06 name', 'st_06 patr', 4, 'st_06 sur'),
@@ -124,4 +125,10 @@ INSERT INTO Journals_pages (id, page_name, journal_id) VALUES
 INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
 (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
 (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
+
+INSERT INTO events_student_groups (event_id, student_groups_name) VALUES
+(1, 'KI 19-1');
+
+INSERT INTO reports (id, event_id) VALUES
+(DEFAULT, 1);
 

@@ -6,10 +6,12 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "StundentGroups")
 public class StudentGroup implements Serializable {
 
@@ -39,7 +41,7 @@ public class StudentGroup implements Serializable {
     *   SET OR LIST???
     */
     @OneToMany(mappedBy = "studentGroup")
-    private Set<Student> students;
+    private Set<Student> students = new TreeSet<>();
 
     @NonNull
     @NotEmpty(message = "The field |CURATOR| cannot be empty!")

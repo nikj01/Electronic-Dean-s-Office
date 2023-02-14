@@ -3,16 +3,19 @@ package ua.dgma.electronicDeansOffice.models;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashSet;
 import java.util.Set;
 
 
 @Entity
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "JournalsPages")
 public class JournalPage {
 
@@ -26,14 +29,15 @@ public class JournalPage {
     private String pageName;
 
     @OneToMany
-    private Set<StudentGroup> studentGroups;
+    private Set<StudentGroup> studentGroups = new HashSet<>();
 
     @OneToMany(mappedBy = "page")
-    private Set<Event> events;
+    private Set<Event> events = new HashSet<>();
 
-//    @OneToMany
-//    private Set<Report> reports;
+    @OneToMany
+    private Set<Report> reports = new HashSet<>();
 
+    @NonNull
     @NotEmpty
     @ManyToOne
     @JoinColumn(nullable = false)
