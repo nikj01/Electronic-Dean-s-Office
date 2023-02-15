@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 
@@ -19,7 +20,7 @@ public class Person {
 
     @Id
     @NonNull
-    @NotEmpty(message = "The field |UID| cannot be empty!")
+    @NotNull(message = "The field |UID| cannot be empty!")
     @Column(
             nullable = false,
             unique = true
@@ -46,13 +47,13 @@ public class Person {
     private String email;
 
     @NonNull
-    @NotEmpty(message = "The filed |ROLE| cannot be empty!")
+    @NotNull(message = "The filed |ROLE| cannot be empty!")
     @Column(nullable = false)
 //    @Enumerated(EnumType.STRING)
     private PersonRole role;
 
     @NonNull
-    @NotEmpty(message = "The field |DATE OF BIRTH| cannot be empty!")
+    @NotNull(message = "The field |DATE OF BIRTH| cannot be empty!")
     @Column(nullable = false)
     private Date dateOfBirth;
 

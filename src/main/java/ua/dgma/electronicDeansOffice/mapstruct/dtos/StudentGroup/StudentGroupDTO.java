@@ -1,13 +1,11 @@
-package ua.dgma.electronicDeansOffice.dtos;
+package ua.dgma.electronicDeansOffice.mapstruct.dtos.StudentGroup;
 
 import lombok.Getter;
 import lombok.Setter;
-import ua.dgma.electronicDeansOffice.models.Student;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonDTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Getter
 @Setter

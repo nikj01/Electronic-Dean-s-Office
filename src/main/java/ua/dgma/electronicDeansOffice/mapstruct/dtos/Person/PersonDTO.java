@@ -1,5 +1,6 @@
-package ua.dgma.electronicDeansOffice.dtos;
+package ua.dgma.electronicDeansOffice.mapstruct.dtos.Person;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import ua.dgma.electronicDeansOffice.models.PersonRole;
@@ -8,13 +9,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 @Getter
 @Setter
-public class PersonDTO {
+public class PersonDTO implements Comparable<PersonDTO>{
 
-    @NotEmpty(message = "The field |UID| cannot be empty!")
+    @NotNull(message = "The field |UID| cannot be empty!")
     private Long uid;
 
     @NotBlank(message = "The field |SURNAME| cannot be empty!")
@@ -29,11 +31,19 @@ public class PersonDTO {
     @NotBlank(message = "The field |EMAIL| cannot be empty!")
     private String email;
 
-    @NotEmpty(message = "The filed |ROLE| cannot be empty!")
-    @Enumerated(EnumType.STRING)
+    @NotNull(message = "The filed |ROLE| cannot be empty!")
     private PersonRole role;
 
-    @NotEmpty(message = "The field |DATE OF BIRTH| cannot be empty!")
+    @NotNull(message = "The field |DATE OF BIRTH| cannot be empty!")
     private Date dateOfBirth;
-
+    @Override
+    public int compareTo(PersonDTO o) {
+        if(this.uid > o.getUid()){
+            return 1;
+        } else if(this.uid < o.getUid()){
+            return -1;
+        } else {
+            return 0;
+        }
+    }
 }

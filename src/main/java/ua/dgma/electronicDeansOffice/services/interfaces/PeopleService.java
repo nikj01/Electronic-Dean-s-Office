@@ -2,7 +2,17 @@ package ua.dgma.electronicDeansOffice.services.interfaces;
 
 import ua.dgma.electronicDeansOffice.models.Person;
 
-public interface PeopleService<T extends Person> {
+import java.util.List;
 
-    T findOneByUid(Long uid);
+public interface PeopleService<T, T1> {
+
+    T1 findOneByUid(Long uid);
+
+    T1 findOneByEmail(String email);
+
+    T1 findOneBySurname(String surname);
+
+    List<T1> findAll();
+
+    void registerNewPerson(T1 person);
 }
