@@ -1,18 +1,24 @@
 package ua.dgma.electronicDeansOffice.services.interfaces;
 
-import ua.dgma.electronicDeansOffice.models.Person;
+import org.springframework.validation.BindingResult;
+import ua.dgma.electronicDeansOffice.exceptions.PersonExceptions.PersonWithThisUidDoesntExist;
 
 import java.util.List;
 
-public interface PeopleService<T, T1> {
+public interface PeopleService<T, T1, T2> {
+    // Person, PersonGetDTO, PersonsGetDTO
 
-    T1 findOneByUid(Long uid);
+    T findOnePersonByUid(Long uid);
 
-    T1 findOneByEmail(String email);
+    T findOnePersonByEmail(String email);
 
-    T1 findOneBySurname(String surname);
+    T findOnePersonBySurname(String surname);
 
-    List<T1> findAll();
+    List<T> findAllPeople();
 
-    void registerNewPerson(T1 person);
+    void registerNewPerson(T newPerson);
+
+    void updatePersonByUid(Long uid, T updatedPerson);
+
+    void deletePerson(T personToDelete);
 }

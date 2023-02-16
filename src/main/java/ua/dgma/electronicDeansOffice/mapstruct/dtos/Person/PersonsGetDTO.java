@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PersonsResponseDTO {
+public class PersonsGetDTO {
 
     @NonNull
-    private List<PersonDTO> persons;
+    private List<PersonGetDTO> persons;
 }

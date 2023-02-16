@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Student.StudentDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.Student.StudentGetDTO;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.services.impl.StudentServiceImpl;
@@ -25,16 +25,16 @@ public class StudentController {
     }
 
     @GetMapping("/{uid}")
-    public StudentDTO findStudentByUid(@PathVariable("uid") Long uid){
+    public StudentGetDTO findStudentByUid(@PathVariable("uid") Long uid){
 //        return convertToStudentDTO(studentService.findOneByUid(uid));
         return null;
     }
 
-    private StudentDTO convertToStudentDTO(Student student){
-        return modelMapper.map(student, StudentDTO.class);
+    private StudentGetDTO convertToStudentDTO(Student student){
+        return modelMapper.map(student, StudentGetDTO.class);
     }
 
-    private Person convertToStudent(StudentDTO studentDTO){
+    private Person convertToStudent(StudentGetDTO studentDTO){
         return modelMapper.map(studentDTO, Student.class);
     }
 }

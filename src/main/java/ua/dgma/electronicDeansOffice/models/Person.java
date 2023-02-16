@@ -44,6 +44,7 @@ public class Person {
 
     @NonNull
     @NotBlank(message = "The field |EMAIL| cannot be empty!")
+    @Column(unique = true)
     private String email;
 
     @NonNull
