@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonsGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PeopleGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.PersonMapperImpl;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.services.impl.PersonServiceImpl;
@@ -28,28 +29,28 @@ public class PeopleController {
 
     @GetMapping("/uid")
     public PersonGetDTO findPersonByUid(@RequestParam(value = "uid") Long uid){
-        return personMapper.convertToPersonDTO(personService.findOnePersonByUid(uid));
+        return personMapper.convertToPersonGetDTO(personService.findOnePersonByUid(uid));
     }
 
     @GetMapping("/email")
     public PersonGetDTO findPersonByEmail(@RequestParam(value = "email") String email){
-        return personMapper.convertToPersonDTO(personService.findOnePersonByEmail(email));
+        return personMapper.convertToPersonGetDTO(personService.findOnePersonByEmail(email));
     }
 
     @GetMapping("/surname")
     public PersonGetDTO findPersonBySurname(@RequestParam("surname") String surname){
-        return personMapper.convertToPersonDTO(personService.findOnePersonBySurname(surname));
+        return personMapper.convertToPersonGetDTO(personService.findOnePersonBySurname(surname));
     }
 
     @GetMapping()
-    public PersonsGetDTO findAllPeople(){
-        return personMapper.convertPersonsToPersonsDTO(personService.findAllPeople());
+    public PeopleGetDTO findAllPeople(){
+        return personMapper.convertToPeopleDTO(personService.findAllPeople());
     }
 
     @PostMapping
-    public void registerNewPerson(@RequestBody @Valid PersonGetDTO personGetDTO,
+    public void registerNewPerson(@RequestBody @Valid PersonPostDTO personPostDTO,
                                                       BindingResult bindingResult){
-        Person newPerson = personMapper.convertToPerson(personGetDTO);
+        Person newPerson = personMapper.convertToPerson(personPostDTO);
 
         //validator
 
@@ -57,17 +58,24 @@ public class PeopleController {
     }
 
     @PatchMapping("/update/uid")
-    public void updatePersonByUid(@RequestParam("uid") Long uid,
-                             @RequestBody @Valid PersonGetDTO personGetDTO){
-        Person updatedPerson = personMapper.convertToPerson(personGetDTO);
-        personService.updatePersonByUid(uid, updatedPerson);
+    public void updatePersonByUidPatch(@RequestParam("uid") Long uid,
+                                       @RequestBody @Valid PersonPostDTO personPostDTO){
+        Person updatedPerson = personMapper.convertToPerson(personPostDTO);
+        personService.updatePersonByUidPatch(uid, updatedPerson);
     }
 
-    @PatchMapping("/update/email")
-    public void updatePersonByEmail(@RequestParam("email") String email,
-                                  @RequestBody @Valid PersonGetDTO personGetDTO){
-        Person updatedPerson = personMapper.convertToPerson(personGetDTO);
-        personService.updatePersonByEmail(email, updatedPerson);
+    @PutMapping("/update/uid")
+    public void updatePersonByUidPut(@RequestParam("uid") Long uid,
+                                     @RequestBody @Valid PersonPostDTO personPostDTO){
+        Person updatedPerson = personMapper.convertToPerson(personPostDTO);
+        personService.updatePersonByUidPut(uid, updatedPerson);
     }
+
+//    @PatchMapping("/update/email")
+//    public void updatePersonByEmail(@RequestParam("email") String email,
+//                                  @RequestBody @Valid PersonGetDTO personGetDTO){
+//        Person updatedPerson = personMapper.convertToPerson(personGetDTO);
+//        personService.updatePersonByEmail(email, updatedPerson);
+//    }
 
 }

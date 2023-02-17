@@ -18,7 +18,7 @@ public interface PeopleService<T, T1, T2> {
 
     void registerNewPerson(T newPerson);
 
-    void updatePersonByUid(Long uid, T updatedPerson);
+    void updatePersonByUidPut(Long uid, T updatedPerson);
+    void updatePersonByUidPatch(Long uid, T updatedPerson);
 
-    void deletePerson(T personToDelete);
 }

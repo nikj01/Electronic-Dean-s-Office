@@ -20,6 +20,7 @@ public interface PeopleRepository<T extends Person> extends JpaRepository<T, Lon
 
     Optional<T> getBySurname(String surname);
 
+    void deleteOneByUid(Long uid);
     boolean existsByUid(Long uid);
 
 }

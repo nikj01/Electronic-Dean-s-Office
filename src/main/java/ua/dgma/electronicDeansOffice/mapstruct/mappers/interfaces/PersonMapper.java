@@ -1,19 +1,19 @@
 package ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces;
 
-
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonsGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.*;
 import ua.dgma.electronicDeansOffice.models.Person;
 
 import java.util.List;
 
-//@Mapper(componentModel = "spring")
 public interface PersonMapper {
 
-    PersonGetDTO convertToPersonDTO(Person person);
+    Person convertToPerson(PersonPostDTO personPost);
 
-    Person convertToPerson(PersonGetDTO personGetDTO);
+    PersonGetDTO convertToPersonGetDTO(Person person);
 
-    PersonsGetDTO convertPersonsToPersonsDTO(List<Person> persons);
+    PersonSlimGetDTO convertToPersonSlimGetDTO(Person person);
 
+    PeopleGetDTO convertToPeopleDTO(List<Person> people);
+
+    PeopleSlimGetDTO convertToPeopleSlimDTO(List<Person> people);
 }

@@ -54,6 +54,11 @@ public class Person {
     private PersonRole role;
 
     @NonNull
+    @NotBlank(message = "The field |PASSWORD| cannot be empty!")
+    @Column(nullable = false)
+    private String password;
+
+    @NonNull
     @NotNull(message = "The field |DATE OF BIRTH| cannot be empty!")
     @Column(nullable = false)
     private Date dateOfBirth;

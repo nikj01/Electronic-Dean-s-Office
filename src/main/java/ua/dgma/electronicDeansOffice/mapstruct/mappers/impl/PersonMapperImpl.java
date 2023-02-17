@@ -3,13 +3,13 @@ package ua.dgma.electronicDeansOffice.mapstruct.mappers.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonsGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;
 import ua.dgma.electronicDeansOffice.models.Person;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Component
 public class PersonMapperImpl implements PersonMapper {
@@ -21,24 +21,36 @@ public class PersonMapperImpl implements PersonMapper {
         this.mapper = mapper;
     }
 
+
     @Override
-    public PersonGetDTO convertToPersonDTO(Person person) {
+    public Person convertToPerson(PersonPostDTO personPost) {
+        return mapper.map(personPost, Person.class);
+    }
+
+    @Override
+    public PersonGetDTO convertToPersonGetDTO(Person person) {
         return mapper.map(person, PersonGetDTO.class);
     }
 
     @Override
-    public Person convertToPerson(PersonGetDTO personGetDTO) {
-        return mapper.map(personGetDTO, Person.class);
+    public PersonSlimGetDTO convertToPersonSlimGetDTO(Person person) {
+        return mapper.map(person, PersonSlimGetDTO.class);
     }
 
     @Override
-    public PersonsGetDTO convertPersonsToPersonsDTO(List<Person> persons) {
-        return new PersonsGetDTO(persons.stream()
-                      .map(this::convertToPersonDTO)
-                      .sorted()
-                      .collect(Collectors.toList())
+    public PeopleGetDTO convertToPeopleDTO(List<Person> people) {
+        return new PeopleGetDTO(people.stream()
+                                      .map(this::convertToPersonGetDTO)
+                                      .sorted()
+                                      .collect(Collectors.toList())
         );
     }
 
-
+    @Override
+    public PeopleSlimGetDTO convertToPeopleSlimDTO(List<Person> people) {
+        return new PeopleSlimGetDTO(people.stream()
+                                          .map(this::convertToPersonSlimGetDTO)
+                                          .sorted()
+                                          .collect(Collectors.toList()));
+    }
 }
