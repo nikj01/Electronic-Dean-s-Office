@@ -29,7 +29,7 @@ public class PersonServiceImplTest {
     @Test
     void shouldFindPerson(){
 //        Mockito.doReturn(true).when(service).findOne(12729303l);
-        var findPerson = service.findOnePersonByUid(12723909L);
+        var findPerson = service.findByUid(12723909L);
         assertEquals("Mykyta",findPerson.getName());
     }
 }

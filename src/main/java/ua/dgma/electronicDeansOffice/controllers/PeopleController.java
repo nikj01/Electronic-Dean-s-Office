@@ -1,8 +1,13 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ua.dgma.electronicDeansOffice.exceptions.CustomExeption;
+import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
+import ua.dgma.electronicDeansOffice.exceptions.PersonExceptions.PersonNotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PeopleGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonPostDTO;
@@ -20,6 +25,7 @@ public class PeopleController {
 
     private final PersonMapperImpl personMapper;
 
+
     @Autowired
     public PeopleController(PersonServiceImpl personService, PersonMapperImpl personMapper) {
         this.personService = personService;
@@ -27,55 +33,74 @@ public class PeopleController {
     }
 
 
-    @GetMapping("/uid")
+    @GetMapping("/findByUid")
+    @ResponseStatus(HttpStatus.FOUND)
     public PersonGetDTO findPersonByUid(@RequestParam(value = "uid") Long uid){
-        return personMapper.convertToPersonGetDTO(personService.findOnePersonByUid(uid));
+        return personMapper.convertToPersonGetDTO(personService.findByUid(uid));
     }
 
-    @GetMapping("/email")
+    @GetMapping("/findByEmail")
+    @ResponseStatus(HttpStatus.FOUND)
     public PersonGetDTO findPersonByEmail(@RequestParam(value = "email") String email){
-        return personMapper.convertToPersonGetDTO(personService.findOnePersonByEmail(email));
+        return personMapper.convertToPersonGetDTO(personService.findByEmail(email));
     }
 
-    @GetMapping("/surname")
-    public PersonGetDTO findPersonBySurname(@RequestParam("surname") String surname){
-        return personMapper.convertToPersonGetDTO(personService.findOnePersonBySurname(surname));
+    @GetMapping("/findBySurname")
+    @ResponseStatus(HttpStatus.FOUND)
+    public PeopleGetDTO findPersonBySurname(@RequestParam("surname") String surname){
+        return personMapper.convertToPeopleDTO(personService.findBySurname(surname));
     }
 
     @GetMapping()
-    public PeopleGetDTO findAllPeople(){
-        return personMapper.convertToPeopleDTO(personService.findAllPeople());
+    public PeopleGetDTO findAllPeople(@RequestParam(value = "page", required = false)            Integer page,
+                                      @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
+        return personMapper.convertToPeopleDTO(personService.findAll(page, peoplePerPage));
     }
 
-    @PostMapping
-    public void registerNewPerson(@RequestBody @Valid PersonPostDTO personPostDTO,
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void registerNewPerson(@RequestBody @Valid PersonPostDTO newPostPerson,
                                                       BindingResult bindingResult){
-        Person newPerson = personMapper.convertToPerson(personPostDTO);
+        Person newPerson = personMapper.convertToPerson(newPostPerson);
 
-        //validator
-
-        personService.registerNewPerson(newPerson);
+        personService.registerNew(newPerson, bindingResult);
     }
 
-    @PatchMapping("/update/uid")
-    public void updatePersonByUidPatch(@RequestParam("uid") Long uid,
-                                       @RequestBody @Valid PersonPostDTO personPostDTO){
-        Person updatedPerson = personMapper.convertToPerson(personPostDTO);
-        personService.updatePersonByUidPatch(uid, updatedPerson);
+    @PatchMapping("/update")
+//    @ResponseStatus(HttpStatus.OK)
+    public void updatePerson(@RequestParam("uid") Long uid,
+                             @RequestBody @Valid  PersonPostDTO updatedPostPerson,
+                                                  BindingResult bindingResult){
+        Person updatedPerson = personMapper.convertToPerson(updatedPostPerson);
+
+        personService.updateByUid(uid, updatedPerson, bindingResult);
     }
 
-    @PutMapping("/update/uid")
-    public void updatePersonByUidPut(@RequestParam("uid") Long uid,
-                                     @RequestBody @Valid PersonPostDTO personPostDTO){
-        Person updatedPerson = personMapper.convertToPerson(personPostDTO);
-        personService.updatePersonByUidPut(uid, updatedPerson);
+    @DeleteMapping("/deleteByUid")
+//    @ResponseStatus(HttpStatus.OK)
+    public void deletePerson(@RequestParam("uid") Long uid){
+        personService.deleteByUId(uid);
     }
 
-//    @PatchMapping("/update/email")
-//    public void updatePersonByEmail(@RequestParam("email") String email,
-//                                  @RequestBody @Valid PersonGetDTO personGetDTO){
-//        Person updatedPerson = personMapper.convertToPerson(personGetDTO);
-//        personService.updatePersonByEmail(email, updatedPerson);
-//    }
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> handleException(CustomExeption e){
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PersonNotFoundException.class)
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private ResponseEntity<ErrorResponse> handleExeption(PersonNotFoundException e){
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 
 }

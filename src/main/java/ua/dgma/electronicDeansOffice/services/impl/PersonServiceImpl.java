@@ -1,88 +1,96 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PeopleGetDTO;
+import org.springframework.validation.BindingResult;
+import ua.dgma.electronicDeansOffice.exceptions.PersonExceptions.PersonNotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
+import ua.dgma.electronicDeansOffice.utill.validators.PersonValidator;
 
 import java.util.List;
 import java.util.Optional;
 
+import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToClient;
+
 
 @Service
 @Transactional(readOnly = true)
-public class PersonServiceImpl implements PeopleService<Person, PersonGetDTO, PeopleGetDTO> {
+public class PersonServiceImpl implements PeopleService<Person> {
 
     private final PeopleRepository<Person> repository;
 
+    private final PersonValidator validator;
+
     @Autowired
-    public PersonServiceImpl(PeopleRepository<Person> repository) {
+    public PersonServiceImpl(PeopleRepository<Person> repository, PersonValidator validator) {
         this.repository = repository;
+        this.validator = validator;
     }
 
 
     @Override
-    public Person findOnePersonByUid(Long uid) {
+    public Person findByUid(Long uid) {
         Optional<Person> foundPerson = repository.getByUid(uid);
-        return foundPerson.orElse(null);
+        return foundPerson.orElseThrow(() -> new <String, Long> PersonNotFoundException("uid", uid ));
     }
 
     @Override
-    public Person findOnePersonByEmail(String email) {
+    public Person findByEmail(String email) {
         Optional<Person> foundPerson = repository.getByEmail(email);
-        return foundPerson.orElse(null);
+        return foundPerson.orElseThrow(() -> new <String, String> PersonNotFoundException("email", email));
     }
 
     @Override
-    public Person findOnePersonBySurname(String surname) {
-        Optional<Person> foundPerson = repository.getBySurname(surname);
-        return foundPerson.orElse(null);
+    public List<Person> findBySurname(String surname) {
+        if(!repository.existsBySurname(surname)) throw new <String, String> PersonNotFoundException("surname", surname);
+
+        return repository.getBySurname(surname);
     }
 
     @Override
-    public List<Person> findAllPeople() {
-        return repository.findAll();
-    }
-
-    @Override
-    @Transactional
-    public void registerNewPerson(Person newPerson) {
-        repository.save(newPerson);
+    public List<Person> findAll(Integer page, Integer peoplePerPage) {
+        if(page == null || peoplePerPage == null)
+            return repository.findAll();
+        else
+            return repository.findAll(PageRequest.of(page, peoplePerPage)).getContent();
     }
 
     @Override
     @Transactional
-    @Modifying
-    public void updatePersonByUidPut(Long uid, Person updatedPerson) {
-        //updatedPerson.setUid(uid);
+    public void registerNew(Person t, BindingResult bindingResult) {
+        validate(t, bindingResult);
 
-        Person personToBeUpdate = repository.getByUid(uid).get();
-        personToBeUpdate.setUid(updatedPerson.getUid());
-        personToBeUpdate.setSurname(updatedPerson.getSurname());
-        personToBeUpdate.setName(updatedPerson.getName());
-        personToBeUpdate.setPatronymic(updatedPerson.getPatronymic());
-        personToBeUpdate.setDateOfBirth(updatedPerson.getDateOfBirth());
-        personToBeUpdate.setEmail(updatedPerson.getEmail());
-        personToBeUpdate.setRole(updatedPerson.getRole());
-        personToBeUpdate.setPassword(updatedPerson.getPassword());
-
-        repository.save(personToBeUpdate);
-
-//        Person personToBeUpdate = repository.getByUid(uid).get();
-//        personToBeUpdate = updatedPerson;
-//        repository.saveAndFlush(personToBeUpdate);
+        repository.save(t);
     }
 
     @Transactional
-    public void updatePersonByUidPatch(Long uid, Person updatedPerson) {
-        updatedPerson.setUid(uid);
+    public void updateByUid(Long uid, Person t, BindingResult bindingResult) {
+        if(!repository.existsByUid(uid)) throw new <String, Long> PersonNotFoundException("uid", uid );
 
-        repository.save(updatedPerson);
+        validate(t, bindingResult);
+
+        t.setUid(uid);
+
+        repository.save(t);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByUId(Long uid) {
+        if(!repository.existsByUid(uid)) throw new <String, Long> PersonNotFoundException("uid", uid );
+
+        repository.deleteByUid(uid);
+    }
+
+    @Override
+    public void validate(Person person, BindingResult bindingResult) {
+        validator.validate(person, bindingResult);
+        if(bindingResult.hasErrors())
+            returnErrorsToClient(bindingResult);
     }
 
 }

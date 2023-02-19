@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
@@ -14,7 +13,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
-@Table(name = "Persons")
+@Table(name = "People")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Person {
 

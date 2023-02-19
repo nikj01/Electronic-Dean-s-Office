@@ -15,7 +15,7 @@ INSERT INTO departments (name, faculty_name) VALUES
 ('dep-7', 'fac-3');
 
 
-INSERT INTO Persons (uid, date_of_birth, email, name, patronymic, role, password, surname) VALUES
+INSERT INTO People (uid, date_of_birth, email, name, patronymic, role, password, surname) VALUES
 (100, '1963-05-05', 'kostikov_email_100@gmail.com', 'Oleksandr', 'Anatoliyovych', 3, 'qwerty00', 'Kostikov'),
 (101, '1970-01-01', 'teacher_email_101@gmail.com', 'teacher_101 name', 'teacher_101 patr', 3, 'qwerty00', 'teacher_101 sur'),
 (102, '1970-01-06', 'teacher_email_102@gmail.com', 'teacher_102 name', 'teacher_102 patr', 3, 'qwerty01', 'teacher_102 sur'),

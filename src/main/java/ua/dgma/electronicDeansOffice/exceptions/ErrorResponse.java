@@ -1,17 +1,17 @@
-package ua.dgma.electronicDeansOffice.mapstruct.dtos.Person;
+package ua.dgma.electronicDeansOffice.exceptions;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PeopleGetDTO {
+public class ErrorResponse {
+    @NonNull
+    private String message;
 
     @NonNull
-    private List<PersonGetDTO> people;
+    private long timestamp;
 }
