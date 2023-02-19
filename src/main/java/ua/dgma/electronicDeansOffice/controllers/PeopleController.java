@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.exceptions.CustomExeption;
+import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
 import ua.dgma.electronicDeansOffice.exceptions.PersonExceptions.PersonNotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
@@ -83,7 +83,7 @@ public class PeopleController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomExeption e){
+    private ResponseEntity<ErrorResponse> handleException(CustomException e){
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -93,7 +93,6 @@ public class PeopleController {
     }
 
     @ExceptionHandler(PersonNotFoundException.class)
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
     private ResponseEntity<ErrorResponse> handleExeption(PersonNotFoundException e){
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),

@@ -1,8 +1,8 @@
 package ua.dgma.electronicDeansOffice.exceptions;
 
-public class CustomExeption extends RuntimeException{
+public class CustomException extends RuntimeException{
 
-    public CustomExeption(String message){
+    public CustomException(String message){
         super(message);
     }
 }

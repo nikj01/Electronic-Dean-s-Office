@@ -2,7 +2,7 @@ package ua.dgma.electronicDeansOffice.utill;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import ua.dgma.electronicDeansOffice.exceptions.CustomExeption;
+import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 
 import java.util.List;
 
@@ -21,6 +21,6 @@ public class ErrorsBuilder {
                     .append(" ");
         }
 
-        throw new CustomExeption(errorMsg.toString());
+        throw new CustomException(errorMsg.toString());
     }
 }
