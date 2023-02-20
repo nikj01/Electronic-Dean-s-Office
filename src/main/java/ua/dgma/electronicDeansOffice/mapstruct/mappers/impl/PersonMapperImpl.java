@@ -10,7 +10,6 @@ import ua.dgma.electronicDeansOffice.models.Person;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Component
 public class PersonMapperImpl implements PersonMapper {
 

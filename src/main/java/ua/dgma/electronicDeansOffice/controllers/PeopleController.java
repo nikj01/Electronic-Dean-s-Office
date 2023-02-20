@@ -25,7 +25,6 @@ public class PeopleController {
 
     private final PersonMapperImpl personMapper;
 
-
     @Autowired
     public PeopleController(PersonServiceImpl personService, PersonMapperImpl personMapper) {
         this.personService = personService;
@@ -54,7 +53,7 @@ public class PeopleController {
     @GetMapping()
     public PeopleGetDTO findAllPeople(@RequestParam(value = "page", required = false)            Integer page,
                                       @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
-        return personMapper.convertToPeopleDTO(personService.findAll(page, peoplePerPage));
+        return personMapper.convertToPeopleDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @PostMapping("/register")
@@ -67,7 +66,6 @@ public class PeopleController {
     }
 
     @PatchMapping("/update")
-//    @ResponseStatus(HttpStatus.OK)
     public void updatePerson(@RequestParam("uid") Long uid,
                              @RequestBody @Valid  PersonPostDTO updatedPostPerson,
                                                   BindingResult bindingResult){
@@ -77,7 +75,6 @@ public class PeopleController {
     }
 
     @DeleteMapping("/deleteByUid")
-//    @ResponseStatus(HttpStatus.OK)
     public void deletePerson(@RequestParam("uid") Long uid){
         personService.deleteByUId(uid);
     }
