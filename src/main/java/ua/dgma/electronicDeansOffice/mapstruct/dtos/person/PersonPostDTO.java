@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.mapstruct.dtos.Person;
+package ua.dgma.electronicDeansOffice.mapstruct.dtos.person;
 
 import lombok.Getter;
 import lombok.Setter;

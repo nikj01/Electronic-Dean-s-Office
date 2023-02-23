@@ -3,7 +3,7 @@ package ua.dgma.electronicDeansOffice.mapstruct.mappers.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.*;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;
 import ua.dgma.electronicDeansOffice.models.Person;
 
@@ -19,7 +19,6 @@ public class PersonMapperImpl implements PersonMapper {
     public PersonMapperImpl(ModelMapper mapper) {
         this.mapper = mapper;
     }
-
 
     @Override
     public Person convertToPerson(PersonPostDTO personPost) {
@@ -37,7 +36,7 @@ public class PersonMapperImpl implements PersonMapper {
     }
 
     @Override
-    public PeopleGetDTO convertToPeopleDTO(List<Person> people) {
+    public PeopleGetDTO convertToPeopleGetDTO(List<Person> people) {
         return new PeopleGetDTO(people.stream()
                                       .map(this::convertToPersonGetDTO)
                                       .sorted()
@@ -46,7 +45,7 @@ public class PersonMapperImpl implements PersonMapper {
     }
 
     @Override
-    public PeopleSlimGetDTO convertToPeopleSlimDTO(List<Person> people) {
+    public PeopleSlimGetDTO convertToPeopleSlimGetDTO(List<Person> people) {
         return new PeopleSlimGetDTO(people.stream()
                                           .map(this::convertToPersonSlimGetDTO)
                                           .sorted()

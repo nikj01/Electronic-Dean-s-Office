@@ -7,10 +7,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.PersonExceptions.PersonNotFoundException;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PeopleGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonPostDTO;
+import ua.dgma.electronicDeansOffice.exceptions.person.PersonNotFoundException;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.PersonMapperImpl;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.services.impl.PersonServiceImpl;
@@ -31,11 +29,16 @@ public class PeopleController {
         this.personMapper = personMapper;
     }
 
-
     @GetMapping("/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
     public PersonGetDTO findPersonByUid(@RequestParam(value = "uid") Long uid){
         return personMapper.convertToPersonGetDTO(personService.findByUid(uid));
+    }
+
+    @GetMapping("/slim/findByUid")
+    @ResponseStatus(HttpStatus.FOUND)
+    public PersonSlimGetDTO findSlimPersonByUid(@RequestParam(value = "uid") Long uid){
+        return personMapper.convertToPersonSlimGetDTO(personService.findByUid(uid));
     }
 
     @GetMapping("/findByEmail")
@@ -44,16 +47,34 @@ public class PeopleController {
         return personMapper.convertToPersonGetDTO(personService.findByEmail(email));
     }
 
+    @GetMapping("/slim/findByEmail")
+    @ResponseStatus(HttpStatus.FOUND)
+    public PersonSlimGetDTO findSlimPersonByEmail(@RequestParam(value = "email") String email){
+        return personMapper.convertToPersonSlimGetDTO(personService.findByEmail(email));
+    }
+
     @GetMapping("/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
     public PeopleGetDTO findPersonBySurname(@RequestParam("surname") String surname){
-        return personMapper.convertToPeopleDTO(personService.findBySurname(surname));
+        return personMapper.convertToPeopleGetDTO(personService.findBySurname(surname));
+    }
+
+    @GetMapping("/slim/findBySurname")
+    @ResponseStatus(HttpStatus.FOUND)
+    public PeopleSlimGetDTO findSlimPersonBySurname(@RequestParam("surname") String surname){
+        return personMapper.convertToPeopleSlimGetDTO(personService.findBySurname(surname));
     }
 
     @GetMapping()
-    public PeopleGetDTO findAllPeople(@RequestParam(value = "page", required = false)            Integer page,
+    public PeopleGetDTO findAllPeople(@RequestParam(value = "page", required = false) Integer page,
                                       @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
-        return personMapper.convertToPeopleDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
+        return personMapper.convertToPeopleGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
+    }
+
+    @GetMapping("/slim")
+    public PeopleSlimGetDTO findAllSlimPeople(@RequestParam(value = "page", required = false)            Integer page,
+                                              @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
+        return personMapper.convertToPeopleSlimGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @PostMapping("/register")
@@ -74,7 +95,7 @@ public class PeopleController {
         personService.updateByUid(uid, updatedPerson, bindingResult);
     }
 
-    @DeleteMapping("/deleteByUid")
+    @DeleteMapping("/delete")
     public void deletePerson(@RequestParam("uid") Long uid){
         personService.deleteByUId(uid);
     }

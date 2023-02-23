@@ -1,8 +1,9 @@
-package ua.dgma.electronicDeansOffice.mapstruct.dtos.StudentGroup;
+package ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup;
 
 import lombok.Getter;
 import lombok.Setter;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Person.PersonGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -14,7 +15,7 @@ public class StudentGroupDTO {
     private String name;
 
     @NotEmpty(message = "The field |GROUP LEADER| cannot be empty!")
-    private PersonGetDTO groupLeader;
+    private PersonSlimGetDTO groupLeader;
 
 //    private Set<StudentDTO> students = new TreeSet<>();
 

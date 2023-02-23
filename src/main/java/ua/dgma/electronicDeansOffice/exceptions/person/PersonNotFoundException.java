@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.exceptions.PersonExceptions;
+package ua.dgma.electronicDeansOffice.exceptions.person;
 
 public class PersonNotFoundException extends RuntimeException {
 

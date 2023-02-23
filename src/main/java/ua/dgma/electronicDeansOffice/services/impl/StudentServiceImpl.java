@@ -1,59 +1,53 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Student.StudentGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.Student.StudentsGetDTO;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class StudentServiceImpl { //implements PeopleService<Student, StudentGetDTO, StudentsGetDTO> {
-//
-//    private final PeopleRepository<Student> repository;
-//
-//    @Autowired
-//    public StudentServiceImpl(PeopleRepository repository) {
-//        this.repository = repository;
-//    }
-//
-////    @Override
-////    public Student findStudentByUid(Long uid) {
-////        Optional<Student> foundStudent = repository.getByUid(uid);
-////        return foundStudent.orElse(null);
-////    }
-//
-//    @Override
-//    public StudentGetDTO findOneByUid(Long uid) {
-////        Optional<Student> foundStudent = repository.getByUid(uid);
-////        return foundStudent.orElse(null);
-//        return null;
-//    }
-//
-//    @Override
-//    public StudentGetDTO findOneByEmail(String email) {
-//        return null;
-//    }
-//
-//    @Override
-//    public StudentGetDTO findOneBySurname(String surname) {
-//        return null;
-//    }
-//
-//    @Override
-//    public StudentsGetDTO findAll() {
-//        return null;
-//    }
-//
-//
-//    @Override
-//    public void registerNewPerson(StudentGetDTO person) {
-//
+public class StudentServiceImpl extends PeopleServiceImpl<Student>{
+
+    private final PeopleRepository<Student> studentRepository;
+
+    protected StudentServiceImpl(PeopleRepository<Student> repository,
+                                 Validator validator,
+                                 PeopleRepository<Student> studentRepository) {
+        super((PeopleRepository<Student>) repository, validator);
+        this.studentRepository = studentRepository;
+    }
+
+//    protected StudentServiceImpl(PeopleRepository<Student> repository,
+//                                 PeopleValidator validator,
+//                                 PeopleRepository<Student> studentRepository) {
+//        super(repository, validator);
+////        this.studentRepository = studentRepository;
+//        this.studentRepository = studentRepository;
 //    }
 
+
+    @Override
+    public void updateByUid(Long uid, Student uodatedStudent, BindingResult bindingResult) {
+        checkExistsWithSuchUid(uid);
+        validate(uodatedStudent, bindingResult);
+
+        uodatedStudent.setUid(uid);
+        studentRepository.save(uodatedStudent);
+    }
+
+
+//    public List<Student> findAllStudents(){
+//        return studentRepository.findAll();
+//    }
+
+
+    /*
+*   public void deleteByUid(Long uid)
+*   student group.get.deleteThisStudent
+*
+* */
 }

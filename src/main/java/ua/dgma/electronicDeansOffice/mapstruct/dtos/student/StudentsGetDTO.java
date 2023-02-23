@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.mapstruct.dtos.Person;
+package ua.dgma.electronicDeansOffice.mapstruct.dtos.student;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PeopleSlimGetDTO {
+public class StudentsGetDTO {
 
     @NonNull
-    private List<PersonSlimGetDTO> slimPersons;
+    private List<StudentGetDTO> students;
 }

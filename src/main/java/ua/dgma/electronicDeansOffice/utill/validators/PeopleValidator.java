@@ -8,12 +8,12 @@ import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 
 @Component
-public class PersonValidator implements Validator {
+public class PeopleValidator implements Validator {
 
     private final PeopleRepository repository;
 
     @Autowired
-    public PersonValidator(PeopleRepository repository) {
+    public PeopleValidator(PeopleRepository repository) {
         this.repository = repository;
     }
 

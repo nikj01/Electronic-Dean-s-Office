@@ -24,7 +24,7 @@ public interface PeopleService<T> {
 
     void checkExistsWithSuchUid(Long uid);
 
-    void checkExistWithSuchSurname(String surname);
+    void checkExistsWithSuchSurname(String surname);
 
     boolean checkPaginationParameters(Integer page, Integer peoplePerPage);
 }
