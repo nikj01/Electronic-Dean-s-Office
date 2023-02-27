@@ -8,7 +8,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.person.PersonNotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
-import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
@@ -60,14 +59,18 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
      * */
     @Override
     @Transactional
-    public void registerNew(P p, BindingResult bindingResult){
-        validate(p, bindingResult);
-        repository.save(p);
-    }
+    public abstract void registerNew(P p, BindingResult bindingResult);
+//    {
+//        validatePerson(p, bindingResult);
+//        repository.save(p);
+//    }
     @Override
     @Transactional
     public abstract void updateByUid(Long uid, P p, BindingResult bindingResult);
 
+    /*
+     * It mb will be abstract
+     * */
     @Override
     @Transactional
     public void deleteByUId(Long uid) {
@@ -79,7 +82,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     * It will be abstract
     * */
     @Override
-    public void validate(P person, BindingResult bindingResult) {
+    public void validatePerson(P person, BindingResult bindingResult) {
         validator.validate(person, bindingResult);
         if(bindingResult.hasErrors())
             returnErrorsToClient(bindingResult);

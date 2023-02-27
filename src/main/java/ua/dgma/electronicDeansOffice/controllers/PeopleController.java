@@ -111,7 +111,7 @@ public class PeopleController {
     }
 
     @ExceptionHandler(PersonNotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleExeption(PersonNotFoundException e){
+    private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e){
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

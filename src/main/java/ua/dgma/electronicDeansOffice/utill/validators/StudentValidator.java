@@ -6,18 +6,20 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
+
+import static ua.dgma.electronicDeansOffice.utill.validators.CheckExistenceStudentGroup.checkExistenceStudentGroup;
 
 @Component
 public class StudentValidator implements Validator {
 
     private final PeopleRepository<Student> studentRepository;
-    private final StudentGroupRepository studentGroupRepository;
+
+    private final CheckExistenceStudentGroup checkExistenceStudentGroup;
 
     @Autowired
-    public StudentValidator(PeopleRepository<Student> studentRepository, StudentGroupRepository studentGroupRepository) {
+    public StudentValidator(PeopleRepository<Student> studentRepository, CheckExistenceStudentGroup checkExistenceStudentGroup) {
         this.studentRepository = studentRepository;
-        this.studentGroupRepository = studentGroupRepository;
+        this.checkExistenceStudentGroup = checkExistenceStudentGroup;
     }
 
     @Override
@@ -30,10 +32,10 @@ public class StudentValidator implements Validator {
         Student student = (Student) target;
 
         if(studentRepository.getByUid(student.getUid()).isPresent())
-            errors.rejectValue("uid", "Student with such UID already exists!");
+            errors.rejectValue("uid", "Student with UID " + student.getUid() + " already exists!");
         if(studentRepository.getByEmail(student.getEmail()).isPresent())
-            errors.rejectValue("email", "Student with such EMAIL already exists!");
-        if(!studentGroupRepository.findById(student.getStudentGroup().getName()).isPresent())
-            errors.rejectValue("group", "Student group with such NAME does not exist!");
+            errors.rejectValue("email", "Student with EMAIL " + student.getEmail() + " already exists!");
+
+        checkExistenceStudentGroup(student.getStudentGroup(), errors);
     }
 }

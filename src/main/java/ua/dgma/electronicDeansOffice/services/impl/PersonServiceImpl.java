@@ -10,7 +10,7 @@ import ua.dgma.electronicDeansOffice.utill.validators.PeopleValidator;
 
 @Service
 @Transactional(readOnly = true)
-public class PersonServiceImpl extends PeopleServiceImpl<Person>{
+public class PersonServiceImpl extends PeopleServiceImpl<Person> {
 
     private final PeopleRepository<Person> personRepository;
     private final PeopleValidator personValidator;
@@ -25,9 +25,15 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person>{
     }
 
     @Override
+    public void registerNew(Person person, BindingResult bindingResult) {
+        validatePerson(person, bindingResult);
+        personRepository.save(person);
+    }
+
+    @Override
     public void updateByUid(Long uid, Person updatedPerson, BindingResult bindingResult) {
         checkExistsWithSuchUid(uid);
-        validate(updatedPerson, bindingResult);
+        validatePerson(updatedPerson, bindingResult);
 
         updatedPerson.setUid(uid);
         personRepository.save(updatedPerson);

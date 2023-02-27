@@ -20,7 +20,7 @@ public interface PeopleService<T> {
 
     void deleteByUId(Long uid);
 
-    void validate(T t, BindingResult bindingResult);
+    void validatePerson(T t, BindingResult bindingResult);
 
     void checkExistsWithSuchUid(Long uid);
 

@@ -3,8 +3,7 @@ package ua.dgma.electronicDeansOffice.models;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-
+import javax.validation.constraints.NotNull;
 
 
 @Entity
@@ -15,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 public class Student extends Person {
 
     @NonNull
-    @NotEmpty(message = "The field |STUDENT GROUP| group cannot be empty!")
+    @NotNull(message = "The field |STUDENT GROUP| group cannot be empty!")
     @ManyToOne
     @JoinColumn(
             name = "group_name",

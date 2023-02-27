@@ -15,9 +15,8 @@ public class ErrorsBuilder {
         for (FieldError error : errors) {
             errorMsg.append("Incorrect ")
                     .append(error.getField().toUpperCase())
-                    .append(" - ")
+                    .append(": ")
                     .append(error.getDefaultMessage() == null ? error.getCode() : error.getDefaultMessage())
-                    .append(";")
                     .append(" ");
         }
 

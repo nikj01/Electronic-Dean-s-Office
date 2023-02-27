@@ -1,42 +1,44 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
-import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
+import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
+
+import java.util.List;
+
 
 @Service
 @Transactional(readOnly = true)
-public class StudentServiceImpl extends PeopleServiceImpl<Student>{
+public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
-    private final PeopleRepository<Student> studentRepository;
+    private final StudentRepository studentRepository;
 
-    protected StudentServiceImpl(PeopleRepository<Student> repository,
-                                 Validator validator,
-                                 PeopleRepository<Student> studentRepository) {
-        super((PeopleRepository<Student>) repository, validator);
+
+    @Autowired
+    protected StudentServiceImpl(StudentValidator validator,
+                                 StudentRepository studentRepository) {
+        super(studentRepository, validator);
         this.studentRepository = studentRepository;
     }
 
-//    protected StudentServiceImpl(PeopleRepository<Student> repository,
-//                                 PeopleValidator validator,
-//                                 PeopleRepository<Student> studentRepository) {
-//        super(repository, validator);
-////        this.studentRepository = studentRepository;
-//        this.studentRepository = studentRepository;
-//    }
-
+    @Override
+    public void registerNew(Student student, BindingResult bindingResult) {
+        validatePerson(student, bindingResult);
+        studentRepository.save(student);
+    }
 
     @Override
-    public void updateByUid(Long uid, Student uodatedStudent, BindingResult bindingResult) {
+    public void updateByUid(Long uid, Student updatedStudent, BindingResult bindingResult) {
         checkExistsWithSuchUid(uid);
-        validate(uodatedStudent, bindingResult);
+        validatePerson(updatedStudent, bindingResult);
 
-        uodatedStudent.setUid(uid);
-        studentRepository.save(uodatedStudent);
+        updatedStudent.setUid(uid);
+        studentRepository.save(updatedStudent);
     }
 
 

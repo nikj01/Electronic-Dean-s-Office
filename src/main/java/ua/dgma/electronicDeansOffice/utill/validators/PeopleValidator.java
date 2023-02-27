@@ -1,6 +1,7 @@
 package ua.dgma.electronicDeansOffice.utill.validators;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,7 +14,7 @@ public class PeopleValidator implements Validator {
     private final PeopleRepository repository;
 
     @Autowired
-    public PeopleValidator(PeopleRepository repository) {
+    public PeopleValidator(@Qualifier("peopleRepository") PeopleRepository repository) {
         this.repository = repository;
     }
 
@@ -27,8 +28,8 @@ public class PeopleValidator implements Validator {
         Person person = (Person) target;
 
         if(repository.getByUid(person.getUid()).isPresent())
-            errors.rejectValue("uid", "Person with such UID already exists!");
+            errors.rejectValue("uid", "Person with UID " + person.getUid() + " already exists!");
         if(repository.getByEmail(person.getEmail()).isPresent())
-            errors.rejectValue("email", "Person with such EMAIL already exists!");
+            errors.rejectValue("email", "Person with EMAIL " + person.getEmail() + " already exists!");
     }
 }

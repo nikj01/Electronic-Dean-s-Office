@@ -3,13 +3,11 @@ package ua.dgma.electronicDeansOffice.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
 import ua.dgma.electronicDeansOffice.exceptions.person.PersonNotFoundException;
-import ua.dgma.electronicDeansOffice.exceptions.student.StudentNotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentMapper;
 import ua.dgma.electronicDeansOffice.models.Student;
@@ -25,9 +23,10 @@ public class StudentController {
     private final StudentMapper studentMapper;
 
     @Autowired
-    public StudentController(StudentServiceImpl studentService, StudentMapper s) {
+    public StudentController(StudentServiceImpl studentService,
+                             StudentMapper studentMapper) {
         this.studentService = studentService;
-        this.studentMapper = s;
+        this.studentMapper = studentMapper;
     }
 
     @GetMapping("/findByUid")
@@ -111,8 +110,8 @@ public class StudentController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(StudentNotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleExeption(StudentNotFoundException e){
+    @ExceptionHandler(PersonNotFoundException.class)
+    private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e){
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -120,4 +119,5 @@ public class StudentController {
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
 }
