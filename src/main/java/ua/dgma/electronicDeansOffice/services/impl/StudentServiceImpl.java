@@ -1,15 +1,14 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import ua.dgma.electronicDeansOffice.exceptions.people.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
 
-import java.util.List;
 
 
 @Service
@@ -18,18 +17,15 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     private final StudentRepository studentRepository;
 
+    private final ExceptionData exceptionData;
 
     @Autowired
-    protected StudentServiceImpl(StudentValidator validator,
-                                 StudentRepository studentRepository) {
-        super(studentRepository, validator);
+    protected StudentServiceImpl(StudentRepository studentRepository,
+                                 StudentValidator validator,
+                                 ExceptionData exceptionData) {
+        super(studentRepository, validator, exceptionData);
         this.studentRepository = studentRepository;
-    }
-
-    @Override
-    public void registerNew(Student student, BindingResult bindingResult) {
-        validatePerson(student, bindingResult);
-        studentRepository.save(student);
+        this.exceptionData = exceptionData;
     }
 
     @Override
@@ -42,14 +38,8 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     }
 
 
-//    public List<Student> findAllStudents(){
-//        return studentRepository.findAll();
-//    }
-
-
     /*
 *   public void deleteByUid(Long uid)
 *   student group.get.deleteThisStudent
-*
 * */
 }

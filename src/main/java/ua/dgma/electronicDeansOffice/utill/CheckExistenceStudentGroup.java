@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.utill.validators;
+package ua.dgma.electronicDeansOffice.utill;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

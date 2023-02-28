@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
-import ua.dgma.electronicDeansOffice.exceptions.person.PersonNotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.people.ExceptionData;
+import ua.dgma.electronicDeansOffice.exceptions.people.PersonNotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToClient;
@@ -20,25 +22,34 @@ import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToCl
 public abstract class PeopleServiceImpl<P extends Person> implements PeopleService<P> {
 
     private final PeopleRepository<P> repository;
-
     private final Validator validator;
+    private final ExceptionData exceptionData;
+    private Class<P> persistentClass;
 
     @Autowired
     protected PeopleServiceImpl(PeopleRepository<P> repository,
-                                Validator validator) {
+                                Validator validator,
+                                ExceptionData exceptionData) {
         this.repository = repository;
         this.validator = validator;
+        this.exceptionData = exceptionData;
+    }
+
+    /*  This method defines class that is required for the ExceptionData in the future */
+    @Override
+    public Class<P> getPersistentClass() {
+        return persistentClass = (Class<P>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     @Override
     public P findByUid(Long uid) {
-        return repository.getByUid(uid).orElseThrow(() -> new <String, Long>PersonNotFoundException("uid", uid ));
+        return repository.getByUid(uid).orElseThrow(() -> new PersonNotFoundException(new ExceptionData<Long>(getPersistentClass().getSimpleName(), "uid", uid)));
     }
 
     @Override
     public P findByEmail(String email) {
-        return repository.getByEmail(email).orElseThrow(() -> new <String, String> PersonNotFoundException("email", email));
-    }
+        return repository.getByEmail(email).orElseThrow(() -> new PersonNotFoundException(new ExceptionData<String>(getPersistentClass().getSimpleName(), "email", email)));
+    };
 
     @Override
     public List<P> findBySurname(String surname) {
@@ -59,11 +70,10 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
      * */
     @Override
     @Transactional
-    public abstract void registerNew(P p, BindingResult bindingResult);
-//    {
-//        validatePerson(p, bindingResult);
-//        repository.save(p);
-//    }
+    public void registerNew(P p, BindingResult bindingResult) {
+        validatePerson(p, bindingResult);
+        repository.save(p);
+    }
     @Override
     @Transactional
     public abstract void updateByUid(Long uid, P p, BindingResult bindingResult);
@@ -78,9 +88,6 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
         repository.deleteByUid(uid);
     }
 
-    /*
-    * It will be abstract
-    * */
     @Override
     public void validatePerson(P person, BindingResult bindingResult) {
         validator.validate(person, bindingResult);
@@ -90,11 +97,12 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     public void checkExistsWithSuchUid(Long uid) {
-        if(!repository.existsByUid(uid)) throw new <String, Long> PersonNotFoundException("uid", uid );
+        if(!repository.existsByUid(uid)) throw new PersonNotFoundException(new ExceptionData<Long>(getPersistentClass().getSimpleName(), "uid", uid));
     }
+
     @Override
     public void checkExistsWithSuchSurname(String surname) {
-        if(!repository.existsBySurname(surname)) throw new <String, String> PersonNotFoundException("surname", surname);
+        if(!repository.existsBySurname(surname)) throw new PersonNotFoundException(new ExceptionData<String>(getPersistentClass().getSimpleName(), "surname", surname));
     }
 
     @Override

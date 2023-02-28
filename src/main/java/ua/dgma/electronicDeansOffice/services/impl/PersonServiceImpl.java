@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import ua.dgma.electronicDeansOffice.exceptions.people.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.utill.validators.PeopleValidator;
@@ -13,21 +14,13 @@ import ua.dgma.electronicDeansOffice.utill.validators.PeopleValidator;
 public class PersonServiceImpl extends PeopleServiceImpl<Person> {
 
     private final PeopleRepository<Person> personRepository;
-    private final PeopleValidator personValidator;
 
     @Autowired
-    protected PersonServiceImpl(PeopleRepository<Person> repository,
-                                PeopleRepository<Person> personRepository,
-                                PeopleValidator personValidator) {
-        super(repository, personValidator);
+    protected PersonServiceImpl(PeopleRepository<Person> personRepository,
+                                PeopleValidator validator,
+                                ExceptionData exceptionData) {
+        super(personRepository, validator, exceptionData);
         this.personRepository = personRepository;
-        this.personValidator = personValidator;
-    }
-
-    @Override
-    public void registerNew(Person person, BindingResult bindingResult) {
-        validatePerson(person, bindingResult);
-        personRepository.save(person);
     }
 
     @Override
@@ -38,12 +31,5 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
         updatedPerson.setUid(uid);
         personRepository.save(updatedPerson);
     }
-
-//    @Override
-//    public void validate(Person person, BindingResult bindingResult) {
-//        personValidator.validate(person, bindingResult);
-//        if(bindingResult.hasErrors())
-//            returnErrorsToClient(bindingResult);
-//    }
 
 }

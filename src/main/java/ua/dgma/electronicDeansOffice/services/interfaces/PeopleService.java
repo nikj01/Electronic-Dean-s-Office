@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface PeopleService<T> {
 
+    Class<T> getPersistentClass();
+
     T findByUid(Long uid);
 
     T findByEmail(String email);

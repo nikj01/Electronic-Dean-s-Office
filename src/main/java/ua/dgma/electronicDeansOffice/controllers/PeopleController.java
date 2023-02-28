@@ -7,7 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.person.PersonNotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.people.PersonNotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.PersonMapperImpl;
 import ua.dgma.electronicDeansOffice.models.Person;

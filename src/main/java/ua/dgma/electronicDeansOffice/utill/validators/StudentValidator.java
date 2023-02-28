@@ -6,8 +6,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.utill.CheckExistenceStudentGroup;
 
-import static ua.dgma.electronicDeansOffice.utill.validators.CheckExistenceStudentGroup.checkExistenceStudentGroup;
+import static ua.dgma.electronicDeansOffice.utill.CheckExistenceStudentGroup.checkExistenceStudentGroup;
 
 @Component
 public class StudentValidator implements Validator {
