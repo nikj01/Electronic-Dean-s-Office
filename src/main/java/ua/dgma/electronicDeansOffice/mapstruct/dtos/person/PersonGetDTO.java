@@ -9,6 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class PersonGetDTO extends PersonSlimGetDTO {
 
-    @NotBlank(message = "The field |PASSWORD| cannot be empty!")
+    @NotBlank
     private String password;
 }

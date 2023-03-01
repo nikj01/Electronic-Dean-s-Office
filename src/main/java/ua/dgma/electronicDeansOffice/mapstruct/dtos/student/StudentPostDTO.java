@@ -11,6 +11,6 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class StudentPostDTO extends PersonPostDTO {
 
-    @NotNull
+    @NotNull(message = "The field |STUDENT GROUP| cannot be empty!")
     private StudentGroupSlimPostDTO studentGroup;
 }

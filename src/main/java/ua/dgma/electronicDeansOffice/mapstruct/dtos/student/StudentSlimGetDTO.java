@@ -5,12 +5,12 @@ import lombok.Setter;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class StudentSlimGetDTO extends PersonSlimGetDTO {
 
-    @NotBlank
+    @NotNull
     private StudentGroupSlimGetDTO group;
 }

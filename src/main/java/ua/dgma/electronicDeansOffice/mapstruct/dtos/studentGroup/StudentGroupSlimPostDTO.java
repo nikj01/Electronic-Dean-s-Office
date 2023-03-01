@@ -9,6 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class StudentGroupSlimPostDTO {
 
-    @NotBlank
+    @NotBlank(message = "The field |GROUP NAME| cannot be empty!")
     private String name;
 }
