@@ -9,15 +9,11 @@ import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
 
-
-
 @Service
 @Transactional(readOnly = true)
 public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     private final StudentRepository studentRepository;
-
-    private final ExceptionData exceptionData;
 
     @Autowired
     protected StudentServiceImpl(StudentRepository studentRepository,
@@ -25,7 +21,6 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
                                  ExceptionData exceptionData) {
         super(studentRepository, validator, exceptionData);
         this.studentRepository = studentRepository;
-        this.exceptionData = exceptionData;
     }
 
     @Override

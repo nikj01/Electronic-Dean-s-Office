@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.utill;
+package ua.dgma.electronicDeansOffice.utill.check;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

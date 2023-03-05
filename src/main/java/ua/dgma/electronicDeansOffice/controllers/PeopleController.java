@@ -31,56 +31,56 @@ public class PeopleController {
 
     @GetMapping("/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonGetDTO findPersonByUid(@RequestParam(value = "uid") Long uid){
+    public PersonGetDTO findPersonByUid(@RequestParam(value = "uid") Long uid) {
         return personMapper.convertToPersonGetDTO(personService.findByUid(uid));
     }
 
     @GetMapping("/slim/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonSlimGetDTO findSlimPersonByUid(@RequestParam(value = "uid") Long uid){
+    public PersonSlimGetDTO findSlimPersonByUid(@RequestParam(value = "uid") Long uid) {
         return personMapper.convertToPersonSlimGetDTO(personService.findByUid(uid));
     }
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonGetDTO findPersonByEmail(@RequestParam(value = "email") String email){
+    public PersonGetDTO findPersonByEmail(@RequestParam(value = "email") String email) {
         return personMapper.convertToPersonGetDTO(personService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonSlimGetDTO findSlimPersonByEmail(@RequestParam(value = "email") String email){
+    public PersonSlimGetDTO findSlimPersonByEmail(@RequestParam(value = "email") String email) {
         return personMapper.convertToPersonSlimGetDTO(personService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public PeopleGetDTO findPersonBySurname(@RequestParam("surname") String surname){
+    public PeopleGetDTO findPersonBySurname(@RequestParam("surname") String surname) {
         return personMapper.convertToPeopleGetDTO(personService.findBySurname(surname));
     }
 
     @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public PeopleSlimGetDTO findSlimPersonBySurname(@RequestParam("surname") String surname){
+    public PeopleSlimGetDTO findSlimPersonBySurname(@RequestParam("surname") String surname) {
         return personMapper.convertToPeopleSlimGetDTO(personService.findBySurname(surname));
     }
 
     @GetMapping()
     public PeopleGetDTO findAllPeople(@RequestParam(value = "page", required = false) Integer page,
-                                      @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
+                                      @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
         return personMapper.convertToPeopleGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @GetMapping("/slim")
     public PeopleSlimGetDTO findAllSlimPeople(@RequestParam(value = "page", required = false)            Integer page,
-                                              @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
+                                              @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
         return personMapper.convertToPeopleSlimGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registerNewPerson(@RequestBody @Valid PersonPostDTO newPostPerson,
-                                                      BindingResult bindingResult){
+                                                      BindingResult bindingResult) {
         Person newPerson = personMapper.convertToPerson(newPostPerson);
 
         personService.registerNew(newPerson, bindingResult);
@@ -89,19 +89,19 @@ public class PeopleController {
     @PatchMapping("/update")
     public void updatePerson(@RequestParam("uid") Long uid,
                              @RequestBody @Valid  PersonPostDTO updatedPostPerson,
-                                                  BindingResult bindingResult){
+                                                  BindingResult bindingResult) {
         Person updatedPerson = personMapper.convertToPerson(updatedPostPerson);
 
         personService.updateByUid(uid, updatedPerson, bindingResult);
     }
 
     @DeleteMapping("/delete")
-    public void deletePerson(@RequestParam("uid") Long uid){
+    public void deletePerson(@RequestParam("uid") Long uid) {
         personService.deleteByUId(uid);
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomException e){
+    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -111,7 +111,7 @@ public class PeopleController {
     }
 
     @ExceptionHandler(PersonNotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e){
+    private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

@@ -31,77 +31,77 @@ public class StudentsController {
 
     @GetMapping("/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGetDTO findStudentByUid(@RequestParam(value = "uid") Long uid){
+    public StudentGetDTO findStudentByUid(@RequestParam(value = "uid") Long uid) {
         return studentMapper.convertToStudentGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("/slim/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentSlimGetDTO findSlimStudentByUid(@RequestParam(value = "uid") Long uid){
+    public StudentSlimGetDTO findSlimStudentByUid(@RequestParam(value = "uid") Long uid) {
         return studentMapper.convertToStudentSlimGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGetDTO findStudentByEmail(@RequestParam(value = "email") String email){
+    public StudentGetDTO findStudentByEmail(@RequestParam(value = "email") String email) {
         return studentMapper.convertToStudentGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentSlimGetDTO findSlimStudentByEmail(@RequestParam(value = "email") String email){
+    public StudentSlimGetDTO findSlimStudentByEmail(@RequestParam(value = "email") String email) {
         return studentMapper.convertToStudentSlimGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentsGetDTO findStudentBySurname(@RequestParam(value = "surname") String surname){
+    public StudentsGetDTO findStudentBySurname(@RequestParam(value = "surname") String surname) {
         return studentMapper.convertToStudentsGetDTO(studentService.findBySurname(surname));
     }
 
     @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentsSlimGetDTO findSlimStudentBySurname(@RequestParam(value = "surname") String surname){
+    public StudentsSlimGetDTO findSlimStudentBySurname(@RequestParam(value = "surname") String surname) {
         return studentMapper.convertToStudentsSlimGetDTO(studentService.findBySurname(surname));
     }
 
     @GetMapping()
     public StudentsGetDTO findAllStudents(@RequestParam(value = "page", required = false) Integer page,
-                                          @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
+                                          @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
         return studentMapper.convertToStudentsGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @GetMapping("/slim")
     public StudentsSlimGetDTO findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
-                                                  @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage){
+                                                  @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
         return studentMapper.convertToStudentsSlimGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registerNewStudent(@RequestBody @Valid StudentPostDTO newPostStudent,
-                                                       BindingResult bindingResult){
+                                                       BindingResult bindingResult) {
         Student newStudent = studentMapper.convertToStudent(newPostStudent);
 
         studentService.registerNew(newStudent, bindingResult);
     }
 
-    @PatchMapping
+    @PatchMapping("/update")
     public void updateStudent(@RequestParam("uid") Long uid,
                               @RequestBody @Valid  StudentPostDTO updatedPostStudent,
-                                                   BindingResult bindingResult){
+                                                   BindingResult bindingResult) {
         Student updatedStudent = studentMapper.convertToStudent(updatedPostStudent);
 
         studentService.updateByUid(uid, updatedStudent, bindingResult);
     }
 
     @DeleteMapping("/delete")
-    public void deleteStudent(@RequestParam("uid") Long uid){
+    public void deleteStudent(@RequestParam("uid") Long uid) {
         studentService.deleteByUId(uid);
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomException e){
+    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -111,7 +111,7 @@ public class StudentsController {
     }
 
     @ExceptionHandler(PersonNotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e){
+    private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
