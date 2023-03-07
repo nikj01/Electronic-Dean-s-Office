@@ -7,7 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.people.PersonNotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.people.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.DeaneryWorkerMapper;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
@@ -110,8 +110,8 @@ public class DeaneryWorkersController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(PersonNotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(PersonNotFoundException e) {
+    @ExceptionHandler(NotFoundException.class)
+    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

@@ -29,6 +29,7 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
         validatePerson(updatedPerson, bindingResult);
 
         updatedPerson.setUid(uid);
+
         personRepository.save(updatedPerson);
     }
 

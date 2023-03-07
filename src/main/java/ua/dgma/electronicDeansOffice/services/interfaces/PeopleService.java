@@ -28,5 +28,4 @@ public interface PeopleService<T> {
 
     void checkExistsWithSuchSurname(String surname);
 
-    boolean checkPaginationParameters(Integer page, Integer peoplePerPage);
 }

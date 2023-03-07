@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.people.ExceptionData;
-import ua.dgma.electronicDeansOffice.exceptions.people.PersonNotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.people.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
@@ -16,6 +16,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToClient;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,12 +44,12 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     public P findByUid(Long uid) {
-        return repository.getByUid(uid).orElseThrow(() -> new PersonNotFoundException(new ExceptionData<Long>(getPersistentClass().getSimpleName(), "uid", uid)));
+        return repository.getByUid(uid).orElseThrow(() -> new NotFoundException(new ExceptionData<Long>(getPersistentClass().getSimpleName(), "uid", uid)));
     }
 
     @Override
     public P findByEmail(String email) {
-        return repository.getByEmail(email).orElseThrow(() -> new PersonNotFoundException(new ExceptionData<String>(getPersistentClass().getSimpleName(), "email", email)));
+        return repository.getByEmail(email).orElseThrow(() -> new NotFoundException(new ExceptionData<String>(getPersistentClass().getSimpleName(), "email", email)));
     };
 
     @Override
@@ -97,16 +98,11 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     public void checkExistsWithSuchUid(Long uid) {
-        if(!repository.existsByUid(uid)) throw new PersonNotFoundException(new ExceptionData<Long>(getPersistentClass().getSimpleName(), "uid", uid));
+        if(!repository.existsByUid(uid)) throw new NotFoundException(new ExceptionData<Long>(getPersistentClass().getSimpleName(), "uid", uid));
     }
 
     @Override
     public void checkExistsWithSuchSurname(String surname) {
-        if(!repository.existsBySurname(surname)) throw new PersonNotFoundException(new ExceptionData<String>(getPersistentClass().getSimpleName(), "surname", surname));
-    }
-
-    @Override
-    public boolean checkPaginationParameters(Integer page, Integer peoplePerPage) {
-        return page == null || peoplePerPage == null;
+        if(!repository.existsBySurname(surname)) throw new NotFoundException(new ExceptionData<String>(getPersistentClass().getSimpleName(), "surname", surname));
     }
 }

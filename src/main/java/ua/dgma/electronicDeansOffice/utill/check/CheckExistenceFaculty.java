@@ -12,7 +12,6 @@ public class CheckExistenceFaculty {
     private static FacultyRepository repository;
 
     @Autowired
-
     public CheckExistenceFaculty(FacultyRepository repository) {
         this.repository = repository;
     }
