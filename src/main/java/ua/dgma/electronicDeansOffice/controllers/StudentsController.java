@@ -31,37 +31,37 @@ public class StudentsController {
 
     @GetMapping("/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGetDTO findStudentByUid(@RequestParam(value = "uid") Long uid) {
+    public StudentGetDTO findStudentByUid(@RequestParam("uid") Long uid) {
         return studentMapper.convertToStudentGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("/slim/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentSlimGetDTO findSlimStudentByUid(@RequestParam(value = "uid") Long uid) {
+    public StudentSlimGetDTO findSlimStudentByUid(@RequestParam("uid") Long uid) {
         return studentMapper.convertToStudentSlimGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGetDTO findStudentByEmail(@RequestParam(value = "email") String email) {
+    public StudentGetDTO findStudentByEmail(@RequestParam("email") String email) {
         return studentMapper.convertToStudentGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentSlimGetDTO findSlimStudentByEmail(@RequestParam(value = "email") String email) {
+    public StudentSlimGetDTO findSlimStudentByEmail(@RequestParam("email") String email) {
         return studentMapper.convertToStudentSlimGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentsGetDTO findStudentBySurname(@RequestParam(value = "surname") String surname) {
+    public StudentsGetDTO findStudentBySurname(@RequestParam("surname") String surname) {
         return studentMapper.convertToStudentsGetDTO(studentService.findBySurname(surname));
     }
 
     @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentsSlimGetDTO findSlimStudentBySurname(@RequestParam(value = "surname") String surname) {
+    public StudentsSlimGetDTO findSlimStudentBySurname(@RequestParam("surname") String surname) {
         return studentMapper.convertToStudentsSlimGetDTO(studentService.findBySurname(surname));
     }
 

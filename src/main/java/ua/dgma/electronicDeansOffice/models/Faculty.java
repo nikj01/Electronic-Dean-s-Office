@@ -1,6 +1,7 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@ToString
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "Faculties")

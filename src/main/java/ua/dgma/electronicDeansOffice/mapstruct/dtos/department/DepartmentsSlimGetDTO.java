@@ -1,17 +1,16 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.department;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class DepartmentsSlimGetDTO {
 
-    @NotNull
+    @NonNull
     private List<DepartmentSlimGetDTO> departments;
 }

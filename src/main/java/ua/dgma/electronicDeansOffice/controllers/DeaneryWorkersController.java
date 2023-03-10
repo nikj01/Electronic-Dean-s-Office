@@ -20,7 +20,6 @@ import javax.validation.Valid;
 public class DeaneryWorkersController {
 
     private final DeaneryWorkerServiceImpl deaneryWorkerService;
-
     private final DeaneryWorkerMapper deaneryWorkerMapper;
 
     @Autowired
@@ -31,37 +30,37 @@ public class DeaneryWorkersController {
 
     @GetMapping("/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerGetDTO findDeaneryWorkerByUid(@RequestParam(value = "uid") Long uid) {
+    public DeaneryWorkerGetDTO findDeaneryWorkerByUid(@RequestParam("uid") Long uid) {
         return deaneryWorkerMapper.convertToDeaneryWorkerGetDTO(deaneryWorkerService.findByUid(uid));
     }
 
     @GetMapping("/slim/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerSlimGetDTO findSlimDeaneryWorkerByUid(@RequestParam(value = "uid") Long uid) {
+    public DeaneryWorkerSlimGetDTO findSlimDeaneryWorkerByUid(@RequestParam("uid") Long uid) {
         return deaneryWorkerMapper.convertToDeaneryWorkerSlimGetDTO(deaneryWorkerService.findByUid(uid));
     }
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerGetDTO findDeaneryWorkerByEmail(@RequestParam(value = "email") String email) {
+    public DeaneryWorkerGetDTO findDeaneryWorkerByEmail(@RequestParam("email") String email) {
         return deaneryWorkerMapper.convertToDeaneryWorkerGetDTO(deaneryWorkerService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerSlimGetDTO findSlimDeaneryWorkerByEmail(@RequestParam(value = "email") String email) {
+    public DeaneryWorkerSlimGetDTO findSlimDeaneryWorkerByEmail(@RequestParam("email") String email) {
         return deaneryWorkerMapper.convertToDeaneryWorkerSlimGetDTO(deaneryWorkerService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkersGetDTO findDeaneryWorkerBySurname(@RequestParam(value = "surname") String surname) {
+    public DeaneryWorkersGetDTO findDeaneryWorkerBySurname(@RequestParam("surname") String surname) {
         return deaneryWorkerMapper.convertToDeaneryWorkersGetDTO(deaneryWorkerService.findBySurname(surname));
     }
 
     @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkersSlimGetDTO findSlimDeaneryWorkerBySurname(@RequestParam(value = "surname") String surname) {
+    public DeaneryWorkersSlimGetDTO findSlimDeaneryWorkerBySurname(@RequestParam("surname") String surname) {
         return deaneryWorkerMapper.convertToDeaneryWorkersSlimGetDTO(deaneryWorkerService.findBySurname(surname));
     }
 
@@ -73,7 +72,7 @@ public class DeaneryWorkersController {
 
     @GetMapping("/slim")
     public DeaneryWorkersSlimGetDTO findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
-                                                                 @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
+                                                              @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
         return deaneryWorkerMapper.convertToDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 

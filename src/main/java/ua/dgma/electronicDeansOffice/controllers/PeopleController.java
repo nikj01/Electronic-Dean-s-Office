@@ -20,7 +20,6 @@ import javax.validation.Valid;
 public class PeopleController {
 
     private final PersonServiceImpl personService;
-
     private final PersonMapperImpl personMapper;
 
     @Autowired
@@ -31,25 +30,25 @@ public class PeopleController {
 
     @GetMapping("/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonGetDTO findPersonByUid(@RequestParam(value = "uid") Long uid) {
+    public PersonGetDTO findPersonByUid(@RequestParam("uid") Long uid) {
         return personMapper.convertToPersonGetDTO(personService.findByUid(uid));
     }
 
     @GetMapping("/slim/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonSlimGetDTO findSlimPersonByUid(@RequestParam(value = "uid") Long uid) {
+    public PersonSlimGetDTO findSlimPersonByUid(@RequestParam("uid") Long uid) {
         return personMapper.convertToPersonSlimGetDTO(personService.findByUid(uid));
     }
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonGetDTO findPersonByEmail(@RequestParam(value = "email") String email) {
+    public PersonGetDTO findPersonByEmail(@RequestParam("email") String email) {
         return personMapper.convertToPersonGetDTO(personService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonSlimGetDTO findSlimPersonByEmail(@RequestParam(value = "email") String email) {
+    public PersonSlimGetDTO findSlimPersonByEmail(@RequestParam("email") String email) {
         return personMapper.convertToPersonSlimGetDTO(personService.findByEmail(email));
     }
 
@@ -72,7 +71,7 @@ public class PeopleController {
     }
 
     @GetMapping("/slim")
-    public PeopleSlimGetDTO findAllSlimPeople(@RequestParam(value = "page", required = false)            Integer page,
+    public PeopleSlimGetDTO findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
                                               @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
         return personMapper.convertToPeopleSlimGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }

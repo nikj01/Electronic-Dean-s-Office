@@ -1,6 +1,8 @@
 package ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces;
 
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.*;
+import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Faculty;
 
 import java.util.List;

@@ -21,9 +21,9 @@ public class PersonSlimGetDTO implements Comparable<PersonSlimGetDTO>{
 
     @Override
     public int compareTo(PersonSlimGetDTO o) {
-        if(this.surname.compareToIgnoreCase(o.getSurname()) > 0){
+        if(this.surname.compareToIgnoreCase(o.getSurname()) > 0) {
             return 1;
-        } else if(this.surname.compareToIgnoreCase(o.getSurname()) < 0){
+        } else if(this.surname.compareToIgnoreCase(o.getSurname()) < 0) {
             return -1;
         } else {
             return 0;
