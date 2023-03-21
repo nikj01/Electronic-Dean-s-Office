@@ -95,7 +95,7 @@ public class DeaneryWorkersController {
     }
 
     @DeleteMapping("/delete")
-    public void deleteStudent(@RequestParam("uid") Long uid) {
+    public void deleteDeaneryWorker(@RequestParam("uid") Long uid) {
         deaneryWorkerService.deleteByUId(uid);
     }
 

@@ -10,7 +10,10 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGet
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.DepartmentMapperImpl;
+import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.services.impl.DepartmentServiceImpl;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/departments")
@@ -49,7 +52,7 @@ public class DepartmentController {
 
     @GetMapping("/findByFacultyName")
     public DepartmentsSlimGetDTO findAllByFacultyName(@RequestParam("facultyName") String facultyName) {
-        return departmentMapper.convertToDepartmentsSlimGetDTO(departmentService.findAllDepartmentsByFacultyName(facultyName));
+        return departmentMapper.convertToDepartmentsSlimGetDTO((List<Department>) departmentService.findAllDepartmentsByFacultyName(facultyName));
     }
 
 }

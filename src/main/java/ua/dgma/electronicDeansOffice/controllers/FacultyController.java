@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
 import ua.dgma.electronicDeansOffice.exceptions.people.NotFoundException;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.DepartmentMapperImpl;
@@ -16,9 +17,11 @@ import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.services.impl.DepartmentServiceImpl;
 import ua.dgma.electronicDeansOffice.services.impl.FacultyServiceImpl;
+import ua.dgma.electronicDeansOffice.utill.ObjectMapperUtils;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,11 +43,20 @@ public class FacultyController {
         this.departmentMapper = departmentMapper;
     }
 
+//    @GetMapping("/findByName")
+//    @ResponseStatus(HttpStatus.FOUND)
+//    public FacultyGetDTO findFacultyByName(@RequestParam("name") String name) {
+//        return facultyMapper.convertToFacultyGetDTO(facultyService.findByName(name));
+//    }
+
     @GetMapping("/findByName")
     @ResponseStatus(HttpStatus.FOUND)
-    public FacultyGetDTO findFacultyByName(@RequestParam("name") String name) {
-
-        return facultyMapper.convertToFacultyGetDTO(facultyService.findByName(name));
+    public boolean findFacultyByName(@RequestParam("name") String name) {
+        boolean abs;
+        if(facultyService.findByName(name).getDepartments().isEmpty())
+            abs = false;
+        else abs = true;
+        return abs;
     }
 
     @GetMapping("/slim/findByName")

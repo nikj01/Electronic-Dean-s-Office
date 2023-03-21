@@ -52,7 +52,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             return departmentRepository.findAll(PageRequest.of(page, peoplePerPage)).getContent();
     }
 
-    public List<Department> findAllDepartmentsByFacultyName(String facultyName) {
+    public Set<Department> findAllDepartmentsByFacultyName(String facultyName) {
         return departmentRepository.getAllByFacultyName(facultyName);
     }
 
