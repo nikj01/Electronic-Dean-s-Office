@@ -1,19 +1,24 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+import org.hibernate.annotations.*;
 import org.springframework.data.annotation.Reference;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@RequiredArgsConstructor
+@EqualsAndHashCode(exclude = "studentGroups")
 @Table(name = "Events")
 public class Event {
 
@@ -43,7 +48,9 @@ public class Event {
     /*
     *   CHECK WHAT DOES MEAN "@REFERENCE"!
     */
-    @OneToMany
+    @ManyToMany
+    @Cascade(value = org.hibernate.annotations.CascadeType.DELETE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Reference
     private List<StudentGroup> studentGroups;
 
@@ -56,6 +63,7 @@ public class Event {
     @NonNull
     @NotEmpty(message = "The field |JOURNAL PAGE| cannot be empty!")
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             name = "page_id",
             referencedColumnName = "id",
@@ -63,6 +71,11 @@ public class Event {
     )
     private JournalPage page;
 
-    @OneToOne(mappedBy = "event")
+    @OneToOne(
+            mappedBy = "event",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Report report;
 }

@@ -1,26 +1,27 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
+import org.hibernate.annotations.*;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Entity
-@Data
-@ToString
+@Getter
+@Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@EqualsAndHashCode(exclude = "studentGroups")
 @Table(name = "Departments")
 public class Department implements Serializable {
 
     @Id
-    @NonNull
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             nullable = false,
@@ -28,12 +29,18 @@ public class Department implements Serializable {
     )
     private String name;
 
-    @NonNull
     @NotEmpty(message = "The field |FACULTY| cannot be empty!")
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Faculty faculty;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(
+            mappedBy = "department",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     private Set<StudentGroup> studentGroups = new HashSet<>();
 }

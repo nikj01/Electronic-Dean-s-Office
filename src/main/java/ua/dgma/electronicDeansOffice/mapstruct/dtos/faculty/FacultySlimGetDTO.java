@@ -1,5 +1,6 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,12 +12,9 @@ import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class FacultySlimGetDTO implements Comparable<FacultySlimGetDTO>{
 
-    @NotBlank
     private String name;
 
     @Override

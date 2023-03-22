@@ -121,13 +121,13 @@ INSERT INTO Journals_pages (id, page_name, journal_id) VALUES
 (DEFAULT, 'AKM', 1);
 
 
-INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
-(DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
-(DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
-
-INSERT INTO events_student_groups (event_id, student_groups_name) VALUES
-(1, 'KI 19-1');
-
-INSERT INTO reports (id, event_id) VALUES
-(DEFAULT, 1);
+-- INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
+-- (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
+-- (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
+--
+-- INSERT INTO events_student_groups (event_id, student_groups_name) VALUES
+-- (1, 'KI 19-1');
+--
+-- INSERT INTO reports (id, event_id) VALUES
+-- (DEFAULT, 1);
 

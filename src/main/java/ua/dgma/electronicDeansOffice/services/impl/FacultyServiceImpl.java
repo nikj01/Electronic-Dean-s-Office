@@ -44,13 +44,13 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty findByName(String name) {
-        return facultyRepository.getByName(name).orElseThrow(() -> new NotFoundException(new ExceptionData<String>(className, "name", name)));
+        return facultyRepository.findById(name).orElseThrow(() -> new NotFoundException(new ExceptionData<String>(className, "name", name)));
     }
 
     @Override
     public List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage) {
-        if(checkPaginationParameters(page, peoplePerPage)){
-            return facultyRepository.findAll();}
+        if(checkPaginationParameters(page, peoplePerPage))
+            return facultyRepository.findAll();
         else
             return facultyRepository.findAll(PageRequest.of(page, peoplePerPage)).getContent();
     }

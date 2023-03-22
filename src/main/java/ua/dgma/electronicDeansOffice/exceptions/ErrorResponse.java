@@ -1,13 +1,11 @@
 package ua.dgma.electronicDeansOffice.exceptions;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class ErrorResponse {
     @NonNull
     private String message;

@@ -1,17 +1,17 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.department;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultyGetDTO;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
-@Setter
+
+@Data
 public class DepartmentSlimGetDTO implements Comparable<DepartmentSlimGetDTO>{
 
-    @NotBlank
     private String name;
 
     @Override

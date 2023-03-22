@@ -1,5 +1,6 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.student;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
@@ -7,10 +8,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSli
 
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Setter
+@Data
 public class StudentSlimGetDTO extends PersonSlimGetDTO {
 
-    @NotNull
-    private StudentGroupSlimGetDTO group;
 }

@@ -13,6 +13,9 @@ public interface FacultyService {
 
     void registerNew(Faculty faculty, BindingResult bindingResult);
 
+    /*
+     * THIS METHOD WILL BE REMOVE
+     * */
     void updateByName(String name, Faculty updatedFaculty, BindingResult bindingResult);
 
     void deleteByName(String name);

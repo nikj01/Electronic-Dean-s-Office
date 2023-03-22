@@ -1,10 +1,9 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.MapKeyType;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.ValueGenerationType;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -14,9 +13,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode
 @Table(name = "Reports")
 public class Report {
 
@@ -25,7 +26,11 @@ public class Report {
     private Long id;
 
     @NonNull
-    @OneToOne
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Event event;
 
     @ElementCollection

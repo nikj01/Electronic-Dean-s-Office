@@ -7,49 +7,55 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsSlimGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.DepartmentMapperImpl;
-import ua.dgma.electronicDeansOffice.services.impl.DepartmentServiceImpl;
+import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.DepartmentListMapper;
+import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.DepartmentMapper;
+import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.services.impl.DepartmentService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/departments")
 public class DepartmentController {
 
-    private final DepartmentServiceImpl departmentService;
-    private final DepartmentMapperImpl departmentMapper;
+    private final DepartmentService departmentService;
+    private final DepartmentMapper departmentMapper;
+    private final DepartmentListMapper departmentListMapper;
 
     @Autowired
-    public DepartmentController(DepartmentServiceImpl departmentService, DepartmentMapperImpl departmentMapper) {
+    public DepartmentController(DepartmentService departmentService,
+                                DepartmentMapper departmentMapper,
+                                DepartmentListMapper departmentListMapper) {
         this.departmentService = departmentService;
         this.departmentMapper = departmentMapper;
+        this.departmentListMapper = departmentListMapper;
     }
 
     @GetMapping("/findByName")
     public DepartmentGetDTO findDepartmentByName(@RequestParam("name") String name) {
-        return departmentMapper.convertToDepartmentGetDTO(departmentService.findByName(name));
+        return departmentMapper.toDepartmentGetDTO(departmentService.findByName(name));
     }
 
     @GetMapping("/slim/findByName")
     public DepartmentSlimGetDTO findSlimDepartmentByName(@RequestParam("name") String name) {
-        return departmentMapper.convertToDepartmentSlimGetDTO(departmentService.findByName(name));
+        return departmentMapper.toDepartmentSlimGetDTO(departmentService.findByName(name));
     }
 
     @GetMapping()
-    public DepartmentsGetDTO findAll(@RequestParam(value = "page", required = false) Integer page,
-                                     @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return departmentMapper.convertToDepartmentsGetDTO(departmentService.findAllWithPaginationOrWithout(page, peoplePerPage));
+    public List<DepartmentGetDTO> findAll(@RequestParam(value = "page", required = false) Integer page,
+                                          @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
+        return departmentListMapper.toDepartmentsGetDTO(departmentService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @GetMapping("/slim")
-    public DepartmentsSlimGetDTO findAllSlim(@RequestParam(value = "page", required = false) Integer page,
-                                             @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return departmentMapper.convertToDepartmentsSlimGetDTO(departmentService.findAllWithPaginationOrWithout(page, peoplePerPage));
+    public List<DepartmentSlimGetDTO> findAllSlim(@RequestParam(value = "page", required = false) Integer page,
+                                                  @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
+        return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @GetMapping("/findByFacultyName")
-    public DepartmentsSlimGetDTO findAllByFacultyName(@RequestParam("facultyName") String facultyName) {
-        return departmentMapper.convertToDepartmentsSlimGetDTO(departmentService.findAllDepartmentsByFacultyName(facultyName));
+    public List<DepartmentSlimGetDTO> findAllByFacultyName(@RequestParam("facultyName") String facultyName) {
+        return departmentListMapper.toDepartmentsSlimGetDTO((List<Department>) departmentService.findAllDepartmentsByFacultyName(facultyName));
     }
 
 }

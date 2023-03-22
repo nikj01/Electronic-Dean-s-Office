@@ -1,19 +1,21 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@EqualsAndHashCode(exclude = "studentGroup")
 @Table(name = "Students")
 public class Student extends Person {
 
-    @NonNull
     @NotNull(message = "The field |STUDENT GROUP| group cannot be empty!")
     @ManyToOne
     @JoinColumn(
@@ -21,6 +23,7 @@ public class Student extends Person {
             referencedColumnName = "name",
             nullable = false
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private StudentGroup studentGroup;
 
 }
