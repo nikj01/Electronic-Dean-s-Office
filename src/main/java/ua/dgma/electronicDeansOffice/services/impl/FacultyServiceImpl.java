@@ -5,22 +5,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ua.dgma.electronicDeansOffice.exceptions.people.ExceptionData;
-import ua.dgma.electronicDeansOffice.exceptions.people.NotFoundException;
-import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
+import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Faculty;
-import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
-import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.FacultyValidator;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToClient;
+import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
+
+import ua.dgma.electronicDeansOffice.utill.ValidationData;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,13 +43,13 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty findByName(String name) {
-        return facultyRepository.getByName(name).orElseThrow(() -> new NotFoundException(new ExceptionData<String>(className, "name", name)));
+        return facultyRepository.findById(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
 
     @Override
     public List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage) {
-        if(checkPaginationParameters(page, peoplePerPage)){
-            return facultyRepository.findAll();}
+        if(checkPaginationParameters(page, peoplePerPage))
+            return facultyRepository.findAll();
         else
             return facultyRepository.findAll(PageRequest.of(page, peoplePerPage)).getContent();
     }
@@ -58,15 +57,15 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     @Transactional
     public void registerNew(Faculty faculty, BindingResult bindingResult) {
-        validateFaculty(faculty, bindingResult);
+        validateObject(new ValidationData<>(facultyValidator, faculty, bindingResult));
         facultyRepository.save(faculty);
     }
 
     @Override
     @Transactional
     public void updateByName(String name, Faculty updatedFaculty, BindingResult bindingResult) {
-        checkExistsWithSuchName(name);
-        validateFaculty(updatedFaculty, bindingResult);
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, facultyRepository));
+        validateObject(new ValidationData<>(facultyValidator, updatedFaculty, bindingResult));
 
         updatedFaculty.setName(name);
 
@@ -76,19 +75,8 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     @Transactional
     public void deleteByName(String name) {
-        checkExistsWithSuchName(name);
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, facultyRepository));
         facultyRepository.deleteByName(name);
     }
 
-    @Override
-    public void validateFaculty(Faculty faculty, BindingResult bindingResult) {
-        facultyValidator.validate(faculty, bindingResult);
-        if(bindingResult.hasErrors())
-            returnErrorsToClient(bindingResult);
-    }
-
-    @Override
-    public void checkExistsWithSuchName(String name) {
-        if(!facultyRepository.existsByName(name)) throw new NotFoundException(new ExceptionData<String>(className, "name", name));
-    }
 }

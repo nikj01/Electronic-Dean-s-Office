@@ -7,81 +7,87 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.people.NotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.*;
+import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentMapper;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.services.impl.StudentServiceImpl;
+import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/students")
 public class StudentsController {
 
-    private final StudentServiceImpl studentService;
+    private final PeopleService<Student> studentService;
     private final StudentMapper studentMapper;
+    private final StudentListMapper studentListMapper;
 
     @Autowired
     public StudentsController(StudentServiceImpl studentService,
-                              StudentMapper studentMapper) {
+                              StudentMapper studentMapper,
+                              StudentListMapper studentListMapper) {
         this.studentService = studentService;
         this.studentMapper = studentMapper;
+        this.studentListMapper = studentListMapper;
     }
 
     @GetMapping("/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
     public StudentGetDTO findStudentByUid(@RequestParam("uid") Long uid) {
-        return studentMapper.convertToStudentGetDTO(studentService.findByUid(uid));
+        return studentMapper.toStudentGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("/slim/findByUid")
     @ResponseStatus(HttpStatus.FOUND)
     public StudentSlimGetDTO findSlimStudentByUid(@RequestParam("uid") Long uid) {
-        return studentMapper.convertToStudentSlimGetDTO(studentService.findByUid(uid));
+        return studentMapper.toStudentSlimGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
     public StudentGetDTO findStudentByEmail(@RequestParam("email") String email) {
-        return studentMapper.convertToStudentGetDTO(studentService.findByEmail(email));
+        return studentMapper.toStudentGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
     public StudentSlimGetDTO findSlimStudentByEmail(@RequestParam("email") String email) {
-        return studentMapper.convertToStudentSlimGetDTO(studentService.findByEmail(email));
+        return studentMapper.toStudentSlimGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentsGetDTO findStudentBySurname(@RequestParam("surname") String surname) {
-        return studentMapper.convertToStudentsGetDTO(studentService.findBySurname(surname));
+    public List<StudentGetDTO> findStudentBySurname(@RequestParam("surname") String surname) {
+        return studentListMapper.toStudentsGetDTO(studentService.findBySurname(surname));
     }
 
     @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentsSlimGetDTO findSlimStudentBySurname(@RequestParam("surname") String surname) {
-        return studentMapper.convertToStudentsSlimGetDTO(studentService.findBySurname(surname));
+    public List<StudentSlimGetDTO> findSlimStudentBySurname(@RequestParam("surname") String surname) {
+        return studentListMapper.toStudentsSlimGetDTO(studentService.findBySurname(surname));
     }
 
     @GetMapping()
-    public StudentsGetDTO findAllStudents(@RequestParam(value = "page", required = false) Integer page,
-                                          @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return studentMapper.convertToStudentsGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage));
+    public List<StudentGetDTO> findAllStudents(@RequestParam(value = "page", required = false) Integer page,
+                                               @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
+        return studentListMapper.toStudentsGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @GetMapping("/slim")
-    public StudentsSlimGetDTO findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
-                                                  @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return studentMapper.convertToStudentsSlimGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage));
+    public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
+                                                       @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
+        return studentListMapper.toStudentsSlimGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registerNewStudent(@RequestBody @Valid StudentPostDTO newPostStudent,
                                                        BindingResult bindingResult) {
-        Student newStudent = studentMapper.convertToStudent(newPostStudent);
+        Student newStudent = studentMapper.toStudent(newPostStudent);
 
         studentService.registerNew(newStudent, bindingResult);
     }
@@ -90,7 +96,7 @@ public class StudentsController {
     public void updateStudent(@RequestParam("uid") Long uid,
                               @RequestBody @Valid  StudentPostDTO updatedPostStudent,
                                                    BindingResult bindingResult) {
-        Student updatedStudent = studentMapper.convertToStudent(updatedPostStudent);
+        Student updatedStudent = studentMapper.toStudent(updatedPostStudent);
 
         studentService.updateByUid(uid, updatedStudent, bindingResult);
     }

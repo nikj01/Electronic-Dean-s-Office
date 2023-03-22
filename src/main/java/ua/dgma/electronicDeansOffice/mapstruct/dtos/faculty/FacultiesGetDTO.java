@@ -1,17 +1,11 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Data
 public class FacultiesGetDTO {
 
-    @NonNull
     private List<FacultyGetDTO> faculties;
 }

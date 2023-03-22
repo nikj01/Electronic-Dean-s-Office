@@ -1,11 +1,12 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
@@ -13,9 +14,10 @@ import java.util.Set;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@EqualsAndHashCode
 @Table(name = "JournalsPages")
 public class JournalPage {
 
@@ -23,23 +25,35 @@ public class JournalPage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     @NotBlank(message = "The field |PAGE NAME| cannot be empty!")
     @Column(nullable = false)
     private String pageName;
 
-    @OneToMany
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    @Fetch(value = FetchMode.SELECT)
+//    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     private Set<StudentGroup> studentGroups = new HashSet<>();
 
-    @OneToMany(mappedBy = "page")
+    @OneToMany(
+            mappedBy = "page",
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
     private Set<Event> events = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
     private Set<Report> reports = new HashSet<>();
 
-    @NonNull
     @NotEmpty
     @ManyToOne
+    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private TeachersJournal journal;
 }

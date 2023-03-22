@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.exceptions.people;
+package ua.dgma.electronicDeansOffice.exceptions;
 
 public class NotFoundException extends RuntimeException {
 

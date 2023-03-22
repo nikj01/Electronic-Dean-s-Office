@@ -14,7 +14,7 @@ public interface DepartmentRepository extends JpaRepository<Department, String> 
     Optional<Department> getByName(String name);
 
 //    List<Department> getAllByFacultyName(String facultyName);
-    List<Department> getAllByFacultyName(String facultyName);
+    Set<Department> getAllByFacultyName(String facultyName);
     void deleteByName(String name);
     boolean existsByName(String name);
 

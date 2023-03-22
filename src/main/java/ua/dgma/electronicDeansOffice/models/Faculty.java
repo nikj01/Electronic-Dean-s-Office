@@ -1,19 +1,23 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
-@ToString
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode(exclude = {"departments", "deaneryWorkers"})
 @Table(name = "Faculties")
 public class Faculty implements Serializable {
 
@@ -26,6 +30,19 @@ public class Faculty implements Serializable {
     )
     private String name;
 
-    @OneToMany(mappedBy = "faculty")
+    @OneToMany(
+            mappedBy = "faculty",
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    @Fetch(value = FetchMode.SELECT)
     private Set<Department> departments = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "faculty",
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    @Fetch(value = FetchMode.SELECT)
+    private Set<DeaneryWorker> deaneryWorkers = new HashSet<>();
 }

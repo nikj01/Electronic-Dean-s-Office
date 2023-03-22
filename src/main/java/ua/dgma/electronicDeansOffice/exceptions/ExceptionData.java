@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.exceptions.people;
+package ua.dgma.electronicDeansOffice.exceptions;
 
 import lombok.*;
 import org.springframework.stereotype.Component;

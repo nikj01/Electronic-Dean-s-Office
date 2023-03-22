@@ -1,19 +1,17 @@
 package ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces;
 
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.*;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 
 import java.util.List;
 
+@Mapper(componentModel = "spring", uses = FacultyMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface DeaneryWorkerMapper {
 
-    DeaneryWorker convertToDeaneryWorker(DeaneryWorkerPostDTO deaneryWorkerPost);
+    DeaneryWorker toDeaneryWorker(DeaneryWorkerPostDTO deaneryWorkerPost);
+    DeaneryWorkerGetDTO toDeaneryWorkerGetDTO(DeaneryWorker deaneryWorker);
+    DeaneryWorkerSlimGetDTO toDeaneryWorkerSlimGetDTO(DeaneryWorker deaneryWorker);
 
-    DeaneryWorkerGetDTO convertToDeaneryWorkerGetDTO(DeaneryWorker deaneryWorker);
-
-    DeaneryWorkerSlimGetDTO convertToDeaneryWorkerSlimGetDTO(DeaneryWorker deaneryWorker);
-
-    DeaneryWorkersGetDTO convertToDeaneryWorkersGetDTO(List<DeaneryWorker> deaneryWorkers);
-
-    DeaneryWorkersSlimGetDTO convertToDeaneryWorkersSlimGetDTO(List<DeaneryWorker> deaneryWorkers);
 }

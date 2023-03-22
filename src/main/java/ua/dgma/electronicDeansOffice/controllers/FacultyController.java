@@ -7,77 +7,74 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.people.NotFoundException;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsSlimGetDTO;
+import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.*;
-import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.DepartmentMapperImpl;
-import ua.dgma.electronicDeansOffice.mapstruct.mappers.impl.FacultyMapperImpl;
-import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.FacultyListMapper;
+import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.FacultyMapper;
 import ua.dgma.electronicDeansOffice.models.Faculty;
-import ua.dgma.electronicDeansOffice.services.impl.DepartmentServiceImpl;
-import ua.dgma.electronicDeansOffice.services.impl.FacultyServiceImpl;
+import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/faculties")
 public class FacultyController {
 
-    private final FacultyServiceImpl facultyService;
-    private final DepartmentServiceImpl departmentService;
-    private final FacultyMapperImpl facultyMapper;
-    private final DepartmentMapperImpl departmentMapper;
+    private final FacultyService facultyService;
+    private final FacultyMapper facultyMapper;
+    private final FacultyListMapper facultyListMapper;
 
     @Autowired
-    public FacultyController(FacultyServiceImpl facultyService,
-                             DepartmentServiceImpl departmentService, FacultyMapperImpl facultyMapper, DepartmentMapperImpl departmentMapper) {
+    public FacultyController(FacultyService facultyService,
+                             FacultyMapper facultyMapper,
+                             FacultyListMapper facultyListMapper) {
         this.facultyService = facultyService;
-        this.departmentService = departmentService;
+        this.facultyListMapper = facultyListMapper;
         this.facultyMapper = facultyMapper;
-        this.departmentMapper = departmentMapper;
     }
 
     @GetMapping("/findByName")
     @ResponseStatus(HttpStatus.FOUND)
     public FacultyGetDTO findFacultyByName(@RequestParam("name") String name) {
-
-        return facultyMapper.convertToFacultyGetDTO(facultyService.findByName(name));
+        return facultyMapper.toFacultyGetDTO(facultyService.findByName(name));
     }
+
 
     @GetMapping("/slim/findByName")
     @ResponseStatus(HttpStatus.FOUND)
     public FacultySlimGetDTO findSlimFacultyByName(@RequestParam("name") String name) {
-        return facultyMapper.convertToFacultySlimGetDTO(facultyService.findByName(name));
+        return facultyMapper.toFacultySlimGetDTO(facultyService.findByName(name));
     }
 
     @GetMapping()
-    public FacultiesGetDTO findAllFaculties(@RequestParam(value = "page", required = false) Integer page,
-                                            @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return facultyMapper.convertToFacultiesGetDTO(facultyService.findAllWithPaginationOrWithout(page, peoplePerPage));
+    public List<FacultyGetDTO> findAllFaculties(@RequestParam(value = "page", required = false) Integer page,
+                                                @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
+        return facultyListMapper.toFacultiesGetDTO(facultyService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @GetMapping("/slim")
-    public FacultiesSlimGetDTO findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
-                                                    @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return facultyMapper.convertToFacultiesSlimGetDTO(facultyService.findAllWithPaginationOrWithout(page, peoplePerPage));
+    public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
+                                                        @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
+        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findAllWithPaginationOrWithout(page, peoplePerPage));
     }
 
     @PostMapping("/register")
     public void registerNewFaculty(@RequestBody @Valid FacultyPostDTO newPostFaculty,
                                                        BindingResult bindingResult) {
-        Faculty newFaculty = facultyMapper.convertToFaculty(newPostFaculty);
+        Faculty newFaculty = facultyMapper.toFaculty(newPostFaculty);
 
         facultyService.registerNew(newFaculty, bindingResult);
     }
 
+    /*
+     * THIS METHOD WILL BE REMOVE
+     * */
     @PatchMapping("/update")
     public void updateFaculty(@RequestParam("name") String name,
                               @RequestBody @Valid   FacultyPostDTO updatedPostFaculty,
                                                     BindingResult bindingResult) {
-        Faculty updatedFaculty = facultyMapper.convertToFaculty(updatedPostFaculty);
+        Faculty updatedFaculty = facultyMapper.toFaculty(updatedPostFaculty);
 
         facultyService.updateByName(name, updatedFaculty, bindingResult);
     }

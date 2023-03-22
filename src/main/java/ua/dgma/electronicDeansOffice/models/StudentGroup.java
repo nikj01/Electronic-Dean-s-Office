@@ -1,59 +1,80 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode(exclude = {"students", "events"})
 @Table(name = "StundentGroups")
+//@EqualsAndHashCode(exclude = "department")
 public class StudentGroup implements Serializable {
 
     @Id
     @NonNull
     @NotBlank(message = "The field |NAME| cannot be empty!")
-    @Size(
-            min = 1,
-            max = 255
-    )
     @Column(
             unique = true,
             nullable = false
     )
     private String name;
 
-    @NonNull
     @NotEmpty(message = "The field |GROUP LEADER| cannot be empty!")
-    @OneToOne
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     @JoinColumn(
             unique = true,
             referencedColumnName = "uid"
     )
     private Student groupLeader;
 
-    /*
-    *   SET OR LIST???
-    */
-    @OneToMany(mappedBy = "studentGroup")
+    @OneToMany(
+            mappedBy = "studentGroup",
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    @Fetch(value = FetchMode.SELECT)
+//    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     private Set<Student> students = new TreeSet<>();
 
-    @NonNull
     @NotEmpty(message = "The field |CURATOR| cannot be empty!")
     @ManyToOne
-    @JoinColumn //  Idk can be a group without a curator
+    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn
     private Teacher curator;
 
 
-    @NonNull
     @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
     @ManyToOne
+    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Department department;
+
+    @ManyToMany(
+            mappedBy = "studentGroups",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Event> events;
 
 }

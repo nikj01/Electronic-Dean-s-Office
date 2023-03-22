@@ -9,7 +9,8 @@ import java.sql.Date;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
@@ -49,7 +50,6 @@ public class Person {
     @NonNull
     @NotNull(message = "The filed |ROLE| cannot be empty!")
     @Column(nullable = false)
-//    @Enumerated(EnumType.STRING)
     private PersonRole role;
 
     @NonNull

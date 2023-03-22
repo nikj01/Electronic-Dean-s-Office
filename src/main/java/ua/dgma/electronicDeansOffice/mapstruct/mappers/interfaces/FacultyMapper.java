@@ -1,21 +1,16 @@
 package ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces;
 
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentsSlimGetDTO;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.*;
-import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Faculty;
 
-import java.util.List;
-
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface FacultyMapper {
 
-    Faculty convertToFaculty(FacultyPostDTO facultyPost);
+    Faculty toFaculty(FacultyPostDTO facultyPost);
+    FacultyGetDTO toFacultyGetDTO(Faculty faculty);
+    FacultySlimGetDTO toFacultySlimGetDTO(Faculty faculty);
 
-    FacultyGetDTO convertToFacultyGetDTO(Faculty faculty);
 
-    FacultySlimGetDTO convertToFacultySlimGetDTO(Faculty faculty);
-
-    FacultiesGetDTO convertToFacultiesGetDTO(List<Faculty> faculties);
-
-    FacultiesSlimGetDTO convertToFacultiesSlimGetDTO(List<Faculty> faculties);
 }

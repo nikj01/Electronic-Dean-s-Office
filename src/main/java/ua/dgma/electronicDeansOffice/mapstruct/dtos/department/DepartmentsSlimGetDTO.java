@@ -5,12 +5,9 @@ import lombok.*;
 import java.util.List;
 import java.util.Set;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
-@NoArgsConstructor
+
+@Data
 public class DepartmentsSlimGetDTO {
 
-    @NonNull
     private List<DepartmentSlimGetDTO> departments;
 }

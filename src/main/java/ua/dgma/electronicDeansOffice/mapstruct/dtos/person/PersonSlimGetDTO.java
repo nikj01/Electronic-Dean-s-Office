@@ -1,22 +1,17 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.person;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
-@Setter
+@Data
 public class PersonSlimGetDTO implements Comparable<PersonSlimGetDTO>{
 
-    @NotBlank
     private String surname;
-
-    @NotBlank
     private String name;
-
-    @NotBlank
     private String patronymic;
 
     @Override

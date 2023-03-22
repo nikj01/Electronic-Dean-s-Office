@@ -11,15 +11,10 @@ import java.util.Optional;
 public interface PeopleRepository<T extends Person> extends JpaRepository<T, Long> {
 
     Optional<T> getByUid(Long uid);
-
     Optional<T> getByEmail(String email);
-
     List<T> getBySurname(String surname);
-
     void deleteByUid(Long uid);
-
     boolean existsByUid(Long uid);
-
     boolean existsBySurname(String surname);
 
 }
