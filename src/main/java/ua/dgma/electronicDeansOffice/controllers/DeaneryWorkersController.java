@@ -73,14 +73,16 @@ public class DeaneryWorkersController {
 
     @GetMapping()
     public List<DeaneryWorkerGetDTO> findAllDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
-                                                           @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                                           @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                                           @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
 
     @GetMapping("/slim")
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
-                                                                   @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                                                   @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                                                   @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
 
     @PostMapping("/register")

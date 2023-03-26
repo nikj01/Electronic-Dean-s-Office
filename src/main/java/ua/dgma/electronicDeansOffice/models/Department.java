@@ -38,11 +38,18 @@ public class Department implements Serializable {
 
     @OneToMany(
             mappedBy = "department",
-            cascade = {CascadeType.REMOVE},
-//                    , CascadeType.MERGE},
+            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
 //    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     private Set<StudentGroup> studentGroups = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "department",
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    @Fetch(value = FetchMode.SELECT)
+    private Set<Teacher> teachers = new HashSet<>();
 }

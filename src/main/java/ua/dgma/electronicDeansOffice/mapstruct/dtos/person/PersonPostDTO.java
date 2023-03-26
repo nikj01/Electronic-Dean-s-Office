@@ -1,13 +1,10 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.person;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import ua.dgma.electronicDeansOffice.models.PersonRole;
+import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.List;
 
 @Data
 public class PersonPostDTO {
@@ -18,6 +15,6 @@ public class PersonPostDTO {
     private String patronymic;
     private Date dateOfBirth;
     private String email;
-    private PersonRole role;
+    private List<PersonRoleEnum> personRoles;
     private String password;
 }

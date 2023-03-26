@@ -18,8 +18,8 @@ import javax.validation.constraints.NotNull;
 public class Student extends Person {
 
     @NotNull(message = "The field |STUDENT GROUP| group cannot be empty!")
-    @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.REMOVE)
+//    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             name = "group_name",

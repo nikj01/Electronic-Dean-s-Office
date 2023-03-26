@@ -1,5 +1,6 @@
 package ua.dgma.electronicDeansOffice.mapstruct.mappers.collections;
 
+import net.bytebuddy.build.HashCodeAndEqualsPlugin;
 import org.mapstruct.*;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PeopleGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PeopleSlimGetDTO;
@@ -19,8 +20,5 @@ public interface PersonListMapper {
     @IterableMapping(qualifiedByName = "slimPerson")
     @Named(value = "peopleSlimGet")
     List<PersonSlimGetDTO> toPeopleSlimGetDTO(List<Person> people);
-//    @IterableMapping(qualifiedByName = "person")
-//    PeopleGetDTO toObjectPeopleGetDTO(List<PersonGetDTO> people);
-//    @IterableMapping(qualifiedByName = "slimPerson")
-//    PeopleSlimGetDTO toObjectPeopleSlimGetDTO(List<PersonGetDTO> people);
+
 }

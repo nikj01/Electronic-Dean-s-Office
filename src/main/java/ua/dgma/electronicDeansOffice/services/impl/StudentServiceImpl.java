@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
-import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.models.Student;
+//import ua.dgma.electronicDeansOffice.models.QStudent;
+//import ua.dgma.electronicDeansOffice.models.QPerson;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
+import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
@@ -26,8 +27,9 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     @Autowired
     protected StudentServiceImpl(StudentRepository studentRepository,
                                  ExceptionData exceptionData,
-                                 StudentValidator studentValidator) {
-        super(studentRepository, studentValidator, exceptionData);
+                                 StudentValidator studentValidator,
+                                 PeopleSpecifications<Student> specifications) {
+        super(studentRepository, studentValidator, exceptionData, specifications);
         this.studentRepository = studentRepository;
         this.studentValidator = studentValidator;
     }

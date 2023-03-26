@@ -4,8 +4,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Data
 public class PersonSlimGetDTO implements Comparable<PersonSlimGetDTO>{
@@ -13,6 +15,8 @@ public class PersonSlimGetDTO implements Comparable<PersonSlimGetDTO>{
     private String surname;
     private String name;
     private String patronymic;
+    private List<PersonRoleEnum> personRoles;
+    private boolean deleted;
 
     @Override
     public int compareTo(PersonSlimGetDTO o) {

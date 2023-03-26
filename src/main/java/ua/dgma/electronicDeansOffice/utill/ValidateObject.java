@@ -7,16 +7,6 @@ import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToCl
 @Component
 public class ValidateObject {
 
-//    private Validator validator;
-//    private T objectToBeValidated;
-//    private BindingResult bindingResult;
-//
-//    public ValidateObject(ValidationData<T> validationData) {
-//        this.validator = validationData.getValidator();
-//        this.objectToBeValidated = validationData.getObjectToBeValidated();
-//        this.bindingResult = validationData.getBindingResult();
-//    }
-
     public static void validateObject(ValidationData validationData) {
         validationData.getValidator().validate(validationData.getObjectToBeValidated(), validationData.getBindingResult());
         if(validationData.getBindingResult().hasErrors())

@@ -9,7 +9,9 @@ import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
+//import ua.dgma.electronicDeansOffice.models.QPerson;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -17,7 +19,6 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToClient;
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
@@ -29,15 +30,24 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     private final PeopleRepository<P> repository;
     private final Validator validator;
     private final ExceptionData exceptionData;
+    private final PeopleSpecifications<P> specifications;
+
+//    private final PersonSpecifications<P> spec;
+//    private Root root;
+//    private CriteriaQuery query;
+//    private CriteriaBuilder builder;
+
     private Class<P> persistentClass;
 
     @Autowired
     protected PeopleServiceImpl(PeopleRepository<P> repository,
                                 Validator validator,
-                                ExceptionData exceptionData) {
+                                ExceptionData exceptionData,
+                                PeopleSpecifications<P> specifications) {
         this.repository = repository;
         this.validator = validator;
         this.exceptionData = exceptionData;
+        this.specifications = specifications;
     }
 
     /*  This method defines class that is required for the ExceptionData in the future */
@@ -63,11 +73,11 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     }
 
     @Override
-    public List<P> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage) {
+    public List<P> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage, Boolean isDeleted) {
         if(checkPaginationParameters(page, peoplePerPage))
-            return repository.findAll();
+            return repository.findAll(specifications.getPeopleByDeletedCriteria(isDeleted));
         else
-            return repository.findAll(PageRequest.of(page, peoplePerPage)).getContent();
+            return repository.findAll(specifications.getPeopleByDeletedCriteria(isDeleted), PageRequest.of(page, peoplePerPage)).getContent();
     }
 
     /*
@@ -77,6 +87,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     @Transactional
     public void registerNew(P p, BindingResult bindingResult) {
         validateObject(new ValidationData<>(validator, p, bindingResult));
+        p.setDeleted(false);
         repository.save(p);
     }
     @Override
@@ -91,6 +102,16 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     public void deleteByUId(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(getPersistentClass().getSimpleName(), uid, repository));
         repository.deleteByUid(uid);
+    }
+
+    @Override
+    @Transactional
+    public void softDeleteByUId(Long uid) {
+        P person = findByUid(uid);
+
+        person.setDeleted(true);
+
+        repository.save(person);
     }
 
     @Override

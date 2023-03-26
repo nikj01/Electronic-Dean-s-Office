@@ -73,14 +73,16 @@ public class PeopleController {
 
     @GetMapping()
     public List<PersonGetDTO> findAllPeople(@RequestParam(value = "page", required = false) Integer page,
-                                            @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return personListMapper.toPeopleGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                            @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                            @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return personListMapper.toPeopleGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
 
     @GetMapping("/slim")
     public List<PersonSlimGetDTO> findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
-                                                    @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return personListMapper.toPeopleSlimGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                                    @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                                    @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return personListMapper.toPeopleSlimGetDTO(personService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
 
     @PostMapping("/register")
@@ -104,6 +106,11 @@ public class PeopleController {
     @DeleteMapping("/delete")
     public void deletePerson(@RequestParam("uid") Long uid) {
         personService.deleteByUId(uid);
+    }
+
+    @DeleteMapping("/soft/delete")
+    public void softDeletePerson(@RequestParam("uid") Long uid) {
+        personService.softDeleteByUId(uid);
     }
 
     @ExceptionHandler

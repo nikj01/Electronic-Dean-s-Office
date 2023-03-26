@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.springframework.data.mapping.AccessOptions;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
@@ -38,7 +39,7 @@ public class StudentGroup implements Serializable {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+//    @Cascade(value = org.hibernate.annotations.CascadeType.LOCK)
     @JoinColumn(
             unique = true,
             referencedColumnName = "uid"
@@ -51,20 +52,18 @@ public class StudentGroup implements Serializable {
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-//    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     private Set<Student> students = new TreeSet<>();
 
-    @NotEmpty(message = "The field |CURATOR| cannot be empty!")
+//    @NotEmpty(message = "The field |CURATOR| cannot be empty!")
     @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
     private Teacher curator;
 
-
     @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
     @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
+//    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Department department;

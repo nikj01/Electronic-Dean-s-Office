@@ -1,11 +1,15 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.List;
 
 
 @Entity
@@ -16,6 +20,7 @@ import java.sql.Date;
 @EqualsAndHashCode
 @Table(name = "People")
 @Inheritance(strategy = InheritanceType.JOINED)
+//@Where(clause = "DELETED = false")
 public class Person {
 
     @Id
@@ -47,10 +52,11 @@ public class Person {
     @Column(unique = true)
     private String email;
 
-    @NonNull
     @NotNull(message = "The filed |ROLE| cannot be empty!")
-    @Column(nullable = false)
-    private PersonRole role;
+    @ElementCollection(targetClass = PersonRoleEnum.class)
+    @CollectionTable(name = "personRoles")
+    @Column(name = "roles", nullable = false)
+    private List<PersonRoleEnum> personRoles;
 
     @NonNull
     @NotBlank(message = "The field |PASSWORD| cannot be empty!")
@@ -62,4 +68,7 @@ public class Person {
     @Column(nullable = false)
     private Date dateOfBirth;
 
+    @NonNull
+    @Column(nullable = false)
+    private boolean deleted;
 }
