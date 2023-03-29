@@ -73,14 +73,14 @@ public class DeaneryWorkersController {
 
     @GetMapping()
     public List<DeaneryWorkerGetDTO> findAllDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
-                                                           @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                                           @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                            @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
         return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
 
     @GetMapping("/slim")
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
-                                                                   @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                                                   @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                                    @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
         return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
@@ -106,6 +106,11 @@ public class DeaneryWorkersController {
     @DeleteMapping("/delete")
     public void deleteDeaneryWorker(@RequestParam("uid") Long uid) {
         deaneryWorkerService.deleteByUId(uid);
+    }
+
+    @DeleteMapping("/soft/delete")
+    public void softDeletePerson(@RequestParam("uid") Long uid) {
+        deaneryWorkerService.softDeleteByUId(uid);
     }
 
     @ExceptionHandler

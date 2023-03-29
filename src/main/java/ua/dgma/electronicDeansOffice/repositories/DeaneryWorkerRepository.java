@@ -8,5 +8,4 @@ import java.util.List;
 @Repository
 public interface DeaneryWorkerRepository extends PeopleRepository<DeaneryWorker> {
 
-
 }

@@ -9,9 +9,8 @@ import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
-//import ua.dgma.electronicDeansOffice.models.QPerson;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
+import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -30,20 +29,14 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     private final PeopleRepository<P> repository;
     private final Validator validator;
     private final ExceptionData exceptionData;
-    private final PeopleSpecifications<P> specifications;
-
-//    private final PersonSpecifications<P> spec;
-//    private Root root;
-//    private CriteriaQuery query;
-//    private CriteriaBuilder builder;
-
+    private final Specifications<P> specifications;
     private Class<P> persistentClass;
 
     @Autowired
     protected PeopleServiceImpl(PeopleRepository<P> repository,
                                 Validator validator,
                                 ExceptionData exceptionData,
-                                PeopleSpecifications<P> specifications) {
+                                Specifications<P> specifications) {
         this.repository = repository;
         this.validator = validator;
         this.exceptionData = exceptionData;
@@ -75,9 +68,9 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     @Override
     public List<P> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage, Boolean isDeleted) {
         if(checkPaginationParameters(page, peoplePerPage))
-            return repository.findAll(specifications.getPeopleByDeletedCriteria(isDeleted));
+            return repository.findAll(specifications.getObjectByDeletedCriteria(isDeleted));
         else
-            return repository.findAll(specifications.getPeopleByDeletedCriteria(isDeleted), PageRequest.of(page, peoplePerPage)).getContent();
+            return repository.findAll(specifications.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, peoplePerPage)).getContent();
     }
 
     /*
@@ -99,16 +92,14 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
      * */
     @Override
     @Transactional
-    public void deleteByUId(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(getPersistentClass().getSimpleName(), uid, repository));
-        repository.deleteByUid(uid);
-    }
+    public abstract void deleteByUId(Long uid);
 
     @Override
     @Transactional
     public void softDeleteByUId(Long uid) {
-        P person = findByUid(uid);
+        checkExistsWithSuchID(new CheckExistsByIdData<>(getPersistentClass().getSimpleName(), uid, repository));
 
+        P person = findByUid(uid);
         person.setDeleted(true);
 
         repository.save(person);

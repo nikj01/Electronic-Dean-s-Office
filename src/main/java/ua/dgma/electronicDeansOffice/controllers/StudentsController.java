@@ -73,14 +73,14 @@ public class StudentsController {
 
     @GetMapping()
     public List<StudentGetDTO> findAllStudents(@RequestParam(value = "page", required = false) Integer page,
-                                               @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                               @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
         return studentListMapper.toStudentsGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
 
     @GetMapping("/slim")
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
-                                                       @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage,
+                                                       @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
     }
@@ -106,6 +106,11 @@ public class StudentsController {
     @DeleteMapping("/delete")
     public void deleteStudent(@RequestParam("uid") Long uid) {
         studentService.deleteByUId(uid);
+    }
+
+    @DeleteMapping("/soft/delete")
+    public void softDeletePerson(@RequestParam("uid") Long uid) {
+        studentService.softDeleteByUId(uid);
     }
 
     @ExceptionHandler

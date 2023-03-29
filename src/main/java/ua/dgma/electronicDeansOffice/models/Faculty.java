@@ -2,9 +2,9 @@ package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -44,5 +44,10 @@ public class Faculty implements Serializable {
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
     private Set<DeaneryWorker> deaneryWorkers = new HashSet<>();
+
+    @NonNull
+    @Column(nullable = false)
+    private boolean deleted;
 }

@@ -49,14 +49,16 @@ public class DepartmentController {
 
     @GetMapping()
     public List<DepartmentGetDTO> findAllDepartments(@RequestParam(value = "page", required = false) Integer page,
-                                          @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return departmentListMapper.toDepartmentsGetDTO(departmentService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                                     @RequestParam(value = "departmentsPerPage", required = false) Integer departmentsPerPage,
+                                                     @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return departmentListMapper.toDepartmentsGetDTO(departmentService.findAllWithPaginationOrWithout(page, departmentsPerPage, isDeleted));
     }
 
     @GetMapping("/slim")
     public List<DepartmentSlimGetDTO> findAllSlimDepartments(@RequestParam(value = "page", required = false) Integer page,
-                                                  @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                                             @RequestParam(value = "people_per_page", required = false) Integer departmentsPerPage,
+                                                             @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findAllWithPaginationOrWithout(page, departmentsPerPage, isDeleted));
     }
 
     @GetMapping("/findByFacultyName")
@@ -84,6 +86,11 @@ public class DepartmentController {
     @DeleteMapping("/delete")
     public void deleteDepartment(@RequestParam("name") String name) {
         departmentService.deleteByName(name);
+    }
+
+    @DeleteMapping("/soft/delete")
+    public void softDeleteDepartment(@RequestParam("name") String name) {
+        departmentService.softDeleteByName(name);
     }
 
     @ExceptionHandler

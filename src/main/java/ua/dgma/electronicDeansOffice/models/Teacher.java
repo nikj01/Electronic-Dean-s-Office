@@ -22,7 +22,6 @@ public class Teacher extends Person {
 
     @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
     @ManyToOne
-//    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             nullable = false,

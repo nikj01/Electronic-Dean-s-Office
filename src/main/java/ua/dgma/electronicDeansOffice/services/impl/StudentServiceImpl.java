@@ -1,15 +1,19 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
+import jdk.dynalink.linker.LinkerServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
+import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Student;
 //import ua.dgma.electronicDeansOffice.models.QStudent;
 //import ua.dgma.electronicDeansOffice.models.QPerson;
+import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
-import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
+import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
@@ -22,16 +26,19 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExists
 public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     private final StudentRepository studentRepository;
+    private final StudentGroupRepository studentGroupRepository;
     private final StudentValidator studentValidator;
 
     @Autowired
     protected StudentServiceImpl(StudentRepository studentRepository,
                                  ExceptionData exceptionData,
                                  StudentValidator studentValidator,
-                                 PeopleSpecifications<Student> specifications) {
+                                 Specifications<Student> specifications,
+                                 StudentGroupRepository studentGroupRepository) {
         super(studentRepository, studentValidator, exceptionData, specifications);
         this.studentRepository = studentRepository;
         this.studentValidator = studentValidator;
+        this.studentGroupRepository = studentGroupRepository;
     }
 
     @Override
@@ -44,9 +51,14 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
         studentRepository.save(updatedStudent);
     }
 
+    @Override
+    public void deleteByUId(Long uid) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(Student.class.getSimpleName(), uid, studentRepository));
 
-    /*
-*   public void deleteByUid(Long uid)
-*   student group.get.deleteThisStudent
-* */
+        if(studentGroupRepository.getByGroupLeader_Uid(Long.valueOf(uid)).isPresent())
+            studentGroupRepository.getByGroupLeader_Uid(uid).stream().findFirst().ifPresent(studentGroup -> studentGroup.setGroupLeader(null));
+
+        studentRepository.deleteByUid(uid);
+    }
+
 }

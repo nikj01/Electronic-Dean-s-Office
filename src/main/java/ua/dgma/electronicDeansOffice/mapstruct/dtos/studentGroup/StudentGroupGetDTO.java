@@ -17,8 +17,8 @@ import java.util.TreeSet;
 public class StudentGroupGetDTO extends StudentGroupSlimGetDTO{
 
     private StudentSlimGetDTO groupLeader;
-//    private List<Student> students;
     private PersonSlimGetDTO curator;
     private DepartmentSlimGetDTO department;
+    private List<StudentSlimGetDTO> students;
 
 }

@@ -16,6 +16,7 @@ import java.util.Set;
 public class FacultySlimGetDTO implements Comparable<FacultySlimGetDTO>{
 
     private String name;
+    private boolean deleted;
 
     @Override
     public int compareTo(FacultySlimGetDTO o) {

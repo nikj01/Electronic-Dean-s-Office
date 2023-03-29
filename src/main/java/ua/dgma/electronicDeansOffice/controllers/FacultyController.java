@@ -49,14 +49,16 @@ public class FacultyController {
 
     @GetMapping()
     public List<FacultyGetDTO> findAllFaculties(@RequestParam(value = "page", required = false) Integer page,
-                                                @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return facultyListMapper.toFacultiesGetDTO(facultyService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                                @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
+                                                @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return facultyListMapper.toFacultiesGetDTO(facultyService.findAllWithPaginationOrWithout(page, facultiesPerPage, isDeleted));
     }
 
     @GetMapping("/slim")
     public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
-                                                        @RequestParam(value = "people_per_page", required = false) Integer peoplePerPage) {
-        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findAllWithPaginationOrWithout(page, peoplePerPage));
+                                                        @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
+                                                        @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
+        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findAllWithPaginationOrWithout(page, facultiesPerPage, isDeleted));
     }
 
     @PostMapping("/register")
@@ -82,6 +84,11 @@ public class FacultyController {
     @DeleteMapping("/delete")
     public void deleteFaculty(@RequestParam("name") String name) {
         facultyService.deleteByName(name);
+    }
+
+    @DeleteMapping("/soft/delete")
+    public void softDeleteFaculty(@RequestParam("name") String name) {
+        facultyService.softDeleteByName(name);
     }
 
     @ExceptionHandler

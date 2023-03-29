@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 public class DepartmentSlimGetDTO implements Comparable<DepartmentSlimGetDTO>{
 
     private String name;
+    private boolean deleted;
 
     @Override
     public int compareTo(DepartmentSlimGetDTO o) {

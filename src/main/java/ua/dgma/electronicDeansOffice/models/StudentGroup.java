@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,7 +22,6 @@ import java.util.TreeSet;
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"students", "events"})
 @Table(name = "StundentGroups")
-//@EqualsAndHashCode(exclude = "department")
 public class StudentGroup implements Serializable {
 
     @Id
@@ -33,17 +33,16 @@ public class StudentGroup implements Serializable {
     )
     private String name;
 
-    @NotEmpty(message = "The field |GROUP LEADER| cannot be empty!")
+//    @NotEmpty(message = "The field |GROUP LEADER| cannot be empty!")
     @OneToOne(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-//    @Cascade(value = org.hibernate.annotations.CascadeType.LOCK)
     @JoinColumn(
             unique = true,
             referencedColumnName = "uid"
     )
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Student groupLeader;
 
     @OneToMany(
@@ -52,18 +51,20 @@ public class StudentGroup implements Serializable {
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-    private Set<Student> students = new TreeSet<>();
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private List<Student> students = new ArrayList<>();
 
+/*
+*   This annotation @NotEmpty must be working after creating TeacherValidator!
+* */
 //    @NotEmpty(message = "The field |CURATOR| cannot be empty!")
     @ManyToOne
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
     private Teacher curator;
 
-    @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
+    @NotNull(message = "The field |DEPARTMENT| cannot be empty!")
     @ManyToOne
-//    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Department department;
@@ -73,7 +74,10 @@ public class StudentGroup implements Serializable {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<Event> events;
 
+    @NonNull
+    @Column(nullable = false)
+    private boolean deleted;
 }

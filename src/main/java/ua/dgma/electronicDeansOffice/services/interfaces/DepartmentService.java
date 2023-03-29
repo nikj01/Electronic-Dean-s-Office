@@ -11,9 +11,10 @@ import java.util.Set;
 public interface DepartmentService {
 
     Department findByName(String name);
-    Set<Department> findAllDepartmentsByFacultyName(String facultyName);
-    List<Department> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage);
+    List<Department> findAllDepartmentsByFacultyName(String facultyName);
+    List<Department> findAllWithPaginationOrWithout(Integer page, Integer departmentsPerPage, Boolean isDeleted);
     void registerNew(Department department, BindingResult bindingResult);
     void updateByName(String name, Department updatedDepartment, BindingResult bindingResult);
     void deleteByName(String name);
+    void softDeleteByName(String name);
 }

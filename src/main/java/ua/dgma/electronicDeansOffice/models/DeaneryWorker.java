@@ -18,7 +18,6 @@ public class DeaneryWorker extends Person {
 
     @NotNull(message = "The field |FACULTY| cannot be empty!")
     @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Faculty faculty;
 

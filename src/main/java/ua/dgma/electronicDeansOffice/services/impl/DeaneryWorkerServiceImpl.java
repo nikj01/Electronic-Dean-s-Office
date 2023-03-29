@@ -9,7 +9,7 @@ import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 //import ua.dgma.electronicDeansOffice.models.QDeaneryWorker;
 //import ua.dgma.electronicDeansOffice.models.QPerson;
 import ua.dgma.electronicDeansOffice.repositories.DeaneryWorkerRepository;
-import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
+import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.DeaneryWorkerValidator;
@@ -28,7 +28,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
     protected DeaneryWorkerServiceImpl(DeaneryWorkerRepository deaneryWorkerRepository,
                                        DeaneryWorkerValidator deaneryWorkerValidator,
                                        ExceptionData exceptionData,
-                                       PeopleSpecifications<DeaneryWorker> specifications) {
+                                       Specifications<DeaneryWorker> specifications) {
         super(deaneryWorkerRepository, deaneryWorkerValidator, exceptionData, specifications);
         this.deaneryWorkerRepository = deaneryWorkerRepository;
         this.deaneryWorkerValidator = deaneryWorkerValidator;
@@ -42,6 +42,11 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         updatedDeaneryWorker.setUid(uid);
         deaneryWorkerRepository.save(updatedDeaneryWorker);
 
+    }
+
+    @Override
+    public void deleteByUId(Long uid) {
+        deaneryWorkerRepository.deleteByUid(uid);
     }
 
 }

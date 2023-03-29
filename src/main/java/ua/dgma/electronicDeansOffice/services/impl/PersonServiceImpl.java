@@ -8,7 +8,7 @@ import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Person;
 //import ua.dgma.electronicDeansOffice.models.QPerson;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
+import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.PeopleValidator;
@@ -27,7 +27,7 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
     protected PersonServiceImpl(PeopleRepository<Person> personRepository,
                                 ExceptionData exceptionData,
                                 PeopleValidator personValidator,
-                                PeopleSpecifications<Person> specifications) {
+                                Specifications<Person> specifications) {
         super(personRepository, personValidator, exceptionData, specifications);
         this.personRepository = personRepository;
         this.personValidator = personValidator;
@@ -41,6 +41,11 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
         updatedPerson.setUid(uid);
 
         personRepository.save(updatedPerson);
+    }
+
+    @Override
+    public void deleteByUId(Long uid) {
+        personRepository.deleteByUid(uid);
     }
 
 }

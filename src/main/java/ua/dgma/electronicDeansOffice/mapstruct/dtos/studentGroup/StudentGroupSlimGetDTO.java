@@ -12,4 +12,5 @@ import javax.validation.constraints.NotBlank;
 public class StudentGroupSlimGetDTO {
 
     private String name;
+    private boolean deleted;
 }

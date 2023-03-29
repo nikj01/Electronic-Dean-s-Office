@@ -10,15 +10,14 @@ import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
+import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.DepartmentValidator;
 
 import java.util.List;
-import java.util.Set;
 
 
-import static ua.dgma.electronicDeansOffice.utill.ErrorsBuilder.returnErrorsToClient;
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
@@ -30,15 +29,18 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentValidator departmentValidator;
     private final ExceptionData exceptionData;
+    private final Specifications<Department> specifications;
+
     private String className;
 
     @Autowired
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
                                  DepartmentValidator departmentValidator,
-                                 ExceptionData exceptionData) {
+                                 ExceptionData exceptionData, Specifications<Department> specifications) {
         this.departmentRepository = departmentRepository;
         this.departmentValidator = departmentValidator;
         this.exceptionData = exceptionData;
+        this.specifications = specifications;
         className = Department.class.getSimpleName();
     }
 
@@ -49,15 +51,15 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public List<Department> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage) {
-        if(checkPaginationParameters(page, peoplePerPage))
-            return departmentRepository.findAll();
+    public List<Department> findAllWithPaginationOrWithout(Integer page, Integer departmentsPerPage, Boolean isDeleted) {
+        if(checkPaginationParameters(page, departmentsPerPage))
+            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted));
         else
-            return departmentRepository.findAll(PageRequest.of(page, peoplePerPage)).getContent();
+            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, departmentsPerPage)).getContent();
     }
 
     @Override
-    public Set<Department> findAllDepartmentsByFacultyName(String facultyName) {
+    public List<Department> findAllDepartmentsByFacultyName(String facultyName) {
         return departmentRepository.getAllByFacultyName(facultyName);
     }
 
@@ -83,6 +85,16 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void deleteByName(String name) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
         departmentRepository.deleteByName(name);
+    }
+
+    @Override
+    public void softDeleteByName(String name) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
+
+        Department department = findByName(name);
+        department.setDeleted(true);
+
+        departmentRepository.save(department);
     }
 
 }

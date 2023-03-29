@@ -11,7 +11,10 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {StudentMapper.class, StudentListMapper.class, PersonMapper.class, DepartmentMapper.class}, injectionStrategy = InjectionStrategy.FIELD)
 public interface StudentGroupMapper {
 
+    @Named(value = "postGroup")
     StudentGroup toStudentGroup(StudentGroupPostDTO studentGroup);
+    @Named(value = "patchGroup")
+    StudentGroup toStudentGroup(StudentGroupPatchDTO studentGroup);
     @Named(value = "group")
     StudentGroupGetDTO toStudentGroupGetDTO(StudentGroup studentGroup);
     @Named(value = "slimGroup")

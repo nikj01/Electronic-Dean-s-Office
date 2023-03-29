@@ -10,7 +10,7 @@ import java.util.List;
 public interface FacultyService {
 
     Faculty findByName(String name);
-    List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage);
+    List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer faculutiesPerPage, Boolean isDeleted);
     void registerNew(Faculty faculty, BindingResult bindingResult);
 
     /*
@@ -18,5 +18,6 @@ public interface FacultyService {
      * */
     void updateByName(String name, Faculty updatedFaculty, BindingResult bindingResult);
     void deleteByName(String name);
+    void softDeleteByName(String name);
 
 }

@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 public class PersonSlimGetDTO implements Comparable<PersonSlimGetDTO>{
 
+    private Long uid;
     private String surname;
     private String name;
     private String patronymic;

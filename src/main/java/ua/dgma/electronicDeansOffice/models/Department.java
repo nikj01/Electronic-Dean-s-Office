@@ -52,4 +52,8 @@ public class Department implements Serializable {
     )
     @Fetch(value = FetchMode.SELECT)
     private Set<Teacher> teachers = new HashSet<>();
+
+    @NonNull
+    @Column(nullable = false)
+    private boolean deleted;
 }
