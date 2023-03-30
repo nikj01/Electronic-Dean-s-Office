@@ -1,0 +1,27 @@
+server:
+  port: 5999
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/Deanery
+    username: postgres
+    password: root
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+        use_sql_comments: true
+        format_sql: true
+        hbm2ddl:
+          auto: create-drop
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
+  main:
+    allow-circular-references: true

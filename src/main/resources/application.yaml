@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: Electronic Deanery
+  profiles:
+    include: dev
+
+  main:
+    allow-circular-references: true
+

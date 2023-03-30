@@ -1,36 +1,40 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
+
 @Entity
-@Table(name = "Teacher")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"studentGroup", "department"})
+@Table(name = "Teachers")
 public class Teacher extends Person {
 
-    @Id
-    @NonNull
-    @NotEmpty(message = "Staff number cannot be empty")
-    @Min(
-            value = 0,
-            message = "Staff number number cannot be less than 0 characters"
+    @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(
+            nullable = false,
+            referencedColumnName = "name"
     )
-    @Column(nullable = false)
-    private Long staffNumber;
+    private Department department;
 
-    @NonNull
-    @OneToMany(mappedBy = "curator")
-    private Set<StudentGroup> studentGroup;
+    @OneToMany(
+            mappedBy = "curator",
+            fetch = FetchType.EAGER
+    )
+    @Fetch(FetchMode.SELECT)
+    @Cascade(CascadeType.SAVE_UPDATE)
+    private Set<StudentGroup> studentGroup = new HashSet<>();
 
-    @NonNull
-    @OneToMany(mappedBy = "teacher")
-    private List<Grade> grades;
 }
