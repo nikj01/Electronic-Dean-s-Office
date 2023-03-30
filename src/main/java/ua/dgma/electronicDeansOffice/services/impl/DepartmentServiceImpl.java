@@ -30,7 +30,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentValidator departmentValidator;
     private final ExceptionData exceptionData;
     private final Specifications<Department> specifications;
-
     private String className;
 
     @Autowired

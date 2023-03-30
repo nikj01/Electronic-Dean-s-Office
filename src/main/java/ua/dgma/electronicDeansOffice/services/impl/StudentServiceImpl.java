@@ -2,6 +2,8 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import jdk.dynalink.linker.LinkerServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -18,8 +20,11 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
 
+import java.util.List;
+
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,6 +33,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     private final StudentRepository studentRepository;
     private final StudentGroupRepository studentGroupRepository;
     private final StudentValidator studentValidator;
+    private final Specifications<Student> specifications;
 
     @Autowired
     protected StudentServiceImpl(StudentRepository studentRepository,
@@ -39,6 +45,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
         this.studentRepository = studentRepository;
         this.studentValidator = studentValidator;
         this.studentGroupRepository = studentGroupRepository;
+        this.specifications = specifications;
     }
 
     @Override

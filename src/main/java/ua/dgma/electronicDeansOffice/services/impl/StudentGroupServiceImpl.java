@@ -16,6 +16,7 @@ import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
+import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
@@ -36,6 +37,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentGroupRepository studentGroupRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final PeopleService<Student> studentService;
     private final DepartmentRepository departmentRepository;
     private final StudentGroupValidator studentGroupValidator;
     private final ExceptionData exceptionData;
@@ -46,6 +48,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public StudentGroupServiceImpl(StudentGroupRepository studentGroupRepository,
                                    TeacherRepository teacherRepository,
                                    StudentRepository studentRepository,
+                                   PeopleService<Student> studentService,
                                    DepartmentRepository departmentRepository,
                                    StudentGroupValidator studentGroupValidator,
                                    ExceptionData exceptionData,
@@ -53,6 +56,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         this.studentGroupRepository = studentGroupRepository;
         this.teacherRepository = teacherRepository;
         this.studentRepository = studentRepository;
+        this.studentService = studentService;
         this.departmentRepository = departmentRepository;
         this.studentGroupValidator = studentGroupValidator;
         this.exceptionData = exceptionData;
@@ -77,14 +81,14 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public List<StudentGroup> findAllGroupsByCurator(Long curatorUid, Boolean isDeleted) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(Teacher.class.getSimpleName(), curatorUid, teacherRepository));
 
-        return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByCurator(curatorUid)).and(specifications.getObjectByDeletedCriteria(isDeleted)));
+        return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByCuratorCriteria(curatorUid)).and(specifications.getObjectByDeletedCriteria(isDeleted)));
     }
 
     @Override
     public List<StudentGroup> findAllGroupsByDepartment(String departmentName, Boolean isDeleted) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(Department.class.getSimpleName(), departmentName, departmentRepository));
 
-        return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByDepartment(departmentName)).and(specifications.getObjectByDeletedCriteria(isDeleted)));
+        return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByDepartmentCriteria(departmentName)).and(specifications.getObjectByDeletedCriteria(isDeleted)));
     }
 
     @Override
@@ -93,7 +97,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         validateObject(new ValidationData<>(studentGroupValidator, studentGroup, bindingResult));
 
         for (Student student: saveStudentGroupWithoutStudents(studentGroup))
-            studentRepository.save(student);
+            studentService.registerNew(student, bindingResult);
     }
     public List<Student> saveStudentGroupWithoutStudents(StudentGroup studentGroup) {
         List<Student> newStudents = studentGroup.getStudents();

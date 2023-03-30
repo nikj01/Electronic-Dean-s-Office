@@ -74,15 +74,17 @@ public class StudentsController {
     @GetMapping()
     public List<StudentGetDTO> findAllStudents(@RequestParam(value = "page", required = false) Integer page,
                                                @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                               @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return studentListMapper.toStudentsGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
+                                               @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                               @RequestParam(value = "faculty", required = false) String facultyName) {
+        return studentListMapper.toStudentsGetDTO(studentService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
     }
 
     @GetMapping("/slim")
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                       @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return studentListMapper.toStudentsSlimGetDTO(studentService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
+                                                       @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                                       @RequestParam(value = "faculty", required = false) String facultyName) {
+        return studentListMapper.toStudentsSlimGetDTO(studentService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
     }
 
     @PostMapping("/register")

@@ -74,15 +74,17 @@ public class DeaneryWorkersController {
     @GetMapping()
     public List<DeaneryWorkerGetDTO> findAllDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
                                                            @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                           @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
+                                                           @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                                           @RequestParam(value = "faculty", required = false) String facultyName) {
+        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
     }
 
     @GetMapping("/slim")
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
                                                                    @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                                   @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted));
+                                                                   @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                                                   @RequestParam(value = "faculty", required = false) String facultyName) {
+        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
     }
 
     @PostMapping("/register")

@@ -40,7 +40,11 @@ INSERT INTO People (uid, date_of_birth, email, name, patronymic, password, surna
 (500, '1988-03-09', 'dw_email_1@gmail.com', 'dw_01 name', 'dw_01 patr', 'qwerty19', 'dw_01 sur', false),
 (501, '1975-10-29', 'dw_email_2@gmail.com', 'dw_02 name', 'dw_02 patr', 'qwerty20', 'dw_02 sur', false),
 (502, '1980-05-13', 'dw_email_3@gmail.com', 'dw_03 name', 'dw_03 patr', 'qwerty21', 'dw_03 sur', false),
-(503, '7777-05-13', '7777dw@gmail.com', '7777dw name', '7777dw patr', '7777dw', '7777 sur', true),
+(503, '7777-05-13', '777dw@gmail.com', '777dw name', '777dw patr', '777dw', '777 sur', true),
+(504, '1988-03-09', 'dw_email_11@gmail.com', 'dw_011 name', 'dw_011 patr', 'qwerty19', 'dw_011 sur', false),
+(505, '1975-10-29', 'dw_email_22@gmail.com', 'dw_022 name', 'dw_022 patr', 'qwerty20', 'dw_022 sur', false),
+(506, '1980-05-13', 'dw_email_33@gmail.com', 'dw_033 name', 'dw_033 patr', 'qwerty21', 'dw_033 sur', false),
+(507, '7777-05-13', '7777dw@gmail.com', '7777dw name', '7777dw patr', '7777dw', '7777 sur', true),
 
 (12723903, '2001-11-03', 'nik.jurawlyow2001@gmail.com', 'Mykyta', 'Olehovych', 'qwerty777', 'Zhuravlov', false),
 (12723904, '2001-07-01', 'st_email_04@gmail.com', 'st_04 name', 'st_04 patr', 'qwerty22', 'st_04 sur', false),
@@ -89,10 +93,13 @@ INSERT INTO person_roles (person_uid, roles) VALUES
 
 (500,1),
 (500,2),
--- (500,3),
 (501,2),
 (502,2),
 (503,2),
+(504,1),
+(505,2),
+(506,2),
+(507,2),
 
 (12723903,0),
 (12723904,4),
@@ -120,7 +127,11 @@ INSERT INTO Deanery_workers (uid, faculty_name) VALUES
 (500, 'FM'),
 (501, 'FM'),
 (502, 'FM'),
-(503, 'FM');
+(503, 'FM'),
+(504, 'fac-1'),
+(505, 'fac-1'),
+(506, 'fac-1'),
+(507, 'fac-1');
 
 INSERT INTO Teachers (uid, department_name) VALUES
 (100, 'AVP'),

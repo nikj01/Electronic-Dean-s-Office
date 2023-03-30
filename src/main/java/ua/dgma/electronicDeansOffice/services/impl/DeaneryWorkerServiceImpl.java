@@ -1,6 +1,8 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -14,8 +16,11 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.DeaneryWorkerValidator;
 
+import java.util.List;
+
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,6 +28,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
 
     private final DeaneryWorkerRepository deaneryWorkerRepository;
     private final DeaneryWorkerValidator deaneryWorkerValidator;
+    private final Specifications<DeaneryWorker> specifications;
 
     @Autowired
     protected DeaneryWorkerServiceImpl(DeaneryWorkerRepository deaneryWorkerRepository,
@@ -32,6 +38,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         super(deaneryWorkerRepository, deaneryWorkerValidator, exceptionData, specifications);
         this.deaneryWorkerRepository = deaneryWorkerRepository;
         this.deaneryWorkerValidator = deaneryWorkerValidator;
+        this.specifications = specifications;
     }
 
     @Override

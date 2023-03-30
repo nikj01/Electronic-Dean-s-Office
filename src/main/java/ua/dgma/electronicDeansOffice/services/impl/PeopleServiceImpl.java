@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -9,13 +10,18 @@ import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
+import ua.dgma.electronicDeansOffice.models.Student;
+import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.services.impl.data.findAllByFacultyData;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 
+import javax.persistence.criteria.Predicate;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
@@ -66,11 +72,66 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     }
 
     @Override
-    public List<P> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage, Boolean isDeleted) {
-        if(checkPaginationParameters(page, peoplePerPage))
-            return repository.findAll(specifications.getObjectByDeletedCriteria(isDeleted));
+    public List<P> findAllPeople(Integer page,
+                                 Integer peoplePerPage,
+                                 Boolean isDeleted,
+                                 String facultyName) {
+        if(facultyName == null)
+            return findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted);
         else
-            return repository.findAll(specifications.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, peoplePerPage)).getContent();
+            return findAllWithPaginationOrWithoutByFaculty(page, peoplePerPage, isDeleted, facultyName);
+    }
+
+    @Override
+    public List<P> findAllWithPaginationOrWithout(Integer page,
+                                                  Integer peoplePerPage,
+                                                  Boolean isDeleted) {
+        if(checkPaginationParameters(page, peoplePerPage))
+            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(isDeleted)));
+        else
+            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(isDeleted)), PageRequest.of(page, peoplePerPage)).getContent();
+    }
+
+    @Override
+    public List<P> findAllWithPaginationOrWithoutByFaculty(Integer page,
+                                                           Integer peoplePerPage,
+                                                           Boolean isDeleted,
+                                                           String facultyName) {
+
+        List<P> newList = new ArrayList<>();
+
+        switch (getPersistentClass().getSimpleName()) {
+            case ("DeaneryWorker"): {
+                Specification spec = Specification.where(specifications.getObjectByDeletedCriteria(isDeleted).and(specifications.findDeaneryWorkersByFacultyCriteria(facultyName)));
+                for(P person: findAllByFaculty(new findAllByFacultyData(page, peoplePerPage,isDeleted,facultyName, spec))){
+                    newList.add(person);
+                }
+                return newList;
+            }
+            case ("Teacher"): {
+                Specification spec = Specification.where(specifications.getObjectByDeletedCriteria(isDeleted).and(specifications.findTeachersByFacultyCriteria(facultyName)));
+                for(P person: findAllByFaculty(new findAllByFacultyData(page, peoplePerPage,isDeleted,facultyName, spec))){
+                    newList.add(person);
+                }
+                return newList;
+            }
+            case ("Student"): {
+                Specification spec = Specification.where(specifications.getObjectByDeletedCriteria(isDeleted).and(specifications.findStudentsByFacultyCriteria(facultyName)));
+                for(P person: findAllByFaculty(new findAllByFacultyData(page, peoplePerPage,isDeleted,facultyName, spec))){
+                    newList.add(person);
+                }
+                return newList;
+            }
+        }
+        return newList;
+    }
+
+    public List<P> findAllByFaculty(findAllByFacultyData data) {
+
+        if(checkPaginationParameters(data.getPage(), data.getPeoplePerPage()))
+            return repository.findAll(data.getSpecification());
+        else
+            return repository.findAll(data.getSpecification(), PageRequest.of(data.getPage(), data.getPeoplePerPage())).getContent();
     }
 
     /*

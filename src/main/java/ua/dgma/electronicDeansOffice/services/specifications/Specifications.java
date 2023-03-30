@@ -3,10 +3,18 @@ package ua.dgma.electronicDeansOffice.services.specifications;
 import lombok.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
+import ua.dgma.electronicDeansOffice.models.Person;
+import ua.dgma.electronicDeansOffice.models.Student;
+import ua.dgma.electronicDeansOffice.models.Teacher;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.lang.model.element.Name;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -21,6 +29,8 @@ public class Specifications<P> {
     private CriteriaQuery<P> query;
     @NonNull
     private CriteriaBuilder builder;
+    @NonNull
+    private EntityManager entityManager;
 
     public Specification<P> getObjectByDeletedCriteria(Boolean isDeleted) {
         return (root, query, criteriaBuilder) -> {
@@ -28,13 +38,33 @@ public class Specifications<P> {
         };
     }
 
-    public Specification<P> getStudentGroupByCurator(Long curatorUid) {
+    public Specification<P> findDeaneryWorkersByFacultyCriteria(String facultyName) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
+        };
+
+    }
+
+    public Specification<P> findTeachersByFacultyCriteria(String facultyName) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("department").get("faculty").get("name"), facultyName);
+        };
+    }
+
+
+    public Specification<P> findStudentsByFacultyCriteria(String facultyName) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("studentGroup").get("department").get("faculty").get("name"), facultyName);
+        };
+    }
+
+    public Specification<P> getStudentGroupByCuratorCriteria(Long curatorUid) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("curator"), curatorUid);
         };
     }
 
-    public Specification<P> getStudentGroupByDepartment(String departmentName) {
+    public Specification<P> getStudentGroupByDepartmentCriteria(String departmentName) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("department").get("name"), departmentName);
         };
