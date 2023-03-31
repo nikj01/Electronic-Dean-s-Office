@@ -98,9 +98,9 @@ public class DeaneryWorkersController {
 
     @PatchMapping("/update")
     public void updateDeaneryWorker(@RequestParam("uid") Long uid,
-                                    @RequestBody @Valid  DeaneryWorkerPostDTO updatedPostDeaneryWorker,
+                                    @RequestBody @Valid  DeaneryWorkerPatchDTO deaneryWorkerPatchDTO,
                                                          BindingResult bindingResult) {
-        DeaneryWorker updatedDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(updatedPostDeaneryWorker);
+        DeaneryWorker updatedDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(deaneryWorkerPatchDTO);
 
         deaneryWorkerService.updateByUid(uid, updatedDeaneryWorker, bindingResult);
     }

@@ -9,6 +9,7 @@ import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentPatchDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.DepartmentListMapper;
@@ -76,9 +77,9 @@ public class DepartmentController {
 
     @PatchMapping("/update")
     public void updateDepartment(@RequestParam("name") String name,
-                                 @RequestBody @Valid   DepartmentPostDTO updatedPostDepartment,
+                                 @RequestBody @Valid   DepartmentPatchDTO departmentPatchDTO,
                                                        BindingResult bindingResult) {
-        Department updatedDepartment = departmentMapper.toDepartment(updatedPostDepartment);
+        Department updatedDepartment = departmentMapper.toDepartment(departmentPatchDTO);
 
         departmentService.updateByName(name, updatedDepartment, bindingResult);
     }

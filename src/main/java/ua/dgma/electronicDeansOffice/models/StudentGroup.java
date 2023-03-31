@@ -7,6 +7,7 @@ import org.springframework.data.mapping.AccessOptions;
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -21,10 +22,15 @@ import java.util.TreeSet;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"students", "events"})
-@Table(name = "StundentGroups")
-public class StudentGroup implements Serializable {
+@Table(name = "StundentGroups", indexes = {
+        @Index(columnList = "name DESC", name = "studentGroupNameIndex")
+})
+public class StudentGroup {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NonNull
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
@@ -33,7 +39,7 @@ public class StudentGroup implements Serializable {
     )
     private String name;
 
-//    @NotEmpty(message = "The field |GROUP LEADER| cannot be empty!")
+//    @NotNull(message = "The field |GROUP LEADER| cannot be empty!")
     @OneToOne(
             fetch = FetchType.LAZY
     )
@@ -57,7 +63,7 @@ public class StudentGroup implements Serializable {
 /*
 *   This annotation @NotEmpty must be working after creating TeacherValidator!
 * */
-//    @NotEmpty(message = "The field |CURATOR| cannot be empty!")
+    @NotNull(message = "The field |CURATOR| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn

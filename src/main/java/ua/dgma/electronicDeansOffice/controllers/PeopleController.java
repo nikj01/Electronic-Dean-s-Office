@@ -98,9 +98,9 @@ public class PeopleController {
 
     @PatchMapping("/update")
     public void updatePerson(@RequestParam("uid") Long uid,
-                             @RequestBody @Valid  PersonPostDTO updatedPostPerson,
+                             @RequestBody @Valid  PersonPatchDTO personPatchDTO,
                                                   BindingResult bindingResult) {
-        Person updatedPerson = personMapper.toPerson(updatedPostPerson);
+        Person updatedPerson = personMapper.toPerson(personPatchDTO);
 
         personService.updateByUid(uid, updatedPerson, bindingResult);
     }

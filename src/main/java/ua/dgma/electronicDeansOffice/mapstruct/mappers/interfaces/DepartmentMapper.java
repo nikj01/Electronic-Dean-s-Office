@@ -11,8 +11,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {StudentGroupMapper.class, StudentGroupListMapper.class, FacultyMapper.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface DepartmentMapper {
-
+    @Named(value = "postDepartment")
     Department toDepartment(DepartmentPostDTO departmentPost);
+    @Named(value = "patchDepartment")
+    Department toDepartment(DepartmentPatchDTO departmentPatch);
     @Named("department")
     DepartmentGetDTO toDepartmentGetDTO(Department department);
     @Named("slimDepartment")

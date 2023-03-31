@@ -40,7 +40,6 @@ public class FacultyController {
         return facultyMapper.toFacultyGetDTO(facultyService.findByName(name));
     }
 
-
     @GetMapping("/slim/findByName")
     @ResponseStatus(HttpStatus.FOUND)
     public FacultySlimGetDTO findSlimFacultyByName(@RequestParam("name") String name) {
@@ -74,9 +73,9 @@ public class FacultyController {
      * */
     @PatchMapping("/update")
     public void updateFaculty(@RequestParam("name") String name,
-                              @RequestBody @Valid   FacultyPostDTO updatedPostFaculty,
+                              @RequestBody @Valid   FacultyPatchDTO facultyPatchDTO,
                                                     BindingResult bindingResult) {
-        Faculty updatedFaculty = facultyMapper.toFaculty(updatedPostFaculty);
+        Faculty updatedFaculty = facultyMapper.toFaculty(facultyPatchDTO);
 
         facultyService.updateByName(name, updatedFaculty, bindingResult);
     }

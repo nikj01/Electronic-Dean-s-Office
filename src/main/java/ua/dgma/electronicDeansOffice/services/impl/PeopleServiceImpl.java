@@ -134,23 +134,14 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
             return repository.findAll(data.getSpecification(), PageRequest.of(data.getPage(), data.getPeoplePerPage())).getContent();
     }
 
-    /*
-     * It mb will be abstract
-     * */
     @Override
     @Transactional
-    public void registerNew(P p, BindingResult bindingResult) {
-        validateObject(new ValidationData<>(validator, p, bindingResult));
-        p.setDeleted(false);
-        repository.save(p);
-    }
+    public abstract void registerNew(P p, BindingResult bindingResult);
+
     @Override
     @Transactional
     public abstract void updateByUid(Long uid, P p, BindingResult bindingResult);
 
-    /*
-     * It mb will be abstract
-     * */
     @Override
     @Transactional
     public abstract void deleteByUId(Long uid);

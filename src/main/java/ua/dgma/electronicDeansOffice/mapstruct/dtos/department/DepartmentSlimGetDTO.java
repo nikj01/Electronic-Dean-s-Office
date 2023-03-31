@@ -5,23 +5,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultyGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultySlimGetDTO;
 
 import javax.validation.constraints.NotBlank;
 
 
 @Data
-public class DepartmentSlimGetDTO implements Comparable<DepartmentSlimGetDTO>{
+public class DepartmentSlimGetDTO {
 
     private String name;
     private boolean deleted;
-
-    @Override
-    public int compareTo(DepartmentSlimGetDTO o) {
-        if (this.name.compareToIgnoreCase(o.getName()) > 0)
-            return 1;
-        else if (this.name.compareToIgnoreCase(o.getName()) < 0) {
-            return -1;
-        } else
-            return 0;
-    }
 }

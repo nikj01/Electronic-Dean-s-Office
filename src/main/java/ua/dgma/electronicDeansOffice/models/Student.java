@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 
 @Entity
@@ -21,8 +22,8 @@ public class Student extends Person {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
-            name = "group_name",
-            referencedColumnName = "name",
+            name = "group_id",
+            referencedColumnName = "id",
             nullable = false
     )
     private StudentGroup studentGroup;

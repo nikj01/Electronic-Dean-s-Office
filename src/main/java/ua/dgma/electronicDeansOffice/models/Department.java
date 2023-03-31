@@ -2,15 +2,18 @@ package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,10 +21,15 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "studentGroups")
-@Table(name = "Departments")
-public class Department implements Serializable {
+@Table(name = "Departments", indexes = {
+        @Index(columnList = "name DESC", name = "departmentNameIndex")
+})
+public class Department {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             nullable = false,
@@ -29,9 +37,8 @@ public class Department implements Serializable {
     )
     private String name;
 
-    @NotEmpty(message = "The field |FACULTY| cannot be empty!")
+    @NotNull(message = "The field |FACULTY| cannot be empty!")
     @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Faculty faculty;
@@ -42,7 +49,7 @@ public class Department implements Serializable {
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-//    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
     private Set<StudentGroup> studentGroups = new HashSet<>();
 
     @OneToMany(
@@ -51,7 +58,7 @@ public class Department implements Serializable {
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-    private Set<Teacher> teachers = new HashSet<>();
+    private List<Teacher> teachers = new ArrayList<>();
 
     @NonNull
     @Column(nullable = false)

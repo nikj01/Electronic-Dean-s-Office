@@ -1,9 +1,6 @@
 package ua.dgma.electronicDeansOffice.mapstruct.mappers.collections;
 
-import net.bytebuddy.build.HashCodeAndEqualsPlugin;
 import org.mapstruct.*;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PeopleGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PeopleSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;

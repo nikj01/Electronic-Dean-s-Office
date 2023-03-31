@@ -16,8 +16,11 @@ import java.util.List;
 @Data
 public class StudentGroupPostDTO {
 
+//    @NotBlank(message = "The field |NAME| cannot be empty!")
     private String name;
+//    @NotNull(message = "The field |DEPARTMENT| cannot be empty!")
     private DepartmentSlimGetDTO department;
+//    @NotNull(message = "The field |CURATOR| cannot be empty!")
     private PersonSlimGetDTO curator;
     private PersonSlimGetDTO groupLeader;
     private List<StudentPostDTO> students;

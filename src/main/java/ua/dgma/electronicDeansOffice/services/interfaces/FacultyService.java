@@ -8,7 +8,7 @@ import ua.dgma.electronicDeansOffice.models.Faculty;
 import java.util.List;
 
 public interface FacultyService {
-
+    Faculty findById(Long id);
     Faculty findByName(String name);
     List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer faculutiesPerPage, Boolean isDeleted);
     void registerNew(Faculty faculty, BindingResult bindingResult);

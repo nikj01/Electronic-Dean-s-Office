@@ -98,9 +98,9 @@ public class StudentsController {
 
     @PatchMapping("/update")
     public void updateStudent(@RequestParam("uid") Long uid,
-                              @RequestBody @Valid  StudentPostDTO updatedPostStudent,
+                              @RequestBody @Valid  StudentPatchDTO studentPatchDTO,
                                                    BindingResult bindingResult) {
-        Student updatedStudent = studentMapper.toStudent(updatedPostStudent);
+        Student updatedStudent = studentMapper.toStudent(studentPatchDTO);
 
         studentService.updateByUid(uid, updatedStudent, bindingResult);
     }

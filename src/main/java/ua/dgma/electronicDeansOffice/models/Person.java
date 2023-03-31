@@ -5,6 +5,7 @@ import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -18,7 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
-@Table(name = "People")
+@Table(name = "People", indexes = {
+        @Index(columnList = "surname DESC", name="peopleSurnameIndex")
+})
 @Inheritance(strategy = InheritanceType.JOINED)
 //@Where(clause = "DELETED = false")
 public class Person {

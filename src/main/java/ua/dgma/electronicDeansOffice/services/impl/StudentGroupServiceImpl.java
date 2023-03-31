@@ -21,14 +21,14 @@ import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentGroupValidator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -65,6 +65,11 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     @Override
+    public StudentGroup findById(Long id) {
+        return studentGroupRepository.findById(id).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", id)));
+    }
+
+    @Override
     public StudentGroup findByName(String name) {
         return studentGroupRepository.getByName(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
@@ -86,7 +91,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
     @Override
     public List<StudentGroup> findAllGroupsByDepartment(String departmentName, Boolean isDeleted) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(Department.class.getSimpleName(), departmentName, departmentRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(Department.class.getSimpleName(), departmentName, departmentRepository));
 
         return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByDepartmentCriteria(departmentName)).and(specifications.getObjectByDeletedCriteria(isDeleted)));
     }
@@ -111,7 +116,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void updateByName(String name, StudentGroup updatedStudentGroup, BindingResult bindingResult) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, studentGroupRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
         validateObject(new ValidationData<>(studentGroupValidator, updatedStudentGroup, bindingResult));
 
         updatedStudentGroup.setName(name);
@@ -122,14 +127,14 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void deleteByName(String name) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, studentGroupRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
         studentGroupRepository.deleteByName(name);
     }
 
     @Override
     @Transactional
     public void softDeleteByName(String name) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, studentGroupRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
 
         StudentGroup studentGroup = findByName(name);
         studentGroup.setDeleted(true);

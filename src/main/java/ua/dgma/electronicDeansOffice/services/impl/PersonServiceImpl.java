@@ -41,6 +41,12 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
     }
 
     @Override
+    public void registerNew(Person person, BindingResult bindingResult) {
+        validateObject(new ValidationData<>(personValidator, person, bindingResult));
+        personRepository.save(person);
+    }
+
+    @Override
     public void updateByUid(Long uid, Person updatedPerson, BindingResult bindingResult) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(Person.class.getSimpleName(), uid, personRepository));
         validateObject(new ValidationData<>(personValidator , updatedPerson, bindingResult));

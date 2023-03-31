@@ -6,10 +6,13 @@ import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,11 +21,15 @@ import java.util.Set;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"departments", "deaneryWorkers"})
-@Table(name = "Faculties")
-public class Faculty implements Serializable {
+@Table(name = "Faculties", indexes = {
+        @Index(columnList = "name DESC", name = "facultyNameIndex")
+})
+public class Faculty {
 
     @Id
-    @NonNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             nullable = false,
@@ -33,10 +40,12 @@ public class Faculty implements Serializable {
     @OneToMany(
             mappedBy = "faculty",
             fetch = FetchType.EAGER,
+            cascade = javax.persistence.CascadeType.MERGE,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-    private Set<Department> departments = new HashSet<>();
+    @Cascade(value = CascadeType.SAVE_UPDATE)
+    private List<Department> departments = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "faculty",
@@ -45,7 +54,7 @@ public class Faculty implements Serializable {
     )
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
-    private Set<DeaneryWorker> deaneryWorkers = new HashSet<>();
+    private List<DeaneryWorker> deaneryWorkers = new ArrayList<>();
 
     @NonNull
     @Column(nullable = false)

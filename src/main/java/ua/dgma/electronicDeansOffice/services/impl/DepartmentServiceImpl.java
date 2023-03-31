@@ -8,25 +8,28 @@ import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
+import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.DepartmentValidator;
 
 import java.util.List;
 
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
 @Service
 @Transactional(readOnly = true)
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final FacultyRepository facultyRepository;
     private final DepartmentValidator departmentValidator;
     private final ExceptionData exceptionData;
     private final Specifications<Department> specifications;
@@ -34,15 +37,23 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
+                                 FacultyRepository facultyRepository,
                                  DepartmentValidator departmentValidator,
-                                 ExceptionData exceptionData, Specifications<Department> specifications) {
+                                 ExceptionData exceptionData,
+                                 Specifications<Department> specifications) {
         this.departmentRepository = departmentRepository;
+        this.facultyRepository = facultyRepository;
         this.departmentValidator = departmentValidator;
         this.exceptionData = exceptionData;
         this.specifications = specifications;
         className = Department.class.getSimpleName();
     }
 
+
+    @Override
+    public Department findById(Long id) {
+        return departmentRepository.getById(id).orElseThrow(()-> new NotFoundException(new ExceptionData<>(className, "id", id)));
+    }
 
     @Override
     public Department findByName(String name) {
@@ -59,6 +70,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> findAllDepartmentsByFacultyName(String facultyName) {
+        checkExistsWithSuchName(new CheckExistsByNameData(Faculty.class.getSimpleName(), facultyName, facultyRepository));
         return departmentRepository.getAllByFacultyName(facultyName);
     }
 
@@ -72,7 +84,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional
     public void updateByName(String name, Department updatedDepartment, BindingResult bindingResult) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
         validateObject(new ValidationData<>(departmentValidator, updatedDepartment, bindingResult));
 
         updatedDepartment.setName(name);
@@ -82,13 +94,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional
     public void deleteByName(String name) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
         departmentRepository.deleteByName(name);
     }
 
     @Override
     public void softDeleteByName(String name) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
 
         Department department = findByName(name);
         department.setDeleted(true);

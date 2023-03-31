@@ -6,7 +6,7 @@ import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import java.util.List;
 
 public interface StudentGroupService {
-
+    StudentGroup findById(Long id);
     StudentGroup findByName(String name);
     List<StudentGroup> findAllWithPaginationOrWithout(Integer page, Integer studentGroupsPerPage, Boolean isDeleted);
     List<StudentGroup> findAllGroupsByCurator(Long curatorUid, Boolean isDeleted);
