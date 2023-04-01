@@ -68,9 +68,6 @@ public class FacultyController {
         facultyService.registerNew(newFaculty, bindingResult);
     }
 
-    /*
-     * THIS METHOD WILL BE REMOVE
-     * */
     @PatchMapping("/update")
     public void updateFaculty(@RequestParam("name") String name,
                               @RequestBody @Valid   FacultyPatchDTO facultyPatchDTO,
@@ -92,6 +89,16 @@ public class FacultyController {
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(CustomException e) {
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

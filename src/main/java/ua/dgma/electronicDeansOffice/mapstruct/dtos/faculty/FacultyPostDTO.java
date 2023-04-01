@@ -14,7 +14,7 @@ import java.util.Set;
 @Data
 public class FacultyPostDTO {
 
-//    @NotBlank(message = "The field |NAME| cannot be empty!")
+    @NotBlank(message = "The field |FACULTY NAME| cannot be empty!")
     private String name;
     private List<DeaneryWorkerPostDTO> deaneryWorkers;
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 public class DepartmentPatchDTO {
 
-//    @NotBlank(message = "The field |NAME| cannot be empty!")
+    @NotBlank(message = "The field |NAME| cannot be empty!")
     private String name;
 //    @NotEmpty(message = "The field |FACULTY| cannot be empty!")
     private FacultySlimGetDTO faculty;

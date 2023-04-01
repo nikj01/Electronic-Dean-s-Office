@@ -11,20 +11,20 @@ import java.util.List;
 @Data
 public class PersonPostDTO {
 
-//    @NotNull(message = "The field |UID| cannot be empty!")
+    @NotNull(message = "The field |UID| cannot be empty!")
     private Long uid;
-//    @NotBlank(message = "The field |SURNAME| cannot be empty!")
+    @NotBlank(message = "The field |SURNAME| cannot be empty!")
     private String surname;
-//    @NotBlank(message = "The field |NAME| cannot be empty!")
+    @NotBlank(message = "The field |NAME| cannot be empty!")
     private String name;
-//    @NotBlank(message = "The field |PATRONYMIC| cannot be empty!")
+    @NotBlank(message = "The field |PATRONYMIC| cannot be empty!")
     private String patronymic;
-//    @NotNull(message = "The filed |ROLE| cannot be empty!")
+    @NotNull(message = "The filed |ROLE| cannot be empty!")
     private List<PersonRoleEnum> personRoles;
-//    @NotNull(message = "The field |DATE OF BIRTH| cannot be empty!")
+    @NotNull(message = "The field |DATE OF BIRTH| cannot be empty!")
     private Date dateOfBirth;
-//    @NotBlank(message = "The field |EMAIL| cannot be empty!")
+    @NotBlank(message = "The field |EMAIL| cannot be empty!")
     private String email;
-//    @NotBlank(message = "The field |PASSWORD| cannot be empty!")
+    @NotBlank(message = "The field |PASSWORD| cannot be empty!")
     private String password;
 }

@@ -20,11 +20,11 @@ import java.util.List;
 @Setter
 public class StudentGroupPatchDTO {
 
-//    @NotBlank(message = "The field |NAME| cannot be empty!")
+    @NotBlank(message = "The field |NAME| cannot be empty!")
     private String name;
-//    @NotNull(message = "The field |DEPARTMENT| cannot be empty!")
+    @NotNull(message = "The field |DEPARTMENT| cannot be empty!")
     private DepartmentSlimGetDTO department;
-//    @NotNull(message = "The field |CURATOR| cannot be empty!")
+    @NotNull(message = "The field |CURATOR| cannot be empty!")
     private PersonSlimGetDTO curator;
     private PersonSlimGetDTO groupLeader;
 }

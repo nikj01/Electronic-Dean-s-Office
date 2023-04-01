@@ -1,15 +1,19 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.*;
-import org.hibernate.annotations.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,9 +42,10 @@ public class Department {
     private String name;
 
     @NotNull(message = "The field |FACULTY| cannot be empty!")
-    @ManyToOne
+    @ManyToOne(cascade = javax.persistence.CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
+//    @JsonBackReference
     private Faculty faculty;
 
     @OneToMany(
@@ -58,9 +63,9 @@ public class Department {
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
     private List<Teacher> teachers = new ArrayList<>();
 
-    @NonNull
     @Column(nullable = false)
     private boolean deleted;
 }

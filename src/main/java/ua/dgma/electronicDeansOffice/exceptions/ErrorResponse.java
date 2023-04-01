@@ -9,7 +9,6 @@ import lombok.*;
 public class ErrorResponse {
     @NonNull
     private String message;
-
     @NonNull
-    private long timestamp;
+    private Long timestamp;
 }

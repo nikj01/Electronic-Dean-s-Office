@@ -137,8 +137,8 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
 
         StudentGroup studentGroup = findByName(name);
-        studentGroup.setDeleted(true);
         studentGroup.getStudents().stream().forEach(student -> student.setDeleted(true));
+        studentGroup.setDeleted(true);
 
         studentGroupRepository.save(studentGroup);
     }

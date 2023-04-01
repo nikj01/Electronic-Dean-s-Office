@@ -1,26 +1,25 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.*;
-import org.springframework.data.mapping.AccessOptions;
 
-import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
-import javax.validation.constraints.*;
-import java.io.Serializable;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"students", "events"})
 @Table(name = "StundentGroups", indexes = {
         @Index(columnList = "name DESC", name = "studentGroupNameIndex")
@@ -31,7 +30,6 @@ public class StudentGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             unique = true,
@@ -60,9 +58,6 @@ public class StudentGroup {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<Student> students = new ArrayList<>();
 
-/*
-*   This annotation @NotEmpty must be working after creating TeacherValidator!
-* */
     @NotNull(message = "The field |CURATOR| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -83,7 +78,6 @@ public class StudentGroup {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<Event> events;
 
-    @NonNull
     @Column(nullable = false)
     private boolean deleted;
 }

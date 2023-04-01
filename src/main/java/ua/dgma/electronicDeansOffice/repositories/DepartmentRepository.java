@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DepartmentRepository extends JpaRepository<Department, String>, JpaSpecificationExecutor, ExistByNameInterface{
-    Optional<Department> getById(Long id);
+public interface DepartmentRepository extends JpaRepository<Department, Long>, JpaSpecificationExecutor, ExistByNameInterface{
     Optional<Department> getByName(String name);
     List<Department> getAllByFacultyName(String facultyName);
     void deleteByName(String name);

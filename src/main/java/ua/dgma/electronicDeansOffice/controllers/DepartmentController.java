@@ -1,7 +1,9 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,6 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGet
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.DepartmentListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.DepartmentMapper;
 import ua.dgma.electronicDeansOffice.models.Department;
-import ua.dgma.electronicDeansOffice.services.impl.DepartmentServiceImpl;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 
 import javax.validation.Valid;
@@ -67,7 +68,8 @@ public class DepartmentController {
         return departmentListMapper.toDepartmentsSlimGetDTO((List<Department>) departmentService.findAllDepartmentsByFacultyName(facultyName));
     }
 
-    @GetMapping("/register")
+//    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping("/register")
     public void registerNewDepartment(@RequestBody @Valid DepartmentPostDTO newPostDepartment,
                                                           BindingResult bindingResult) {
         Department newDepartment = departmentMapper.toDepartment(newPostDepartment);
@@ -75,7 +77,7 @@ public class DepartmentController {
         departmentService.registerNew(newDepartment, bindingResult);
     }
 
-    @PatchMapping("/update")
+    @PatchMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public void updateDepartment(@RequestParam("name") String name,
                                  @RequestBody @Valid   DepartmentPatchDTO departmentPatchDTO,
                                                        BindingResult bindingResult) {
@@ -96,6 +98,16 @@ public class DepartmentController {
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(CustomException e) {
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

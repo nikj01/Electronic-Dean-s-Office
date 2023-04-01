@@ -1,25 +1,21 @@
 package ua.dgma.electronicDeansOffice.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"departments", "deaneryWorkers"})
 @Table(name = "Faculties", indexes = {
         @Index(columnList = "name DESC", name = "facultyNameIndex")
@@ -39,24 +35,24 @@ public class Faculty {
 
     @OneToMany(
             mappedBy = "faculty",
-            fetch = FetchType.EAGER,
-            cascade = javax.persistence.CascadeType.MERGE,
+            fetch = FetchType.LAZY,
+//            cascade = javax.persistence.CascadeType.ALL,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-    @Cascade(value = CascadeType.SAVE_UPDATE)
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+//    @JsonManagedReference
     private List<Department> departments = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "faculty",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-    @Cascade(value = CascadeType.SAVE_UPDATE)
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private List<DeaneryWorker> deaneryWorkers = new ArrayList<>();
 
-    @NonNull
     @Column(nullable = false)
     private boolean deleted;
 }

@@ -125,6 +125,16 @@ public class DeaneryWorkersController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
+        ErrorResponse response = new ErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
         ErrorResponse response = new ErrorResponse(

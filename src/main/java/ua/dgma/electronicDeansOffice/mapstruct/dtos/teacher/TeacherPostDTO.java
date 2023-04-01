@@ -34,5 +34,4 @@ public class TeacherPostDTO extends PersonPostDTO {
     private String email;
     @NotBlank(message = "The field |PASSWORD| cannot be empty!")
     private String password;
-    private List<StudentGroup> studentGroups;
 }

@@ -7,6 +7,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class FacultyPatchDTO {
 
-//    @NotBlank(message = "The field |NAME| cannot be empty!")
+    @NotBlank(message = "The field |NAME| cannot be empty!")
     private String name;
 }
