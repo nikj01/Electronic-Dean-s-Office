@@ -6,8 +6,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
@@ -21,7 +21,6 @@ import ua.dgma.electronicDeansOffice.repositories.functional.GetStudentGroupByNa
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
-import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentGroupValidator;
@@ -42,8 +41,6 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentRepository studentRepository;
     private final PeopleService<Student> studentService;
     private final DepartmentRepository departmentRepository;
-    private final GetDepartmentByNameInterface getDepartment;
-    private final GetStudentGroupByNameInterface getStudentGroup;
     private final StudentGroupValidator studentGroupValidator;
     private final ExceptionData exceptionData;
     private final Specifications<StudentGroup> specifications;
@@ -55,8 +52,6 @@ public class StudentGroupServiceImpl implements StudentGroupService {
                                    StudentRepository studentRepository,
                                    PeopleService<Student> studentService,
                                    DepartmentRepository departmentRepository,
-                                   GetDepartmentByNameInterface getDepartment,
-                                   GetStudentGroupByNameInterface getStudentGroup,
                                    StudentGroupValidator studentGroupValidator,
                                    ExceptionData exceptionData,
                                    Specifications<StudentGroup> specifications) {
@@ -65,8 +60,6 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         this.studentRepository = studentRepository;
         this.studentService = studentService;
         this.departmentRepository = departmentRepository;
-        this.getDepartment = getDepartment;
-        this.getStudentGroup = getStudentGroup;
         this.studentGroupValidator = studentGroupValidator;
         this.exceptionData = exceptionData;
         this.specifications = specifications;
@@ -108,9 +101,10 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void registerNew(StudentGroup studentGroup, BindingResult bindingResult) {
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(StudentGroup.class.getSimpleName(), studentGroup.getName(), studentGroupRepository));
         validateObject(new DataForAbstractValidator<>(studentGroupValidator, studentGroup));
 
-        studentGroup.setDepartment(getDepartment.getByName(studentGroup.getDepartment().getName()));
+        studentGroup.setDepartment(departmentRepository.getByName(studentGroup.getDepartment().getName()).get());
         for (Student student: saveStudentGroupWithoutStudents(studentGroup))
             studentService.registerNew(student, bindingResult);
     }
@@ -130,8 +124,11 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
         validateObject(new DataForAbstractValidator<>(studentGroupValidator, updatedStudentGroup));
 
-        updatedStudentGroup.setId(getStudentGroup.getStudentGroupByName(name).getId().longValue());
-        updatedStudentGroup.setDepartment(getDepartment.getByName(updatedStudentGroup.getDepartment().getName()));
+        updatedStudentGroup.setId(studentGroupRepository.getByName(name).get().getId());
+        updatedStudentGroup.setDepartment(departmentRepository.getByName(updatedStudentGroup.getDepartment().getName()).get());
+        updatedStudentGroup.setCurator(teacherRepository.getByUid(updatedStudentGroup.getCurator().getUid().longValue()).get());
+        updatedStudentGroup.setGroupLeader(studentRepository.getByUid(updatedStudentGroup.getGroupLeader().getUid().longValue()).get());
+        updatedStudentGroup.setStudents(studentGroupRepository.getByName(name).get().getStudents());
 
         studentGroupRepository.save(updatedStudentGroup);
     }

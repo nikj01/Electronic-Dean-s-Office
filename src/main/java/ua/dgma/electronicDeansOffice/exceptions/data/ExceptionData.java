@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class ExceptionData<T> {
-
     @NonNull
     private String copyOfClass;
     @NonNull

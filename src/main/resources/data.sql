@@ -67,6 +67,7 @@ INSERT INTO People (uid, date_of_birth, email, name, patronymic, password, surna
 (12723921, '2001-06-16', 'st_email_21@gmail.com', 'st_21 name', 'st_21 patr', 'qwerty39', 'st_21 sur', false),
 (12723922, '2001-01-24', 'st_email_22@gmail.com', 'st_22 name', 'st_22 patr', 'qwerty40', 'st_22 sur', false),
 (12723333, '2001-01-24', '12723333@gmail.com', '12723333 name', '12723333 patr', '12723333', '12723333 sur', true);
+-- (12723333, '2001-01-24', '12723333@gmail.com', '12723333 name', '12723333 patr', '12723333', '12723333 sur', true),
 -- (12723350, '2001-01-24', '50@gmail.com', '50 name', '50 patr', '50', '50 sur', false),
 -- (12723351, '2001-01-24', '51@gmail.com', '51 name', '51 patr', '51', '51 sur', false);
 
@@ -123,6 +124,7 @@ INSERT INTO person_roles (person_uid, roles) VALUES
 (12723920,4),
 (12723921,4),
 (12723922,4),
+(12723333,4),
 (12723333,4);
 -- (12723350,4),
 -- (12723351,4);

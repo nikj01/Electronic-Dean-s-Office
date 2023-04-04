@@ -1,6 +1,7 @@
 package ua.dgma.electronicDeansOffice.utill.check;
 
 import org.springframework.stereotype.Component;
+import ua.dgma.electronicDeansOffice.exceptions.ObjectExistsException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -19,5 +20,9 @@ public class CheckMethods {
 
     public static void checkExistsWithSuchName(CheckExistsByNameData data) {
         if(!data.getRepository().existsByName(data.getName())) throw new NotFoundException(new ExceptionData<String>(data.getClassName(), "name", data.getName().toString()));
+    }
+
+    public static void checkExistenceByNameBeforeRegistration(CheckExistsByNameData data) {
+        if(data.getRepository().existsByName(data.getName())) throw new ObjectExistsException(new ExceptionData<String>(data.getClassName(), "name", data.getName().toString()));
     }
 }
