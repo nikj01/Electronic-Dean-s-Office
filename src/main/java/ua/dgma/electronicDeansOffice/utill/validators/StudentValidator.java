@@ -35,8 +35,6 @@ public class StudentValidator implements Validator {
 
         if(studentRepository.getByUid(student.getUid()).isPresent())
             errors.rejectValue("uid", "Student with UID " + student.getUid() + " already exists!");
-        if(studentRepository.getByEmail(student.getEmail()).isPresent())
-            errors.rejectValue("email", "Student with EMAIL " + student.getEmail() + " already exists!");
         if(!studentGroupRepository.getByName(student.getStudentGroup().getName()).isPresent())
             errors.rejectValue("student_group", "Student group with NAME " + student.getStudentGroup().getName() + " does not exist!");
     }

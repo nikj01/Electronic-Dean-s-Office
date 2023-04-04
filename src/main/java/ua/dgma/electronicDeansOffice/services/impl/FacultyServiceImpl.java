@@ -5,17 +5,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.models.Faculty;
+import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
-import ua.dgma.electronicDeansOffice.repositories.functional.GetFacultyByNameInterface;
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
-import ua.dgma.electronicDeansOffice.utill.validators.FacultyValidator;
+import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
+import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,29 +24,26 @@ import java.util.List;
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
-import ua.dgma.electronicDeansOffice.utill.ValidationData;
-
 @Service
 @Transactional(readOnly = true)
 public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository facultyRepository;
-    private final GetFacultyByNameInterface getFacultyInterface;
+    private final DepartmentRepository departmentRepository;
     private final PeopleService<DeaneryWorker> deaneryWorkerService;
-    private final FacultyValidator facultyValidator;
+    private final AbstractValidator facultyValidator;
     private final ExceptionData exceptionData;
     private final Specifications<Faculty> specifications;
     private String className;
 
     @Autowired
     public FacultyServiceImpl(FacultyRepository facultyRepository,
-                              GetFacultyByNameInterface getFacultyInterface,
-                              PeopleService<DeaneryWorker> deaneryWorkerService,
-                              FacultyValidator facultyValidator,
+                              DepartmentRepository departmentRepository, PeopleService<DeaneryWorker> deaneryWorkerService,
+                              AbstractValidator facultyValidator,
                               ExceptionData exceptionData,
                               Specifications<Faculty> specifications) {
         this.facultyRepository = facultyRepository;
-        this.getFacultyInterface = getFacultyInterface;
+        this.departmentRepository = departmentRepository;
         this.deaneryWorkerService = deaneryWorkerService;
         this.facultyValidator = facultyValidator;
         this.exceptionData = exceptionData;
@@ -74,7 +72,8 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     @Transactional
     public void registerNew(Faculty faculty, BindingResult bindingResult) {
-        validateObject(new ValidationData<>(facultyValidator, faculty, bindingResult));
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(Faculty.class.getSimpleName(), faculty.getName(), facultyRepository));
+        validateObject(new DataForAbstractValidator(facultyValidator, faculty));
 
         for (DeaneryWorker worker: saveFacultyWithoutDeaneryWorkers(faculty))
             deaneryWorkerService.registerNew(worker, bindingResult);
@@ -93,9 +92,11 @@ public class FacultyServiceImpl implements FacultyService {
     @Transactional
     public void updateByName(String name, Faculty updatedFaculty, BindingResult bindingResult) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, facultyRepository));
-        validateObject(new ValidationData<>(facultyValidator, updatedFaculty, bindingResult));
+        validateObject(new DataForAbstractValidator(facultyValidator, updatedFaculty));
 
-        updatedFaculty.setId(getFacultyInterface.getFacultyByName(name).getId());
+        updatedFaculty.setId(facultyRepository.getByName(name).get().getId());
+        updatedFaculty.setDepartments(facultyRepository.getByName(name).get().getDepartments());
+        updatedFaculty.setDeaneryWorkers(facultyRepository.getByName(name).get().getDeaneryWorkers());
 
         facultyRepository.save(updatedFaculty);
     }

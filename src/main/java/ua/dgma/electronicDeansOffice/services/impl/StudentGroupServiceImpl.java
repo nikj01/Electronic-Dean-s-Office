@@ -16,14 +16,12 @@ import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
-import ua.dgma.electronicDeansOffice.repositories.functional.GetDepartmentByNameInterface;
-import ua.dgma.electronicDeansOffice.repositories.functional.GetStudentGroupByNameInterface;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
-import ua.dgma.electronicDeansOffice.utill.validators.StudentGroupValidator;
+import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentRepository studentRepository;
     private final PeopleService<Student> studentService;
     private final DepartmentRepository departmentRepository;
-    private final StudentGroupValidator studentGroupValidator;
+    private final AbstractValidator studentGroupValidator;
     private final ExceptionData exceptionData;
     private final Specifications<StudentGroup> specifications;
     private String className;
@@ -52,7 +50,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
                                    StudentRepository studentRepository,
                                    PeopleService<Student> studentService,
                                    DepartmentRepository departmentRepository,
-                                   StudentGroupValidator studentGroupValidator,
+                                   AbstractValidator studentGroupValidator,
                                    ExceptionData exceptionData,
                                    Specifications<StudentGroup> specifications) {
         this.studentGroupRepository = studentGroupRepository;

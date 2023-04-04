@@ -6,11 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Student;
-//import ua.dgma.electronicDeansOffice.models.QStudent;
-//import ua.dgma.electronicDeansOffice.models.QPerson;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
-import ua.dgma.electronicDeansOffice.repositories.functional.GetStudentGroupByNameInterface;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -25,7 +22,6 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     private final StudentRepository studentRepository;
     private final StudentGroupRepository studentGroupRepository;
-    private final GetStudentGroupByNameInterface getStudentGroupInterface;
     private final StudentValidator studentValidator;
     private final Specifications<Student> specifications;
 
@@ -34,21 +30,19 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
                                  ExceptionData exceptionData,
                                  StudentValidator studentValidator,
                                  Specifications<Student> specifications,
-                                 StudentGroupRepository studentGroupRepository,
-                                 GetStudentGroupByNameInterface getStudentGroupInterface) {
+                                 StudentGroupRepository studentGroupRepository) {
         super(studentRepository, studentValidator, exceptionData, specifications);
         this.studentRepository = studentRepository;
         this.studentValidator = studentValidator;
         this.studentGroupRepository = studentGroupRepository;
         this.specifications = specifications;
-        this.getStudentGroupInterface = getStudentGroupInterface;
     }
 
     @Override
     public void registerNew(Student student, BindingResult bindingResult) {
         validateObject(new ValidationData<>(studentValidator, student, bindingResult));
 
-        student.setStudentGroup(getStudentGroupInterface.getStudentGroupByName(student.getStudentGroup().getName()));
+        student.setStudentGroup(studentGroupRepository.getByName(student.getStudentGroup().getName()).get());
 
         studentRepository.save(student);
     }
@@ -59,7 +53,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
         validateObject(new ValidationData<>(studentValidator, updatedStudent, bindingResult));
 
         updatedStudent.setUid(uid);
-        updatedStudent.setStudentGroup(getStudentGroupInterface.getStudentGroupByName(updatedStudent.getStudentGroup().getName()));
+        updatedStudent.setStudentGroup(studentGroupRepository.getByName(updatedStudent.getStudentGroup().getName()).get());
 
         studentRepository.save(updatedStudent);
     }

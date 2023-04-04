@@ -28,7 +28,5 @@ public class DeaneryWorkerValidator implements Validator {
 
         if(deaneryWorkerRepository.getByUid(deaneryWorker.getUid()).isPresent())
             errors.rejectValue("uid", "Deanery worker with UID " + deaneryWorker.getUid() + " already exists!");
-        if(deaneryWorkerRepository.getByEmail(deaneryWorker.getEmail()).isPresent())
-            errors.rejectValue("email", "Deanery worker with EMAIL " + deaneryWorker.getEmail() + " already exists!");
     }
 }

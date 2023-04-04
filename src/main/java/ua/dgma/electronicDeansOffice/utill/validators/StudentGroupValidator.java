@@ -3,14 +3,8 @@ package ua.dgma.electronicDeansOffice.utill.validators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.dgma.electronicDeansOffice.exceptions.IncorrectPropertyException;
-import ua.dgma.electronicDeansOffice.models.Department;
-import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.models.StudentGroup;
-import ua.dgma.electronicDeansOffice.models.Teacher;
-import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
-import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
-import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
-import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
+import ua.dgma.electronicDeansOffice.models.*;
+import ua.dgma.electronicDeansOffice.repositories.*;
 import ua.dgma.electronicDeansOffice.utill.validators.data.StudentGroupValidationData;
 
 import java.util.List;
@@ -23,37 +17,40 @@ public class StudentGroupValidator implements AbstractValidator {
     private final DepartmentRepository departmentRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final PeopleRepository<Person> peopleRepository;
 
     @Autowired
     public StudentGroupValidator(StudentGroupRepository studentGroupRepository,
                                  DepartmentRepository departmentRepository,
                                  TeacherRepository teacherRepository,
-                                 StudentRepository studentRepository) {
+                                 StudentRepository studentRepository,
+                                 PeopleRepository<Person> peopleRepository) {
         this.studentGroupRepository = studentGroupRepository;
         this.departmentRepository = departmentRepository;
         this.teacherRepository = teacherRepository;
         this.studentRepository = studentRepository;
+        this.peopleRepository = peopleRepository;
     }
     @Override
     public void validate(Object target) {
         StudentGroup studentGroup = (StudentGroup) target;
-        StudentGroupValidationData validationData = new StudentGroupValidationData(studentGroup, studentGroupRepository, departmentRepository, teacherRepository, studentRepository);
+        StudentGroupValidationData validationData = new StudentGroupValidationData(studentGroup, studentGroupRepository, studentRepository, departmentRepository, teacherRepository, peopleRepository);
 
-         if(checkExistenceOfTheStudentGroup(validationData)){
-             checkExistenceOfTheDepartment(validationData);
-             checkExistenceOfTheCurator(validationData);
-             checkIfTheTeacherInDepartment(validationData);
-             checkExistenceOfTheStudentsByUid(validationData);
-         } else {
+         if(checkExistenceOfTheStudentGroup(validationData)) {
              checkExistenceOfTheDepartment(validationData);
              checkExistenceOfTheCurator(validationData);
              checkIfTheTeacherInDepartment(validationData);
              checkIfGroupLeaderInGroup(validationData);
+         } else {
+             checkExistenceOfTheDepartment(validationData);
+             checkExistenceOfTheCurator(validationData);
+             checkIfTheTeacherInDepartment(validationData);
+             checkExistenceOfTheStudentsByUid(validationData);
          }
     }
 
     private boolean checkExistenceOfTheStudentGroup(StudentGroupValidationData data) {
-        if(data.getStudentGroupRepository().getByName((data.getStudentGroup().getName())).isPresent()) return false; else return true;
+        if(data.getStudentGroupRepository().getByName((data.getStudentGroup().getName())).isPresent()) return true; else return false;
     }
 
     private void checkExistenceOfTheDepartment(StudentGroupValidationData data) {
@@ -65,13 +62,13 @@ public class StudentGroupValidator implements AbstractValidator {
         List<Student> newStudents = data.getStudentGroup().getStudents();
 
         for (Student student : newStudents) {
-            checkStudentsByUid(data, student);
+            checkStudentByUid(data, student);
         }
     }
 
-    private void checkStudentsByUid(StudentGroupValidationData data, Student student) {
-        if(data.getStudentRepository().getByUid(student.getUid()).isPresent())
-            throw new IncorrectPropertyException("Student with uid " + student.getUid() + " already exists!");
+    private void checkStudentByUid(StudentGroupValidationData data, Student student) {
+        if(data.getPeopleRepository().getByUid(student.getUid()).isPresent())
+            throw new IncorrectPropertyException("Person with uid " + student.getUid() + " already exists!");
     }
 
     private void checkExistenceOfTheCurator(StudentGroupValidationData data) {

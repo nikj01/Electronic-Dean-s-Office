@@ -29,7 +29,5 @@ public class PeopleValidator implements Validator {
 
         if(repository.getByUid(person.getUid()).isPresent())
             errors.rejectValue("uid", "Person with UID " + person.getUid() + " already exists!");
-        if(repository.getByEmail(person.getEmail()).isPresent())
-            errors.rejectValue("email", "Person with EMAIL " + person.getEmail() + " already exists!");
     }
 }

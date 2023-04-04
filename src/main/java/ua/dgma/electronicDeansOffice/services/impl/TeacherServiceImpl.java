@@ -9,7 +9,6 @@ import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
-import ua.dgma.electronicDeansOffice.repositories.functional.GetDepartmentByNameInterface;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -26,7 +25,6 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
 
     private final TeacherRepository teacherRepository;
     private final DepartmentRepository departmentRepository;
-    private final GetDepartmentByNameInterface getDepartment;
     private final TeacherValidator teacherValidator;
     private final Specifications<Teacher> specifications;
 
@@ -35,13 +33,11 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
                               TeacherValidator teacherValidator,
                               ExceptionData exceptionData,
                               DepartmentRepository departmentRepository,
-                              GetDepartmentByNameInterface getDepartment,
                               Specifications<Teacher> specifications) {
         super(teacherRepository, teacherValidator, exceptionData, specifications);
         this.teacherRepository = teacherRepository;
         this.teacherValidator = teacherValidator;
         this.departmentRepository = departmentRepository;
-        this.getDepartment = getDepartment;
         this.specifications = specifications;
     }
 
@@ -50,7 +46,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
         validateObject(new ValidationData<>(teacherValidator, teacher, bindingResult));
         checkExistsWithSuchName(new CheckExistsByNameData<>(Department.class.getSimpleName(), teacher.getDepartment().getName(), departmentRepository));
 
-        teacher.setDepartment(getDepartment.getByName(teacher.getDepartment().getName()));
+        teacher.setDepartment(departmentRepository.getByName(teacher.getDepartment().getName()).get());
 
         teacherRepository.save(teacher);
     }

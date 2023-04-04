@@ -9,7 +9,6 @@ import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.repositories.DeaneryWorkerRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
-import ua.dgma.electronicDeansOffice.repositories.functional.GetFacultyByNameInterface;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -26,7 +25,6 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
 
     private final DeaneryWorkerRepository deaneryWorkerRepository;
     private final FacultyRepository facultyRepository;
-    private final GetFacultyByNameInterface getFacultyInterface;
     private final DeaneryWorkerValidator deaneryWorkerValidator;
     private final Specifications<DeaneryWorker> specifications;
 
@@ -35,13 +33,11 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
                                        DeaneryWorkerValidator deaneryWorkerValidator,
                                        ExceptionData exceptionData,
                                        FacultyRepository facultyRepository,
-                                       GetFacultyByNameInterface getFacultyInterface,
                                        Specifications<DeaneryWorker> specifications) {
         super(deaneryWorkerRepository, deaneryWorkerValidator, exceptionData, specifications);
         this.deaneryWorkerRepository = deaneryWorkerRepository;
         this.deaneryWorkerValidator = deaneryWorkerValidator;
         this.facultyRepository = facultyRepository;
-        this.getFacultyInterface = getFacultyInterface;
         this.specifications = specifications;
     }
 
@@ -50,7 +46,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         validateObject(new ValidationData<>(deaneryWorkerValidator, deaneryWorker, bindingResult));
         checkExistsWithSuchName(new CheckExistsByNameData<>(Faculty.class.getSimpleName(), deaneryWorker.getFaculty().getName(), facultyRepository));
 
-        deaneryWorker.setFaculty(getFacultyInterface.getFacultyByName(deaneryWorker.getFaculty().getName()));
+        deaneryWorker.setFaculty(facultyRepository.getByName(deaneryWorker.getFaculty().getName()).get());
 
         deaneryWorkerRepository.save(deaneryWorker);
     }
@@ -61,7 +57,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         validateObject(new ValidationData<>(deaneryWorkerValidator, updatedDeaneryWorker, bindingResult));
 
         updatedDeaneryWorker.setUid(uid);
-        updatedDeaneryWorker.setFaculty(getFacultyInterface.getFacultyByName(updatedDeaneryWorker.getFaculty().getName()));
+        updatedDeaneryWorker.setFaculty(facultyRepository.getByName(updatedDeaneryWorker.getFaculty().getName()).get());
 
         deaneryWorkerRepository.save(updatedDeaneryWorker);
     }
