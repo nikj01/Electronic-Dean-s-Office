@@ -115,33 +115,33 @@ public class PeopleController {
         personService.softDeleteByUId(uid);
     }
 
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler(RuntimeException.class)
-    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
+//    @ExceptionHandler
+//    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
+//        ErrorResponse response = new ErrorResponse(
+//                e.getMessage(),
+//                System.currentTimeMillis()
+//        );
+//
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
+//    @ExceptionHandler(RuntimeException.class)
+//    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
+//        ErrorResponse response = new ErrorResponse(
+//                e.getMessage(),
+//                System.currentTimeMillis()
+//        );
+//
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @ExceptionHandler(NotFoundException.class)
+//    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
+//        ErrorResponse response = new ErrorResponse(
+//                e.getMessage(),
+//                System.currentTimeMillis()
+//        );
+//
+//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//    }
 
 }

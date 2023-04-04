@@ -99,9 +99,9 @@ public class StudentGroupsController {
     @PatchMapping("/update")
     @ResponseStatus(HttpStatus.OK)
     public void updateStudentGroup(@RequestParam("name") String studentGroupName,
-                                   @RequestBody @Valid   StudentGroupPatchDTO updatedPostStudentGroup,
+                                   @RequestBody @Valid   StudentGroupPatchDTO studentGroupPatchDTO,
                                                          BindingResult bindingResult) {
-        StudentGroup studentGroup = studentGroupMapper.toStudentGroup(updatedPostStudentGroup);
+        StudentGroup studentGroup = studentGroupMapper.toStudentGroup(studentGroupPatchDTO);
 
         studentGroupService.updateByName(studentGroupName, studentGroup, bindingResult);
     }
@@ -116,34 +116,34 @@ public class StudentGroupsController {
         studentGroupService.softDeleteByName(name);
     }
 
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
+//    @ExceptionHandler
+//    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
+//        ErrorResponse response = new ErrorResponse(
+//                e.getMessage(),
+//                System.currentTimeMillis()
+//        );
+//
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @ExceptionHandler(RuntimeException.class)
+//    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
+//        ErrorResponse response = new ErrorResponse(
+//                e.getMessage(),
+//                System.currentTimeMillis()
+//        );
+//
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @ExceptionHandler(NotFoundException.class)
+//    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
+//        ErrorResponse response = new ErrorResponse(
+//                e.getMessage(),
+//                System.currentTimeMillis()
+//        );
+//
+//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//    }
 
 }

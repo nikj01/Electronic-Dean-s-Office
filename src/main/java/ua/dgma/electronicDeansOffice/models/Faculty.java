@@ -36,12 +36,10 @@ public class Faculty {
     @OneToMany(
             mappedBy = "faculty",
             fetch = FetchType.LAZY,
-//            cascade = javax.persistence.CascadeType.ALL,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-//    @JsonManagedReference
     private List<Department> departments = new ArrayList<>();
 
     @OneToMany(

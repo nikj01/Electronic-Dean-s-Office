@@ -6,7 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Student;
@@ -16,6 +16,8 @@ import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
+import ua.dgma.electronicDeansOffice.repositories.functional.GetDepartmentByNameInterface;
+import ua.dgma.electronicDeansOffice.repositories.functional.GetStudentGroupByNameInterface;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
@@ -23,6 +25,7 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentGroupValidator;
+import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,8 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentRepository studentRepository;
     private final PeopleService<Student> studentService;
     private final DepartmentRepository departmentRepository;
+    private final GetDepartmentByNameInterface getDepartment;
+    private final GetStudentGroupByNameInterface getStudentGroup;
     private final StudentGroupValidator studentGroupValidator;
     private final ExceptionData exceptionData;
     private final Specifications<StudentGroup> specifications;
@@ -50,6 +55,8 @@ public class StudentGroupServiceImpl implements StudentGroupService {
                                    StudentRepository studentRepository,
                                    PeopleService<Student> studentService,
                                    DepartmentRepository departmentRepository,
+                                   GetDepartmentByNameInterface getDepartment,
+                                   GetStudentGroupByNameInterface getStudentGroup,
                                    StudentGroupValidator studentGroupValidator,
                                    ExceptionData exceptionData,
                                    Specifications<StudentGroup> specifications) {
@@ -58,6 +65,8 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         this.studentRepository = studentRepository;
         this.studentService = studentService;
         this.departmentRepository = departmentRepository;
+        this.getDepartment = getDepartment;
+        this.getStudentGroup = getStudentGroup;
         this.studentGroupValidator = studentGroupValidator;
         this.exceptionData = exceptionData;
         this.specifications = specifications;
@@ -99,11 +108,13 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void registerNew(StudentGroup studentGroup, BindingResult bindingResult) {
-        validateObject(new ValidationData<>(studentGroupValidator, studentGroup, bindingResult));
+        validateObject(new DataForAbstractValidator<>(studentGroupValidator, studentGroup));
 
+        studentGroup.setDepartment(getDepartment.getByName(studentGroup.getDepartment().getName()));
         for (Student student: saveStudentGroupWithoutStudents(studentGroup))
             studentService.registerNew(student, bindingResult);
     }
+
     public List<Student> saveStudentGroupWithoutStudents(StudentGroup studentGroup) {
         List<Student> newStudents = studentGroup.getStudents();
 
@@ -117,9 +128,10 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Transactional
     public void updateByName(String name, StudentGroup updatedStudentGroup, BindingResult bindingResult) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
-        validateObject(new ValidationData<>(studentGroupValidator, updatedStudentGroup, bindingResult));
+        validateObject(new DataForAbstractValidator<>(studentGroupValidator, updatedStudentGroup));
 
-        updatedStudentGroup.setName(name);
+        updatedStudentGroup.setId(getStudentGroup.getStudentGroupByName(name).getId().longValue());
+        updatedStudentGroup.setDepartment(getDepartment.getByName(updatedStudentGroup.getDepartment().getName()));
 
         studentGroupRepository.save(updatedStudentGroup);
     }

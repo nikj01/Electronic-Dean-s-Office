@@ -34,7 +34,7 @@ public class TeacherValidator implements Validator {
             errors.rejectValue("uid", "Teacher with UID " + teacher.getUid() + " already exists!");
         if(teacherRepository.getByEmail(teacher.getEmail()).isPresent())
             errors.rejectValue("email", "Teacher with EMAIL " + teacher.getEmail() + " already exists!");
-        if(!departmentRepository.getByName(teacher.getDepartment().getName()).isPresent())
-            errors.rejectValue("department", "Department " + teacher.getDepartment().getName() + " does not exist!");
+//        if(!departmentRepository.getByName(teacher.getDepartment().getName()).isPresent())
+//            errors.rejectValue("department", "Department " + teacher.getDepartment().getName() + " does not exist!");
     }
 }

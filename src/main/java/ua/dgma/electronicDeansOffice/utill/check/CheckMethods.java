@@ -1,7 +1,7 @@
 package ua.dgma.electronicDeansOffice.utill.check;
 
 import org.springframework.stereotype.Component;
-import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;

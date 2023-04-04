@@ -1,9 +1,7 @@
-package ua.dgma.electronicDeansOffice.utill;
+package ua.dgma.electronicDeansOffice.utill.validators.data;
 
 import lombok.*;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 
 @Getter
@@ -11,12 +9,9 @@ import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Component
-public class ValidationData<T> {
+public class DataForAbstractValidator<T> {
     @NonNull
-    private Validator validator;
+    private AbstractValidator validator;
     @NonNull
     private T objectToBeValidated;
-    @NonNull
-    private BindingResult bindingResult;
-
 }

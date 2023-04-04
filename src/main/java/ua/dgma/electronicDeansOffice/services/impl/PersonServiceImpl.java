@@ -1,12 +1,10 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Person;
 //import ua.dgma.electronicDeansOffice.models.QPerson;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
@@ -15,11 +13,8 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.PeopleValidator;
 
-import java.util.List;
-
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
 
 @Service
 @Transactional(readOnly = true)

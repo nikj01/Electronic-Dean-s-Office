@@ -8,9 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Getter
@@ -29,7 +27,7 @@ public class TeachersJournal {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+//    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
     private Teacher teacher;
@@ -41,6 +39,6 @@ public class TeachersJournal {
     )
     @Fetch(value = FetchMode.SELECT)
 //    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
-    private Set<JournalPage> pages = new TreeSet<>();
+    private List<JournalPage> pages = new ArrayList<>();
 
 }

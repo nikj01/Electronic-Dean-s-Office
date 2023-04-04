@@ -7,8 +7,6 @@ import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.repositories.DeaneryWorkerRepository;
 
-import static ua.dgma.electronicDeansOffice.utill.check.CheckExistenceFaculty.checkExistenceFaculty;
-
 @Component
 public class DeaneryWorkerValidator implements Validator {
 
@@ -32,7 +30,5 @@ public class DeaneryWorkerValidator implements Validator {
             errors.rejectValue("uid", "Deanery worker with UID " + deaneryWorker.getUid() + " already exists!");
         if(deaneryWorkerRepository.getByEmail(deaneryWorker.getEmail()).isPresent())
             errors.rejectValue("email", "Deanery worker with EMAIL " + deaneryWorker.getEmail() + " already exists!");
-
-        checkExistenceFaculty(deaneryWorker.getFaculty(), errors);
     }
 }

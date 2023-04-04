@@ -7,24 +7,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
-import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
-import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.findAllByFacultyData;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
-import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 
-import javax.persistence.criteria.Predicate;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
 
@@ -129,6 +124,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     public List<P> findAllByFaculty(findAllByFacultyData data) {
 
         if(checkPaginationParameters(data.getPage(), data.getPeoplePerPage()))
+//            return repository.findAll(data.getSpecification());
             return repository.findAll(data.getSpecification());
         else
             return repository.findAll(data.getSpecification(), PageRequest.of(data.getPage(), data.getPeoplePerPage())).getContent();

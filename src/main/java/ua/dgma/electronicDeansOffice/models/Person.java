@@ -46,7 +46,7 @@ public class Person {
     private String patronymic;
 
     @NotBlank(message = "The field |EMAIL| cannot be empty!")
-    @Column(unique = true)
+    @Column(nullable = false)
     private String email;
 
     @NotNull(message = "The filed |ROLE| cannot be empty!")

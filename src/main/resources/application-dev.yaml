@@ -1,5 +1,15 @@
 server:
   port: 5999
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-exception: true
+    include-stacktrace: on_param
+#  error:
+#    include-message: never
+#    include-binding-errors: never
+#    include-exception: off
+#    include-stacktrace: never
 
 spring:
   datasource:

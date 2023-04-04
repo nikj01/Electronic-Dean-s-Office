@@ -10,12 +10,8 @@ import java.util.List;
 public interface FacultyService {
     Faculty findById(Long id);
     Faculty findByName(String name);
-    List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer faculutiesPerPage, Boolean isDeleted);
+    List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer facultiesPerPage, Boolean isDeleted);
     void registerNew(Faculty faculty, BindingResult bindingResult);
-
-    /*
-     * THIS METHOD WILL BE REMOVE
-     * */
     void updateByName(String name, Faculty updatedFaculty, BindingResult bindingResult);
     void deleteByName(String name);
     void softDeleteByName(String name);
