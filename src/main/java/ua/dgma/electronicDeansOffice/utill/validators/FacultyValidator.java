@@ -33,6 +33,7 @@ public class FacultyValidator implements AbstractValidator {
         FacultyValidationData validationData = new FacultyValidationData(faculty, facultyRepository, deaneryWorkerRepository);
 
         if(checkExistenceOfTheFaculty(validationData)) {
+
         } else {
             checkExistenceOfTheDeaneryWorkers(validationData);
         }

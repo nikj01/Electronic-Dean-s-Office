@@ -27,6 +27,12 @@ public class PeopleValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Person person = (Person) target;
 
+        checkExistenceOfThePersonById(person, errors);
+//        if(repository.getByUid(person.getUid()).isPresent())
+//            errors.rejectValue("uid", "Person with UID " + person.getUid() + " already exists!");
+    }
+
+    private void checkExistenceOfThePersonById(Person person, Errors errors) {
         if(repository.getByUid(person.getUid()).isPresent())
             errors.rejectValue("uid", "Person with UID " + person.getUid() + " already exists!");
     }

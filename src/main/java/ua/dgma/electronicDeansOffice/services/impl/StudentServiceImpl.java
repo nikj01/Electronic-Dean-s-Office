@@ -11,10 +11,11 @@ import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,6 +41,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Override
     public void registerNew(Student student, BindingResult bindingResult) {
+        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(Student.class.getSimpleName(), student.getUid(), studentRepository));
         validateObject(new ValidationData<>(studentValidator, student, bindingResult));
 
         student.setStudentGroup(studentGroupRepository.getByName(student.getStudentGroup().getName()).get());
