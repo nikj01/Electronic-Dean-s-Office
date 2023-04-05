@@ -56,6 +56,5 @@ public class StudentValidator implements Validator {
     private void checkExistenceOfTheStudentGroup(StudentValidationData data) {
         if(!data.getStudentGroupRepository().getByName(data.getStudent().getStudentGroup().getName()).isPresent())
             data.getErrors().rejectValue("studentGroup", "Student group with name " + data.getStudent().getStudentGroup().getName() + " does not exist!");
-//            throw new IncorrectPropertyException("Student group with name " + data.getStudent().getStudentGroup().getName() + " does not exist!");
     }
 }

@@ -16,8 +16,7 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.TeacherValidator;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchName;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,8 +42,8 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
 
     @Override
     public void registerNew(Teacher teacher, BindingResult bindingResult) {
+        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(Teacher.class.getSimpleName(), teacher.getUid().longValue(), teacherRepository));
         validateObject(new ValidationData<>(teacherValidator, teacher, bindingResult));
-        checkExistsWithSuchName(new CheckExistsByNameData<>(Department.class.getSimpleName(), teacher.getDepartment().getName(), departmentRepository));
 
         teacher.setDepartment(departmentRepository.getByName(teacher.getDepartment().getName()).get());
 

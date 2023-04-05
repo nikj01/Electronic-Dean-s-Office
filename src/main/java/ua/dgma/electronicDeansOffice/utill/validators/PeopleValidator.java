@@ -7,14 +7,16 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.utill.validators.data.PersonValidationData;
+import ua.dgma.electronicDeansOffice.utill.validators.data.TeacherValidationData;
 
 @Component
 public class PeopleValidator implements Validator {
 
-    private final PeopleRepository repository;
+    private final PeopleRepository<Person> repository;
 
     @Autowired
-    public PeopleValidator(@Qualifier("peopleRepository") PeopleRepository repository) {
+    public PeopleValidator(@Qualifier("peopleRepository") PeopleRepository<Person> repository) {
         this.repository = repository;
     }
 
@@ -26,14 +28,22 @@ public class PeopleValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Person person = (Person) target;
+        PersonValidationData validationData = new PersonValidationData(person, repository, errors);
 
-        checkExistenceOfThePersonById(person, errors);
-//        if(repository.getByUid(person.getUid()).isPresent())
-//            errors.rejectValue("uid", "Person with UID " + person.getUid() + " already exists!");
+        if(checkPersonId(validationData)) {
+
+        } else {
+            checkExistenceOfThePersonById(validationData);
+        }
     }
 
-    private void checkExistenceOfThePersonById(Person person, Errors errors) {
-        if(repository.getByUid(person.getUid()).isPresent())
-            errors.rejectValue("uid", "Person with UID " + person.getUid() + " already exists!");
+    private boolean checkPersonId(PersonValidationData data) {
+        if(data.getPerson().getUid() == null) return true; else return false;
     }
+
+    private void checkExistenceOfThePersonById(PersonValidationData data) {
+        if(data.getPeopleRepository().getByUid(data.getPerson().getUid().longValue()).isPresent())
+            data.getErrors().rejectValue("uid", "Person with UID " + data.getPerson().getUid() + " already exists!");
+    }
+
 }
