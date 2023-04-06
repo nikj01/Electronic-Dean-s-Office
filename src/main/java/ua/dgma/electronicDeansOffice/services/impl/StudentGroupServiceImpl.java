@@ -18,7 +18,8 @@ import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
-import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
+import ua.dgma.electronicDeansOffice.services.specifications.StudentGroupSpecifications;
+import ua.dgma.electronicDeansOffice.services.specifications.impl.SpecificationsImpl;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
@@ -41,7 +42,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     private final DepartmentRepository departmentRepository;
     private final AbstractValidator studentGroupValidator;
     private final ExceptionData exceptionData;
-    private final Specifications<StudentGroup> specifications;
+    private final StudentGroupSpecifications specifications;
     private String className;
 
     @Autowired
@@ -52,7 +53,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
                                    DepartmentRepository departmentRepository,
                                    AbstractValidator studentGroupValidator,
                                    ExceptionData exceptionData,
-                                   Specifications<StudentGroup> specifications) {
+                                   StudentGroupSpecifications specifications) {
         this.studentGroupRepository = studentGroupRepository;
         this.teacherRepository = teacherRepository;
         this.studentRepository = studentRepository;

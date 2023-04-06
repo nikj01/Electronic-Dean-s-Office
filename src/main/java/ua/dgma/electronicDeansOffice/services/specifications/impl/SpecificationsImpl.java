@@ -1,28 +1,23 @@
-package ua.dgma.electronicDeansOffice.services.specifications;
+package ua.dgma.electronicDeansOffice.services.specifications.impl;
 
 import lombok.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
-import ua.dgma.electronicDeansOffice.models.Person;
-import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.models.Teacher;
+import ua.dgma.electronicDeansOffice.models.*;
+import ua.dgma.electronicDeansOffice.services.specifications.*;
 
-import javax.lang.model.element.Name;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Component
-public class Specifications<P> {
-
+public class SpecificationsImpl<P> implements DeaneryWorkerSpecifications,
+        TeacherSpecifications,
+        StudentSpecifications,
+        StudentGroupSpecifications {
     @NonNull
     private Root<P> root;
     @NonNull
@@ -32,45 +27,39 @@ public class Specifications<P> {
     @NonNull
     private EntityManager entityManager;
 
-    public Specification getObjectByDeletedCriteria(Boolean isDeleted) {
+    public Specification<P> getObjectByDeletedCriteria(Boolean isDeleted) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("deleted"), isDeleted);
         };
     }
 
-//    public Specification<P> getDeaneryWorkersByDeletedCriteria(Boolean isDeleted) {
-//        return (root, query, criteriaBuilder) -> {
-//            return criteriaBuilder.equal(root.get("deaneryWorkers").get("deaneryWorker").get("deleted"), isDeleted);
-//        };
-//    }
-
-    public Specification<P> findDeaneryWorkersByFacultyCriteria(String facultyName) {
+    public Specification<DeaneryWorker> findDeaneryWorkersByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
         };
 
     }
 
-    public Specification<P> findTeachersByFacultyCriteria(String facultyName) {
+    public Specification<Teacher> findTeachersByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("department").get("faculty").get("name"), facultyName);
         };
     }
 
 
-    public Specification<P> findStudentsByFacultyCriteria(String facultyName) {
+    public Specification<Student> findStudentsByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("studentGroup").get("department").get("faculty").get("name"), facultyName);
         };
     }
 
-    public Specification<P> getStudentGroupByCuratorCriteria(Long curatorUid) {
+    public Specification<StudentGroup> getStudentGroupByCuratorCriteria(Long curatorUid) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("curator"), curatorUid);
         };
     }
 
-    public Specification<P> getStudentGroupByDepartmentCriteria(String departmentName) {
+    public Specification<StudentGroup> getStudentGroupByDepartmentCriteria(String departmentName) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("department").get("name"), departmentName);
         };

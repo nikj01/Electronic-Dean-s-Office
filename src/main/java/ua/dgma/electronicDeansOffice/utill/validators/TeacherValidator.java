@@ -54,6 +54,5 @@ public class TeacherValidator implements Validator {
     private void checkExistenceOfTheDepartment(TeacherValidationData data) {
         if(!data.getDepartmentRepository().getByName(data.getTeacher().getDepartment().getName()).isPresent())
             data.getErrors().rejectValue("department", "Department with name " + data.getTeacher().getDepartment().getName() + " does not exist!");
-//            throw new IncorrectPropertyException("Department with name " + data.getTeacher().getDepartment().getName() + " does not exist!");
     }
 }

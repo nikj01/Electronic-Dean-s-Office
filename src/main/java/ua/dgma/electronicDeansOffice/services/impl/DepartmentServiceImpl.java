@@ -15,7 +15,8 @@ import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
-import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
+import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
+import ua.dgma.electronicDeansOffice.services.specifications.impl.SpecificationsImpl;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -36,23 +37,24 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final TeacherRepository teacherRepository;
     private final AbstractValidator departmentValidator;
     private final ExceptionData exceptionData;
-    private final Specifications<Department> specifications;
+    private final DeletedSpecification specification;
     private String className;
 
     @Autowired
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
                                  FacultyRepository facultyRepository,
                                  PeopleService<Teacher> teacherService,
-                                 TeacherRepository teacherRepository, AbstractValidator departmentValidator,
+                                 TeacherRepository teacherRepository,
+                                 AbstractValidator departmentValidator,
                                  ExceptionData exceptionData,
-                                 Specifications<Department> specifications) {
+                                 DeletedSpecification specification) {
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
         this.teacherService = teacherService;
         this.teacherRepository = teacherRepository;
         this.departmentValidator = departmentValidator;
         this.exceptionData = exceptionData;
-        this.specifications = specifications;
+        this.specification = specification;
         className = Department.class.getSimpleName();
     }
 
@@ -70,9 +72,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public List<Department> findAllWithPaginationOrWithout(Integer page, Integer departmentsPerPage, Boolean isDeleted) {
         if(checkPaginationParameters(page, departmentsPerPage))
-            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted));
+            return departmentRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted));
         else
-            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, departmentsPerPage)).getContent();
+            return departmentRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, departmentsPerPage)).getContent();
     }
 
     @Override

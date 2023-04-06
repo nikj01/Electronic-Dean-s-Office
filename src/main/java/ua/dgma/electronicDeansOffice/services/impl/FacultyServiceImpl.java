@@ -13,7 +13,8 @@ import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
-import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
+import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
+import ua.dgma.electronicDeansOffice.services.specifications.impl.SpecificationsImpl;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -29,25 +30,23 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository facultyRepository;
-    private final DepartmentRepository departmentRepository;
     private final PeopleService<DeaneryWorker> deaneryWorkerService;
     private final AbstractValidator facultyValidator;
     private final ExceptionData exceptionData;
-    private final Specifications<Faculty> specifications;
+    private final DeletedSpecification specification;
     private String className;
 
     @Autowired
     public FacultyServiceImpl(FacultyRepository facultyRepository,
-                              DepartmentRepository departmentRepository, PeopleService<DeaneryWorker> deaneryWorkerService,
+                              PeopleService<DeaneryWorker> deaneryWorkerService,
                               AbstractValidator facultyValidator,
                               ExceptionData exceptionData,
-                              Specifications<Faculty> specifications) {
+                              DeletedSpecification specification) {
         this.facultyRepository = facultyRepository;
-        this.departmentRepository = departmentRepository;
         this.deaneryWorkerService = deaneryWorkerService;
         this.facultyValidator = facultyValidator;
         this.exceptionData = exceptionData;
-        this.specifications = specifications;
+        this.specification = specification;
         className = Faculty.class.getSimpleName();
     }
 
@@ -64,9 +63,9 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer facultiesPerPage, Boolean isDeleted) {
         if(checkPaginationParameters(page, facultiesPerPage))
-            return facultyRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted));
+            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted));
         else
-            return facultyRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, facultiesPerPage)).getContent();
+            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, facultiesPerPage)).getContent();
     }
 
     @Override

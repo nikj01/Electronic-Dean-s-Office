@@ -12,7 +12,7 @@ import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.findAllByFacultyData;
-import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
+import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 
@@ -30,14 +30,14 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     private final PeopleRepository<P> repository;
     private final Validator validator;
     private final ExceptionData exceptionData;
-    private final Specifications<P> specifications;
+    private final PeopleSpecifications specifications;
     private Class<P> persistentClass;
 
     @Autowired
     protected PeopleServiceImpl(PeopleRepository<P> repository,
                                 Validator validator,
                                 ExceptionData exceptionData,
-                                Specifications<P> specifications) {
+                                PeopleSpecifications specifications) {
         this.repository = repository;
         this.validator = validator;
         this.exceptionData = exceptionData;
@@ -92,47 +92,11 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     }
 
     @Override
-    public List<P> findAllWithPaginationOrWithoutByFaculty(Integer page,
+    public abstract List<P> findAllWithPaginationOrWithoutByFaculty(Integer page,
                                                            Integer peoplePerPage,
                                                            Boolean isDeleted,
-                                                           String facultyName) {
+                                                           String facultyName);
 
-        List<P> newList = new ArrayList<>();
-
-        switch (getPersistentClass().getSimpleName()) {
-            case ("DeaneryWorker"): {
-                Specification spec = Specification.where(specifications.getObjectByDeletedCriteria(isDeleted).and(specifications.findDeaneryWorkersByFacultyCriteria(facultyName)));
-                for(P person: findAllByFaculty(new findAllByFacultyData(page, peoplePerPage,isDeleted,facultyName, spec))){
-                    newList.add(person);
-                }
-                return newList;
-            }
-            case ("Teacher"): {
-                Specification spec = Specification.where(specifications.getObjectByDeletedCriteria(isDeleted).and(specifications.findTeachersByFacultyCriteria(facultyName)));
-                for(P person: findAllByFaculty(new findAllByFacultyData(page, peoplePerPage,isDeleted,facultyName, spec))){
-                    newList.add(person);
-                }
-                return newList;
-            }
-            case ("Student"): {
-                Specification spec = Specification.where(specifications.getObjectByDeletedCriteria(isDeleted).and(specifications.findStudentsByFacultyCriteria(facultyName)));
-                for(P person: findAllByFaculty(new findAllByFacultyData(page, peoplePerPage,isDeleted,facultyName, spec))){
-                    newList.add(person);
-                }
-                return newList;
-            }
-        }
-        return newList;
-    }
-
-    public List<P> findAllByFaculty(findAllByFacultyData data) {
-
-        if(checkPaginationParameters(data.getPage(), data.getPeoplePerPage()))
-//            return repository.findAll(data.getSpecification());
-            return repository.findAll(data.getSpecification());
-        else
-            return repository.findAll(data.getSpecification(), PageRequest.of(data.getPage(), data.getPeoplePerPage())).getContent();
-    }
 
     @Override
     @Transactional

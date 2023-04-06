@@ -7,6 +7,6 @@ import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import java.util.Optional;
 
 public interface TeachersJournalRepository extends JpaRepository<TeachersJournal, Long>, JpaSpecificationExecutor {
-
     Optional<TeachersJournal> getByTeacher_Uid(Long uid);
+    boolean existsById(Long uid);
 }
