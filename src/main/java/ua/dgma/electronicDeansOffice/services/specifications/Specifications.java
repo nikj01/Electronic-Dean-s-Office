@@ -32,11 +32,17 @@ public class Specifications<P> {
     @NonNull
     private EntityManager entityManager;
 
-    public Specification<P> getObjectByDeletedCriteria(Boolean isDeleted) {
+    public Specification getObjectByDeletedCriteria(Boolean isDeleted) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("deleted"), isDeleted);
         };
     }
+
+//    public Specification<P> getDeaneryWorkersByDeletedCriteria(Boolean isDeleted) {
+//        return (root, query, criteriaBuilder) -> {
+//            return criteriaBuilder.equal(root.get("deaneryWorkers").get("deaneryWorker").get("deleted"), isDeleted);
+//        };
+//    }
 
     public Specification<P> findDeaneryWorkersByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {

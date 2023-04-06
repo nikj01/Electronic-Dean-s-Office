@@ -13,11 +13,8 @@ public class ErrorsBuilder {
 
         List<FieldError> errors = bindingResult.getFieldErrors();
         for (FieldError error : errors) {
-            errorMsg.append("Incorrect ")
-                    .append(error.getField().toUpperCase())
-                    .append(": ")
-                    .append(error.getDefaultMessage() == null ? error.getCode() : error.getDefaultMessage())
-                    .append(" ");
+            errorMsg.append(error.getDefaultMessage() == null ? error.getCode() : error.getDefaultMessage())
+                    .append(" Check the correct data entered.");
         }
 
         throw new CustomException(errorMsg.toString());

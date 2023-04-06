@@ -1,16 +1,17 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,21 +21,21 @@ import java.util.Set;
 @Table(name = "Teachers")
 public class Teacher extends Person {
 
-    @NotEmpty(message = "The field |DEPARTMENT| cannot be empty!")
+    @NotNull(message = "The field |DEPARTMENT| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             nullable = false,
-            referencedColumnName = "name"
+            referencedColumnName = "id"
     )
     private Department department;
 
     @OneToMany(
             mappedBy = "curator",
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
-    @Fetch(FetchMode.SELECT)
-    @Cascade(CascadeType.SAVE_UPDATE)
-    private Set<StudentGroup> studentGroup = new HashSet<>();
+    @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private List<StudentGroup> studentGroups = new ArrayList<>();
 
 }

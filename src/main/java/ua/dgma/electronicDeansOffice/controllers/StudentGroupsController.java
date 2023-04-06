@@ -23,7 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/studentGroups")
 public class StudentGroupsController {
-
     private final StudentGroupService studentGroupService;
     private final StudentGroupMapper studentGroupMapper;
     private final StudentGroupListMapper studentGroupListMapper;
@@ -50,13 +49,6 @@ public class StudentGroupsController {
     }
 
     @GetMapping()
-    public List<StudentGroupGetDTO> findAllStudentGroups(@RequestParam(value = "page", required = false) Integer page,
-                                                         @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
-                                                         @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return studentGroupListMapper.toStudentGroupsGetDTO(studentGroupService.findAllWithPaginationOrWithout(page, groupsPerPage, isDeleted));
-    }
-
-    @GetMapping("/slim")
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroups(@RequestParam(value = "page", required = false) Integer page,
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                                  @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
@@ -64,24 +56,12 @@ public class StudentGroupsController {
     }
 
     @GetMapping("/findAllGroupsByCurator")
-    public List<StudentGroupGetDTO> findAllStudentGroupsByCurator(@RequestParam(value = "curatorUid") Long curatorUid,
-                                                                  @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return studentGroupListMapper.toStudentGroupsGetDTO(studentGroupService.findAllGroupsByCurator(curatorUid, isDeleted));
-    }
-
-    @GetMapping("/slim/findAllGroupsByCurator")
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroupsByCurator(@RequestParam(value = "curatorUid") Long curatorUid,
                                                                           @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAllGroupsByCurator(curatorUid, isDeleted));
     }
 
     @GetMapping("/findAllGroupsByDepartment")
-    public List<StudentGroupGetDTO> findAllStudentGroupsByDepartment(@RequestParam(value = "department") String departmentName,
-                                                                     @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return studentGroupListMapper.toStudentGroupsGetDTO(studentGroupService.findAllGroupsByDepartment(departmentName, isDeleted));
-    }
-
-    @GetMapping("/slim/findAllGroupsByDepartment")
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroupsByDepartment(@RequestParam(value = "department") String departmentName,
                                                                              @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAllGroupsByDepartment(departmentName, isDeleted));
@@ -99,9 +79,9 @@ public class StudentGroupsController {
     @PatchMapping("/update")
     @ResponseStatus(HttpStatus.OK)
     public void updateStudentGroup(@RequestParam("name") String studentGroupName,
-                                   @RequestBody @Valid   StudentGroupPatchDTO updatedPostStudentGroup,
+                                   @RequestBody @Valid   StudentGroupPatchDTO studentGroupPatchDTO,
                                                          BindingResult bindingResult) {
-        StudentGroup studentGroup = studentGroupMapper.toStudentGroup(updatedPostStudentGroup);
+        StudentGroup studentGroup = studentGroupMapper.toStudentGroup(studentGroupPatchDTO);
 
         studentGroupService.updateByName(studentGroupName, studentGroup, bindingResult);
     }
@@ -114,26 +94,6 @@ public class StudentGroupsController {
     @DeleteMapping("/soft/delete")
     public void softDeleteStudentGroup(@RequestParam("name") String name) {
         studentGroupService.softDeleteByName(name);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

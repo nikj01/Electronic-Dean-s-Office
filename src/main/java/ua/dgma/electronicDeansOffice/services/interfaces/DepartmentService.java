@@ -10,6 +10,7 @@ import java.util.Set;
 
 public interface DepartmentService {
 
+    Department findById(Long id);
     Department findByName(String name);
     List<Department> findAllDepartmentsByFacultyName(String facultyName);
     List<Department> findAllWithPaginationOrWithout(Integer page, Integer departmentsPerPage, Boolean isDeleted);

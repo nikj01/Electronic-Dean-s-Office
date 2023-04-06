@@ -13,18 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-public class FacultySlimGetDTO implements Comparable<FacultySlimGetDTO>{
+public class FacultySlimGetDTO {
 
     private String name;
     private boolean deleted;
 
-    @Override
-    public int compareTo(FacultySlimGetDTO o) {
-        if(this.name.compareToIgnoreCase(o.getName()) > 0) {
-            return 1;
-        } else if (this.name.compareToIgnoreCase(o.getName()) < 0) {
-            return -1;
-        } else
-            return 0;
-    }
 }

@@ -5,6 +5,7 @@ import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,15 +17,15 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode
-@Table(name = "People")
+@Table(name = "People", indexes = {
+        @Index(columnList = "surname DESC", name="peopleSurnameIndex")
+})
 @Inheritance(strategy = InheritanceType.JOINED)
 //@Where(clause = "DELETED = false")
 public class Person {
 
     @Id
-    @NonNull
     @NotNull(message = "The field |UID| cannot be empty!")
     @Column(
             nullable = false,
@@ -32,24 +33,20 @@ public class Person {
     )
     private Long uid;
 
-    @NonNull
     @NotBlank(message = "The field |SURNAME| cannot be empty!")
     @Column(nullable = false)
     private String surname;
 
-    @NonNull
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(nullable = false)
     private String name;
 
-    @NonNull
     @NotBlank(message = "The field |PATRONYMIC| cannot be empty!")
     @Column(nullable = false)
     private String patronymic;
 
-    @NonNull
     @NotBlank(message = "The field |EMAIL| cannot be empty!")
-    @Column(unique = true)
+    @Column(nullable = false)
     private String email;
 
     @NotNull(message = "The filed |ROLE| cannot be empty!")
@@ -58,17 +55,14 @@ public class Person {
     @Column(name = "roles", nullable = false)
     private List<PersonRoleEnum> personRoles;
 
-    @NonNull
     @NotBlank(message = "The field |PASSWORD| cannot be empty!")
     @Column(nullable = false)
     private String password;
 
-    @NonNull
     @NotNull(message = "The field |DATE OF BIRTH| cannot be empty!")
     @Column(nullable = false)
     private Date dateOfBirth;
 
-    @NonNull
     @Column(nullable = false)
     private boolean deleted;
 }

@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/faculties")
 public class FacultyController {
-
     private final FacultyService facultyService;
     private final FacultyMapper facultyMapper;
     private final FacultyListMapper facultyListMapper;
@@ -40,21 +39,13 @@ public class FacultyController {
         return facultyMapper.toFacultyGetDTO(facultyService.findByName(name));
     }
 
-
     @GetMapping("/slim/findByName")
     @ResponseStatus(HttpStatus.FOUND)
     public FacultySlimGetDTO findSlimFacultyByName(@RequestParam("name") String name) {
         return facultyMapper.toFacultySlimGetDTO(facultyService.findByName(name));
     }
 
-    @GetMapping()
-    public List<FacultyGetDTO> findAllFaculties(@RequestParam(value = "page", required = false) Integer page,
-                                                @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
-                                                @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return facultyListMapper.toFacultiesGetDTO(facultyService.findAllWithPaginationOrWithout(page, facultiesPerPage, isDeleted));
-    }
-
-    @GetMapping("/slim")
+    @GetMapping("")
     public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
                                                         @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
                                                         @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
@@ -69,14 +60,11 @@ public class FacultyController {
         facultyService.registerNew(newFaculty, bindingResult);
     }
 
-    /*
-     * THIS METHOD WILL BE REMOVE
-     * */
     @PatchMapping("/update")
     public void updateFaculty(@RequestParam("name") String name,
-                              @RequestBody @Valid   FacultyPostDTO updatedPostFaculty,
+                              @RequestBody @Valid   FacultyPatchDTO facultyPatchDTO,
                                                     BindingResult bindingResult) {
-        Faculty updatedFaculty = facultyMapper.toFaculty(updatedPostFaculty);
+        Faculty updatedFaculty = facultyMapper.toFaculty(facultyPatchDTO);
 
         facultyService.updateByName(name, updatedFaculty, bindingResult);
     }
@@ -89,26 +77,6 @@ public class FacultyController {
     @DeleteMapping("/soft/delete")
     public void softDeleteFaculty(@RequestParam("name") String name) {
         facultyService.softDeleteByName(name);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

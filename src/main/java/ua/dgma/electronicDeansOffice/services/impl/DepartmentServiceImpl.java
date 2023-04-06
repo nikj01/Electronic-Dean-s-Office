@@ -5,44 +5,62 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ua.dgma.electronicDeansOffice.exceptions.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.models.Faculty;
+import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
+import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
+import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
+import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
-import ua.dgma.electronicDeansOffice.utill.ValidationData;
-import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
-import ua.dgma.electronicDeansOffice.utill.validators.DepartmentValidator;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
+import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
+import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
 @Service
 @Transactional(readOnly = true)
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
-    private final DepartmentValidator departmentValidator;
+    private final FacultyRepository facultyRepository;
+    private final PeopleService<Teacher> teacherService;
+    private final TeacherRepository teacherRepository;
+    private final AbstractValidator departmentValidator;
     private final ExceptionData exceptionData;
     private final Specifications<Department> specifications;
     private String className;
 
     @Autowired
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
-                                 DepartmentValidator departmentValidator,
-                                 ExceptionData exceptionData, Specifications<Department> specifications) {
+                                 FacultyRepository facultyRepository,
+                                 PeopleService<Teacher> teacherService,
+                                 TeacherRepository teacherRepository, AbstractValidator departmentValidator,
+                                 ExceptionData exceptionData,
+                                 Specifications<Department> specifications) {
         this.departmentRepository = departmentRepository;
+        this.facultyRepository = facultyRepository;
+        this.teacherService = teacherService;
+        this.teacherRepository = teacherRepository;
         this.departmentValidator = departmentValidator;
         this.exceptionData = exceptionData;
         this.specifications = specifications;
         className = Department.class.getSimpleName();
     }
 
+
+    @Override
+    public Department findById(Long id) {
+        return departmentRepository.findById(id).orElseThrow(()-> new NotFoundException(new ExceptionData<>(className, "id", id)));
+    }
 
     @Override
     public Department findByName(String name) {
@@ -59,38 +77,64 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> findAllDepartmentsByFacultyName(String facultyName) {
+        checkExistsWithSuchName(new CheckExistsByNameData(Faculty.class.getSimpleName(), facultyName, facultyRepository));
         return departmentRepository.getAllByFacultyName(facultyName);
     }
 
     @Override
     @Transactional
     public void registerNew(Department department, BindingResult bindingResult) {
-        validateObject(new ValidationData<>(departmentValidator, department, bindingResult));
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(Department.class.getSimpleName(), department.getName(), departmentRepository));
+        validateObject(new DataForAbstractValidator(departmentValidator, department));
+
+        department.setFaculty(facultyRepository.getByName(department.getFaculty().getName()).get());
+
+        if(department.getTeachers() != null) {
+            for (Teacher teacher: saveDepartmentWithoutTeachers(department)) {
+                teacherService.registerNew(teacher, bindingResult);
+            }
+        } else {
+            departmentRepository.save(department);
+        }
+    }
+
+    public List<Teacher> saveDepartmentWithoutTeachers(Department department) {
+        List<Teacher> newTeachers = department.getTeachers();
+
+        department.setTeachers(new ArrayList<>());
         departmentRepository.save(department);
+
+        return newTeachers;
     }
 
     @Override
     @Transactional
     public void updateByName(String name, Department updatedDepartment, BindingResult bindingResult) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
-        validateObject(new ValidationData<>(departmentValidator, updatedDepartment, bindingResult));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
+        validateObject(new DataForAbstractValidator(departmentValidator, updatedDepartment));
 
-        updatedDepartment.setName(name);
+        updatedDepartment.setId(departmentRepository.getByName(name).get().getId());
+        updatedDepartment.setFaculty(facultyRepository.getByName(updatedDepartment.getFaculty().getName()).get());
+        updatedDepartment.setTeachers(departmentRepository.getByName(name).get().getTeachers());
+        updatedDepartment.setStudentGroups(departmentRepository.getByName(name).get().getStudentGroups());
+
         departmentRepository.save(updatedDepartment);
     }
 
     @Override
     @Transactional
     public void deleteByName(String name) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
         departmentRepository.deleteByName(name);
     }
 
     @Override
     public void softDeleteByName(String name) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, name, departmentRepository));
+        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
 
         Department department = findByName(name);
+        department.getStudentGroups().stream().forEach(studentGroup -> studentGroup.setDeleted(true));
+        department.getTeachers().stream().forEach(teacher -> teacher.setDeleted(true));
         department.setDeleted(true);
 
         departmentRepository.save(department);

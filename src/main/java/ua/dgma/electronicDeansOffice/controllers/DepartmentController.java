@@ -1,7 +1,9 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -9,12 +11,12 @@ import ua.dgma.electronicDeansOffice.exceptions.CustomException;
 import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentPatchDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.DepartmentListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.DepartmentMapper;
 import ua.dgma.electronicDeansOffice.models.Department;
-import ua.dgma.electronicDeansOffice.services.impl.DepartmentServiceImpl;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 
 import javax.validation.Valid;
@@ -23,7 +25,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/departments")
 public class DepartmentController {
-
     private final DepartmentService departmentService;
     private final DepartmentMapper departmentMapper;
     private final DepartmentListMapper departmentListMapper;
@@ -48,13 +49,6 @@ public class DepartmentController {
     }
 
     @GetMapping()
-    public List<DepartmentGetDTO> findAllDepartments(@RequestParam(value = "page", required = false) Integer page,
-                                                     @RequestParam(value = "departmentsPerPage", required = false) Integer departmentsPerPage,
-                                                     @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return departmentListMapper.toDepartmentsGetDTO(departmentService.findAllWithPaginationOrWithout(page, departmentsPerPage, isDeleted));
-    }
-
-    @GetMapping("/slim")
     public List<DepartmentSlimGetDTO> findAllSlimDepartments(@RequestParam(value = "page", required = false) Integer page,
                                                              @RequestParam(value = "people_per_page", required = false) Integer departmentsPerPage,
                                                              @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
@@ -66,7 +60,7 @@ public class DepartmentController {
         return departmentListMapper.toDepartmentsSlimGetDTO((List<Department>) departmentService.findAllDepartmentsByFacultyName(facultyName));
     }
 
-    @GetMapping("/register")
+    @PostMapping("/register")
     public void registerNewDepartment(@RequestBody @Valid DepartmentPostDTO newPostDepartment,
                                                           BindingResult bindingResult) {
         Department newDepartment = departmentMapper.toDepartment(newPostDepartment);
@@ -74,11 +68,11 @@ public class DepartmentController {
         departmentService.registerNew(newDepartment, bindingResult);
     }
 
-    @PatchMapping("/update")
+    @PatchMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public void updateDepartment(@RequestParam("name") String name,
-                                 @RequestBody @Valid   DepartmentPostDTO updatedPostDepartment,
+                                 @RequestBody @Valid   DepartmentPatchDTO departmentPatchDTO,
                                                        BindingResult bindingResult) {
-        Department updatedDepartment = departmentMapper.toDepartment(updatedPostDepartment);
+        Department updatedDepartment = departmentMapper.toDepartment(departmentPatchDTO);
 
         departmentService.updateByName(name, updatedDepartment, bindingResult);
     }
@@ -91,25 +85,5 @@ public class DepartmentController {
     @DeleteMapping("/soft/delete")
     public void softDeleteDepartment(@RequestParam("name") String name) {
         departmentService.softDeleteByName(name);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-        ErrorResponse response = new ErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

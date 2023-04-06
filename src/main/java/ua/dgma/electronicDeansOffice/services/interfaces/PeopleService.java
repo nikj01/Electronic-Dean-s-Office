@@ -8,7 +8,7 @@ public interface PeopleService<T> {
 
     Class<T> getPersistentClass();
     T findByUid(Long uid);
-    T findByEmail(String email);
+    List<T> findByEmail(String email);
     List<T> findBySurname(String surname);
     List<T> findAllPeople(Integer page, Integer peoplePerPage, Boolean isDeleted, String facultyName);
     List<T> findAllWithPaginationOrWithout(Integer page, Integer peoplePerPage, Boolean isDeleted);

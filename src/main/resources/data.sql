@@ -4,15 +4,15 @@ INSERT INTO Faculties (name, deleted) VALUES
 ('fac-2', false),
 ('fac-3', false);
 
-INSERT INTO departments (name, faculty_name, deleted) VALUES
-('AVP', 'FM', false),
-('dep-1', 'FM', false),
-('dep-2', 'fac-1', false),
-('dep-3', 'fac-1', false),
-('dep-4', 'fac-2', false),
-('dep-5', 'fac-2', false),
-('dep-6', 'fac-3', false),
-('dep-7', 'fac-3', false);
+INSERT INTO departments (name, faculty_id, deleted) VALUES
+('AVP', '1', false),
+('dep-1', '1', false),
+('dep-2', '2', false),
+('dep-3', '2', false),
+('dep-4', '3', false),
+('dep-5', '3', false),
+('dep-6', '4', false),
+('dep-7', '4', false);
 
 INSERT INTO People (uid, date_of_birth, email, name, patronymic, password, surname, deleted) VALUES
 (100, '1963-05-05', 'kostikov_email_100@gmail.com', 'Oleksandr', 'Anatoliyovych', 'qwerty00', 'Kostikov', false),
@@ -34,7 +34,7 @@ INSERT INTO People (uid, date_of_birth, email, name, patronymic, password, surna
 (116, '1991-08-01', 'teacher_email_116@gmail.com', 'teacher_116 name', 'teacher_116 patr', 'qwerty15', 'teacher_116 sur', false),
 (117, '1994-12-18', 'teacher_email_117@gmail.com', 'teacher_117 name', 'teacher_117 patr', 'qwerty16', 'teacher_117 sur', false),
 (118, '1994-11-16', 'teacher_email_118@gmail.com', 'teacher_118 name', 'teacher_118 patr', 'qwerty17', 'teacher_118 sur', false),
-(119, '1997-04-24', 'teacher_email_119@gmail.com', 'teacher_119 name', 'teacher_119 patr', 'qwerty18', 'teacher_119 sur', false),
+(119, '1997-04-24', 'teacher_email_119@gmail.com', 'teacher_119 name', 'teacher_119 patr', 'qwerty18', 'teacher_119 sur', true),
 (120, '7777-05-05', '7777prepod@gmail.com', '7777prepod', '7777prepod', '7777prepod', '7777prepod', true),
 
 (500, '1988-03-09', 'dw_email_1@gmail.com', 'dw_01 name', 'dw_01 patr', 'qwerty19', 'dw_01 sur', false),
@@ -67,6 +67,9 @@ INSERT INTO People (uid, date_of_birth, email, name, patronymic, password, surna
 (12723921, '2001-06-16', 'st_email_21@gmail.com', 'st_21 name', 'st_21 patr', 'qwerty39', 'st_21 sur', false),
 (12723922, '2001-01-24', 'st_email_22@gmail.com', 'st_22 name', 'st_22 patr', 'qwerty40', 'st_22 sur', false),
 (12723333, '2001-01-24', '12723333@gmail.com', '12723333 name', '12723333 patr', '12723333', '12723333 sur', true);
+-- (12723333, '2001-01-24', '12723333@gmail.com', '12723333 name', '12723333 patr', '12723333', '12723333 sur', true),
+-- (12723350, '2001-01-24', '50@gmail.com', '50 name', '50 patr', '50', '50 sur', false),
+-- (12723351, '2001-01-24', '51@gmail.com', '51 name', '51 patr', '51', '51 sur', false);
 
 INSERT INTO person_roles (person_uid, roles) VALUES
 (100,3),
@@ -121,74 +124,83 @@ INSERT INTO person_roles (person_uid, roles) VALUES
 (12723920,4),
 (12723921,4),
 (12723922,4),
+(12723333,4),
 (12723333,4);
+-- (12723350,4),
+-- (12723351,4);
 
-INSERT INTO Deanery_workers (uid, faculty_name) VALUES
-(500, 'FM'),
-(501, 'FM'),
-(502, 'FM'),
-(503, 'FM'),
-(504, 'fac-1'),
-(505, 'fac-1'),
-(506, 'fac-1'),
-(507, 'fac-1');
+INSERT INTO Deanery_workers (uid, faculty_id) VALUES
+(500, '1'),
+(501, '1'),
+(502, '1'),
+(503, '1'),
+(504, '2'),
+(505, '2'),
+(506, '2'),
+(507, '2');
 
-INSERT INTO Teachers (uid, department_name) VALUES
-(100, 'AVP'),
-(101, 'AVP'),
-(102, 'AVP'),
-(103, 'AVP'),
-(104, 'AVP'),
-(105, 'dep-1'),
-(106, 'dep-1'),
-(107, 'dep-1'),
-(108, 'dep-1'),
-(109, 'dep-1'),
-(110, 'dep-2'),
-(111, 'dep-2'),
-(112, 'dep-2'),
-(113, 'dep-2'),
-(114, 'dep-2'),
-(115, 'dep-3'),
-(116, 'dep-3'),
-(117, 'dep-3'),
-(118, 'dep-3'),
-(119, 'dep-3');
+INSERT INTO Teachers (uid, department_id) VALUES
+(100, '1'),
+(101, '1'),
+(102, '1'),
+(103, '1'),
+(104, '1'),
+(105, '2'),
+(106, '2'),
+(107, '2'),
+(108, '2'),
+(109, '2'),
+(110, '3'),
+(111, '3'),
+(112, '3'),
+(113, '3'),
+(114, '3'),
+(115, '4'),
+(116, '4'),
+(117, '4'),
+(118, '4'),
+(119, '4'),
+(120, '4');
 
-INSERT INTO Stundent_groups (name, curator_uid, department_name, group_leader_uid, deleted) VALUES
-('KI 19-1', 100, 'AVP', null, false),
-('KI 19-1t', 101, 'AVP', null, false),
-('KH 19-1', 105, 'dep-1', null, false),
-('KH 19-2', 106, 'dep-1', null, false),
-('KM 19-1', 110, 'dep-2', null, false),
-('KM 19-1t', 111, 'dep-2', null, false),
-('KK 19-1', 115, 'dep-3', null, false),
-('KK 19-1t', 116, 'dep-3', null, false);
+INSERT INTO Stundent_groups (name, curator_uid, department_id, group_leader_uid, deleted) VALUES
+('KI 19-1', 100, '1', null, false),
+('KI 19-1t', 101, '1', null, false),
+('APP 19-1', 100, '1', null, false),
+('APP 19-1t', 101, '1', null, false),
+('KH 19-1', 105, '2', null, false),
+('KH 19-2', 106, '2', null, false),
+('KM 19-1', 110, '3', null, false),
+('KM 19-1t', 111, '3', null, false),
+('KK 19-1', 115, '4', null, false),
+('KK 19-1t', 116, '4', null, false);
+-- ('KI 22-1', 100, '1', null, false);
 
-INSERT INTO Students (uid, group_name) VALUES
-(12723903, 'KI 19-1'),
-(12723904, 'KI 19-1'),
-(12723905, 'KI 19-1'),
-(12723906, 'KI 19-1'),
-(12723907, 'KI 19-1'),
-(12723333, 'KI 19-1');
-
-INSERT INTO Teachers_journals (id, teacher_uid) VALUES
-(DEFAULT, 100),
-(DEFAULT, 101),
-(DEFAULT, 102);
-
-INSERT INTO Journals_pages (id, page_name, journal_id) VALUES
-(DEFAULT, 'IPZ', 1),
-(DEFAULT, 'AKM', 1);
-
--- INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
--- (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
--- (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
+INSERT INTO Students (uid, group_id) VALUES
+(12723903, '1'),
+(12723904, '1'),
+(12723905, '1'),
+(12723906, '1'),
+(12723907, '1'),
+(12723333, '1');
+-- (12723350, '11'),
+-- (12723351, '11');
 --
--- INSERT INTO events_student_groups (event_id, student_groups_name) VALUES
--- (1, 'KI 19-1');
+-- INSERT INTO Teachers_journals (id, teacher_uid) VALUES
+-- (DEFAULT, 100),
+-- (DEFAULT, 101),
+-- (DEFAULT, 102);
 --
--- INSERT INTO reports (id, event_id) VALUES
--- (DEFAULT, 1);
-
+-- INSERT INTO Journals_pages (id, page_name, journal_id) VALUES
+-- (DEFAULT, 'IPZ', 1),
+-- (DEFAULT, 'AKM', 1);
+--
+-- -- INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
+-- -- (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
+-- -- (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
+-- --
+-- -- INSERT INTO events_student_groups (event_id, student_groups_name) VALUES
+-- -- (1, 'KI 19-1');
+-- --
+-- -- INSERT INTO reports (id, event_id) VALUES
+-- -- (DEFAULT, 1);
+--

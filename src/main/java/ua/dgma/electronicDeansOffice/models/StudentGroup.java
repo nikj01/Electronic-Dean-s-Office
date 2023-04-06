@@ -1,31 +1,35 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.*;
-import org.springframework.data.mapping.AccessOptions;
 
-import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
-import javax.validation.constraints.*;
-import java.io.Serializable;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"students", "events"})
-@Table(name = "StundentGroups")
-public class StudentGroup implements Serializable {
+@Table(name = "StundentGroups", indexes = {
+        @Index(columnList = "name DESC", name = "studentGroupNameIndex")
+})
+public class StudentGroup {
 
     @Id
-    @NonNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             unique = true,
@@ -33,7 +37,7 @@ public class StudentGroup implements Serializable {
     )
     private String name;
 
-//    @NotEmpty(message = "The field |GROUP LEADER| cannot be empty!")
+//    @NotNull(message = "The field |GROUP LEADER| cannot be empty!")
     @OneToOne(
             fetch = FetchType.LAZY
     )
@@ -54,10 +58,7 @@ public class StudentGroup implements Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<Student> students = new ArrayList<>();
 
-/*
-*   This annotation @NotEmpty must be working after creating TeacherValidator!
-* */
-//    @NotEmpty(message = "The field |CURATOR| cannot be empty!")
+    @NotNull(message = "The field |CURATOR| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
@@ -77,7 +78,6 @@ public class StudentGroup implements Serializable {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<Event> events;
 
-    @NonNull
     @Column(nullable = false)
     private boolean deleted;
 }

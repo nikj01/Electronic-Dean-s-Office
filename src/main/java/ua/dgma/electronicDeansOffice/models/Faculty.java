@@ -1,28 +1,31 @@
 package ua.dgma.electronicDeansOffice.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = {"departments", "deaneryWorkers"})
-@Table(name = "Faculties")
-public class Faculty implements Serializable {
+@Table(name = "Faculties", indexes = {
+        @Index(columnList = "name DESC", name = "facultyNameIndex")
+})
+public class Faculty {
 
     @Id
-    @NonNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             nullable = false,
@@ -32,22 +35,22 @@ public class Faculty implements Serializable {
 
     @OneToMany(
             mappedBy = "faculty",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-    private Set<Department> departments = new HashSet<>();
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private List<Department> departments = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "faculty",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
-    @Cascade(value = CascadeType.SAVE_UPDATE)
-    private Set<DeaneryWorker> deaneryWorkers = new HashSet<>();
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private List<DeaneryWorker> deaneryWorkers = new ArrayList<>();
 
-    @NonNull
     @Column(nullable = false)
     private boolean deleted;
 }

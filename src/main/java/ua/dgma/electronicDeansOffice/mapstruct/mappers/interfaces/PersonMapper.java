@@ -9,8 +9,10 @@ import ua.dgma.electronicDeansOffice.models.Person;
 import java.util.List;
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface PersonMapper {
-
+    @Named(value = "postPerson")
     Person toPerson(PersonPostDTO personPost);
+    @Named(value = "patchPerson")
+    Person toPerson(PersonPatchDTO personPatch);
     @Named(value = "person")
     PersonGetDTO toPersonGetDTO(Person person);
     @Named(value = "slimPerson")
