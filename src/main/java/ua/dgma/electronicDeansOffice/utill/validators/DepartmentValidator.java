@@ -25,17 +25,14 @@ public class DepartmentValidator implements AbstractValidator {
 
     private final DepartmentRepository departmentRepository;
     private final FacultyRepository facultyRepository;
-    private final TeacherRepository teacherRepository;
     private final PeopleRepository<Person> peopleRepository;
 
     @Autowired
     public DepartmentValidator(DepartmentRepository departmentRepository,
                                FacultyRepository facultyRepository,
-                               TeacherRepository teacherRepository,
                                PeopleRepository<Person> peopleRepository) {
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
-        this.teacherRepository = teacherRepository;
         this.peopleRepository = peopleRepository;
     }
 
@@ -65,9 +62,10 @@ public class DepartmentValidator implements AbstractValidator {
     private void checkExistenceOfTheTeachers(DepartmentValidationData data) {
         List<Teacher> newTeachers = data.getDepartment().getTeachers();
 
-        for (Teacher teacher : newTeachers) {
-            checkTeacherByUid(data, teacher);
-        }
+        if(newTeachers != null)
+            for (Teacher teacher : newTeachers) {
+                checkTeacherByUid(data, teacher);
+            }
     }
 
     private void checkTeacherByUid(DepartmentValidationData data, Teacher teacher) {

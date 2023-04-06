@@ -21,7 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/students")
 public class StudentsController {
-
     private final PeopleService<Student> studentService;
     private final StudentMapper studentMapper;
     private final StudentListMapper studentListMapper;
@@ -49,14 +48,14 @@ public class StudentsController {
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGetDTO findStudentByEmail(@RequestParam("email") String email) {
-        return studentMapper.toStudentGetDTO(studentService.findByEmail(email));
+    public List<StudentGetDTO> findStudentByEmail(@RequestParam("email") String email) {
+        return studentListMapper.toStudentsGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentSlimGetDTO findSlimStudentByEmail(@RequestParam("email") String email) {
-        return studentMapper.toStudentSlimGetDTO(studentService.findByEmail(email));
+    public List<StudentSlimGetDTO> findSlimStudentByEmail(@RequestParam("email") String email) {
+        return studentListMapper.toStudentsSlimGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
@@ -72,14 +71,6 @@ public class StudentsController {
     }
 
     @GetMapping()
-    public List<StudentGetDTO> findAllStudents(@RequestParam(value = "page", required = false) Integer page,
-                                               @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                               @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
-                                               @RequestParam(value = "faculty", required = false) String facultyName) {
-        return studentListMapper.toStudentsGetDTO(studentService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
-    }
-
-    @GetMapping("/slim")
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
@@ -114,35 +105,5 @@ public class StudentsController {
     public void softDeletePerson(@RequestParam("uid") Long uid) {
         studentService.softDeleteByUId(uid);
     }
-
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(NotFoundException.class)
-//    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
 
 }

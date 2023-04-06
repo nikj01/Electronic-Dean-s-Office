@@ -56,8 +56,12 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     }
 
     @Override
-    public P findByEmail(String email) {
-        return repository.getByEmail(email).orElseThrow(() -> new NotFoundException(new ExceptionData<>(getPersistentClass().getSimpleName(), "email", email)));
+    public List<P> findByEmail(String email) {
+        List<P> people = new ArrayList<>();
+
+        people.add(repository.getByEmail(email).orElseThrow(() -> new NotFoundException(new ExceptionData<>(getPersistentClass().getSimpleName(), "email", email))));
+
+        return people;
     };
 
     @Override

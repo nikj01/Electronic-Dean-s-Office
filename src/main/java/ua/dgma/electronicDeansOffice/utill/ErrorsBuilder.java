@@ -14,7 +14,7 @@ public class ErrorsBuilder {
         List<FieldError> errors = bindingResult.getFieldErrors();
         for (FieldError error : errors) {
             errorMsg.append(error.getDefaultMessage() == null ? error.getCode() : error.getDefaultMessage())
-                    .append(" ");
+                    .append(" Check the correct data entered.");
         }
 
         throw new CustomException(errorMsg.toString());

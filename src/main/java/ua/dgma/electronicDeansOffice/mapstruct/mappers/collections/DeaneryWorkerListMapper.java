@@ -13,6 +13,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = DeaneryWorkerMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface DeaneryWorkerListMapper {
 
-    List<DeaneryWorkerGetDTO> toDeaneryWorkersGetDTO(Iterable<DeaneryWorker> deaneryWorkers);
-    List<DeaneryWorkerSlimGetDTO> toDeaneryWorkersSlimGetDTO(Iterable<DeaneryWorker> deaneryWorkers);
+    List<DeaneryWorkerGetDTO> toDeaneryWorkersGetDTO(List<DeaneryWorker> deaneryWorkers);
+    List<DeaneryWorkerSlimGetDTO> toDeaneryWorkersSlimGetDTO(List<DeaneryWorker> deaneryWorkers);
 }

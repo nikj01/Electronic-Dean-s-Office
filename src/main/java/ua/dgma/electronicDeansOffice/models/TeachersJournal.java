@@ -22,6 +22,7 @@ public class TeachersJournal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     @NotEmpty(message = "The field |TEACHER| cannot be empty!")
     @OneToOne(
             cascade = CascadeType.ALL,

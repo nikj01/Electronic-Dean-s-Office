@@ -21,5 +21,5 @@ public class DepartmentValidationData {
     @NonNull
     private FacultyRepository facultyRepository;
     @NonNull
-    private PeopleRepository<Person> peopleRepository;
+    private PeopleRepository peopleRepository;
 }

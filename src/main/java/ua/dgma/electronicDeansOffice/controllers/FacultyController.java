@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/faculties")
 public class FacultyController {
-
     private final FacultyService facultyService;
     private final FacultyMapper facultyMapper;
     private final FacultyListMapper facultyListMapper;
@@ -46,14 +45,7 @@ public class FacultyController {
         return facultyMapper.toFacultySlimGetDTO(facultyService.findByName(name));
     }
 
-    @GetMapping()
-    public List<FacultyGetDTO> findAllFaculties(@RequestParam(value = "page", required = false) Integer page,
-                                                @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
-                                                @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return facultyListMapper.toFacultiesGetDTO(facultyService.findAllWithPaginationOrWithout(page, facultiesPerPage, isDeleted));
-    }
-
-    @GetMapping("/slim")
+    @GetMapping("")
     public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
                                                         @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
                                                         @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
@@ -86,35 +78,5 @@ public class FacultyController {
     public void softDeleteFaculty(@RequestParam("name") String name) {
         facultyService.softDeleteByName(name);
     }
-
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(NotFoundException.class)
-//    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
 
 }

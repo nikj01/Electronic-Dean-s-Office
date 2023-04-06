@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import ua.dgma.electronicDeansOffice.exceptions.IncorrectPropertyException;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.utill.validators.data.TeacherValidationData;
 
 @Component
@@ -54,5 +54,6 @@ public class TeacherValidator implements Validator {
     private void checkExistenceOfTheDepartment(TeacherValidationData data) {
         if(!data.getDepartmentRepository().getByName(data.getTeacher().getDepartment().getName()).isPresent())
             data.getErrors().rejectValue("department", "Department with name " + data.getTeacher().getDepartment().getName() + " does not exist!");
+//            throw new IncorrectPropertyException("Department with name " + data.getTeacher().getDepartment().getName() + " does not exist!");
     }
 }

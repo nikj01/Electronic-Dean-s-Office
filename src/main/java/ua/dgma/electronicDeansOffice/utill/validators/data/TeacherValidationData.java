@@ -5,6 +5,7 @@ import org.springframework.validation.Errors;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 
 @Getter
 @Setter

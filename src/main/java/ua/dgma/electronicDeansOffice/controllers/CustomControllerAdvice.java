@@ -45,4 +45,11 @@ public class CustomControllerAdvice {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ObjectExistsException.class)
+    private ResponseEntity<ErrorResponse> handleException(ObjectExistsException e) {
+        ErrorResponse response = new ErrorResponse(new Date(), 400, "Object exists", e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }

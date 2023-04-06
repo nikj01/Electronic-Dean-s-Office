@@ -34,7 +34,7 @@ INSERT INTO People (uid, date_of_birth, email, name, patronymic, password, surna
 (116, '1991-08-01', 'teacher_email_116@gmail.com', 'teacher_116 name', 'teacher_116 patr', 'qwerty15', 'teacher_116 sur', false),
 (117, '1994-12-18', 'teacher_email_117@gmail.com', 'teacher_117 name', 'teacher_117 patr', 'qwerty16', 'teacher_117 sur', false),
 (118, '1994-11-16', 'teacher_email_118@gmail.com', 'teacher_118 name', 'teacher_118 patr', 'qwerty17', 'teacher_118 sur', false),
-(119, '1997-04-24', 'teacher_email_119@gmail.com', 'teacher_119 name', 'teacher_119 patr', 'qwerty18', 'teacher_119 sur', false),
+(119, '1997-04-24', 'teacher_email_119@gmail.com', 'teacher_119 name', 'teacher_119 patr', 'qwerty18', 'teacher_119 sur', true),
 (120, '7777-05-05', '7777prepod@gmail.com', '7777prepod', '7777prepod', '7777prepod', '7777prepod', true),
 
 (500, '1988-03-09', 'dw_email_1@gmail.com', 'dw_01 name', 'dw_01 patr', 'qwerty19', 'dw_01 sur', false),
@@ -159,7 +159,8 @@ INSERT INTO Teachers (uid, department_id) VALUES
 (116, '4'),
 (117, '4'),
 (118, '4'),
-(119, '4');
+(119, '4'),
+(120, '4');
 
 INSERT INTO Stundent_groups (name, curator_uid, department_id, group_leader_uid, deleted) VALUES
 ('KI 19-1', 100, '1', null, false),

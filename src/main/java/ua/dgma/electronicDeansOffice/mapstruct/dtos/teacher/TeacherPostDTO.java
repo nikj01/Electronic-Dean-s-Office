@@ -2,11 +2,8 @@ package ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher;
 
 import lombok.Data;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultySlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonPostDTO;
-import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
-import ua.dgma.electronicDeansOffice.models.StudentGroup;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,7 +11,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Data
-public class TeacherPostDTO extends PersonPostDTO {
+public class TeacherPostDTO {
 
     @NotNull(message = "The field |UID| cannot be empty!")
     private Long uid;

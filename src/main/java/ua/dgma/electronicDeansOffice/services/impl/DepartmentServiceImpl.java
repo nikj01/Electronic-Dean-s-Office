@@ -12,6 +12,7 @@ import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
+import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.Specifications;
@@ -32,6 +33,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final FacultyRepository facultyRepository;
     private final PeopleService<Teacher> teacherService;
+    private final TeacherRepository teacherRepository;
     private final AbstractValidator departmentValidator;
     private final ExceptionData exceptionData;
     private final Specifications<Department> specifications;
@@ -41,12 +43,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
                                  FacultyRepository facultyRepository,
                                  PeopleService<Teacher> teacherService,
-                                 AbstractValidator departmentValidator,
+                                 TeacherRepository teacherRepository, AbstractValidator departmentValidator,
                                  ExceptionData exceptionData,
                                  Specifications<Department> specifications) {
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
         this.teacherService = teacherService;
+        this.teacherRepository = teacherRepository;
         this.departmentValidator = departmentValidator;
         this.exceptionData = exceptionData;
         this.specifications = specifications;
@@ -85,8 +88,13 @@ public class DepartmentServiceImpl implements DepartmentService {
         validateObject(new DataForAbstractValidator(departmentValidator, department));
 
         department.setFaculty(facultyRepository.getByName(department.getFaculty().getName()).get());
-        for (Teacher teacher: saveDepartmentWithoutTeachers(department)) {
-            teacherService.registerNew(teacher, bindingResult);
+
+        if(department.getTeachers() != null) {
+            for (Teacher teacher: saveDepartmentWithoutTeachers(department)) {
+                teacherService.registerNew(teacher, bindingResult);
+            }
+        } else {
+            departmentRepository.save(department);
         }
     }
 

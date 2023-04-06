@@ -5,7 +5,12 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGet
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 
 @Data
-public class TeacherSlimGetDTO extends PersonSlimGetDTO {
+public class TeacherSlimGetDTO {
 
+    private Long uid;
+    private String surname;
+    private String name;
+    private String patronymic;
     private DepartmentSlimGetDTO department;
+    private boolean deleted;
 }

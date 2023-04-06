@@ -50,7 +50,7 @@ public class Department {
 
     @OneToMany(
             mappedBy = "department",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
@@ -59,7 +59,7 @@ public class Department {
 
     @OneToMany(
             mappedBy = "department",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)

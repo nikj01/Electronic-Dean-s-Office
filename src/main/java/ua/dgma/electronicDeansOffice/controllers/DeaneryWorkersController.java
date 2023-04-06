@@ -21,13 +21,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/deaneryWorkers")
 public class DeaneryWorkersController {
-
-    private final DeaneryWorkerServiceImpl deaneryWorkerService;
+    private final PeopleService<DeaneryWorker> deaneryWorkerService;
     private final DeaneryWorkerMapper deaneryWorkerMapper;
     private final DeaneryWorkerListMapper deaneryWorkerListMapper;
 
     @Autowired
-    public DeaneryWorkersController(DeaneryWorkerServiceImpl deaneryWorkerService,
+    public DeaneryWorkersController(PeopleService<DeaneryWorker> deaneryWorkerService,
                                     DeaneryWorkerMapper deaneryWorkerMapper,
                                     DeaneryWorkerListMapper deaneryWorkerListMapper) {
         this.deaneryWorkerService = deaneryWorkerService;
@@ -49,14 +48,14 @@ public class DeaneryWorkersController {
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerGetDTO findDeaneryWorkerByEmail(@RequestParam("email") String email) {
-        return deaneryWorkerMapper.toDeaneryWorkerGetDTO(deaneryWorkerService.findByEmail(email));
+    public List<DeaneryWorkerGetDTO> findDeaneryWorkerByEmail(@RequestParam("email") String email) {
+        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerSlimGetDTO findSlimDeaneryWorkerByEmail(@RequestParam("email") String email) {
-        return deaneryWorkerMapper.toDeaneryWorkerSlimGetDTO(deaneryWorkerService.findByEmail(email));
+    public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerByEmail(@RequestParam("email") String email) {
+        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
@@ -72,14 +71,6 @@ public class DeaneryWorkersController {
     }
 
     @GetMapping()
-    public List<DeaneryWorkerGetDTO> findAllDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
-                                                           @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                           @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
-                                                           @RequestParam(value = "faculty", required = false) String facultyName) {
-        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
-    }
-
-    @GetMapping("/slim")
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
                                                                    @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                                    @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
@@ -89,9 +80,9 @@ public class DeaneryWorkersController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerNewDeaneryWorker(@RequestBody @Valid DeaneryWorkerPostDTO newPostDeaneryWorker,
+    public void registerNewDeaneryWorker(@RequestBody @Valid DeaneryWorkerPostDTO deaneryWorkerPostDTO,
                                                              BindingResult bindingResult) {
-        DeaneryWorker newDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(newPostDeaneryWorker);
+        DeaneryWorker newDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(deaneryWorkerPostDTO);
 
         deaneryWorkerService.registerNew(newDeaneryWorker, bindingResult);
     }
@@ -114,35 +105,5 @@ public class DeaneryWorkersController {
     public void softDeletePerson(@RequestParam("uid") Long uid) {
         deaneryWorkerService.softDeleteByUId(uid);
     }
-
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(NotFoundException.class)
-//    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
 
 }

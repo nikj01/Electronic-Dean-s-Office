@@ -21,7 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/people")
 public class PeopleController {
-
     private final PeopleService<Person> personService;
     private final PersonMapper personMapper;
     private final PersonListMapper personListMapper;
@@ -49,14 +48,14 @@ public class PeopleController {
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonGetDTO findPersonByEmail(@RequestParam("email") String email) {
-        return personMapper.toPersonGetDTO(personService.findByEmail(email));
+    public List<PersonGetDTO> findPersonByEmail(@RequestParam("email") String email) {
+        return personListMapper.toPeopleGetDTO(personService.findByEmail(email));
     }
 
     @GetMapping("/slim/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonSlimGetDTO findSlimPersonByEmail(@RequestParam("email") String email) {
-        return personMapper.toPersonSlimGetDTO(personService.findByEmail(email));
+    public List<PersonSlimGetDTO> findSlimPersonByEmail(@RequestParam("email") String email) {
+        return personListMapper.toPeopleSlimGetDTO(personService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
@@ -72,14 +71,6 @@ public class PeopleController {
     }
 
     @GetMapping()
-    public List<PersonGetDTO> findAllPeople(@RequestParam(value = "page", required = false) Integer page,
-                                            @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                            @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
-                                            @RequestParam(value = "faculty", required = false) String facultyName) {
-        return personListMapper.toPeopleGetDTO(personService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
-    }
-
-    @GetMapping("/slim")
     public List<PersonSlimGetDTO> findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
                                                     @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                     @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
@@ -114,34 +105,5 @@ public class PeopleController {
     public void softDeletePerson(@RequestParam("uid") Long uid) {
         personService.softDeleteByUId(uid);
     }
-
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//    @ExceptionHandler(RuntimeException.class)
-//    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(NotFoundException.class)
-//    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
 
 }

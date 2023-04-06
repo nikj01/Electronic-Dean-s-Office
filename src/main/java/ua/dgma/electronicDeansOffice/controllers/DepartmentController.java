@@ -25,7 +25,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/departments")
 public class DepartmentController {
-
     private final DepartmentService departmentService;
     private final DepartmentMapper departmentMapper;
     private final DepartmentListMapper departmentListMapper;
@@ -50,13 +49,6 @@ public class DepartmentController {
     }
 
     @GetMapping()
-    public List<DepartmentGetDTO> findAllDepartments(@RequestParam(value = "page", required = false) Integer page,
-                                                     @RequestParam(value = "departmentsPerPage", required = false) Integer departmentsPerPage,
-                                                     @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return departmentListMapper.toDepartmentsGetDTO(departmentService.findAllWithPaginationOrWithout(page, departmentsPerPage, isDeleted));
-    }
-
-    @GetMapping("/slim")
     public List<DepartmentSlimGetDTO> findAllSlimDepartments(@RequestParam(value = "page", required = false) Integer page,
                                                              @RequestParam(value = "people_per_page", required = false) Integer departmentsPerPage,
                                                              @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
@@ -68,7 +60,6 @@ public class DepartmentController {
         return departmentListMapper.toDepartmentsSlimGetDTO((List<Department>) departmentService.findAllDepartmentsByFacultyName(facultyName));
     }
 
-//    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @PostMapping("/register")
     public void registerNewDepartment(@RequestBody @Valid DepartmentPostDTO newPostDepartment,
                                                           BindingResult bindingResult) {
@@ -95,34 +86,4 @@ public class DepartmentController {
     public void softDeleteDepartment(@RequestParam("name") String name) {
         departmentService.softDeleteByName(name);
     }
-
-//    @ExceptionHandler
-//    private ResponseEntity<ErrorResponse> handleException(CustomException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    private ResponseEntity<ErrorResponse> handleException(RuntimeException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler(NotFoundException.class)
-//    private ResponseEntity<ErrorResponse> handleException(NotFoundException e) {
-//        ErrorResponse response = new ErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
 }
