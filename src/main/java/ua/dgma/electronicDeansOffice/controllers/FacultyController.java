@@ -45,7 +45,6 @@ public class FacultyController {
     @GetMapping("/slim/findByName")
     @ResponseStatus(HttpStatus.FOUND)
     public List<FacultySlimGetDTO> findSlimFacultyByName(@RequestParam("name") String name) {
-//        return facultyMapper.toFacultySlimGetDTO(facultyService.findByName(name));
         return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findByName(name));
     }
 

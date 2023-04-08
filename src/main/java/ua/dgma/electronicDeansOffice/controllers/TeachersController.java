@@ -62,9 +62,9 @@ public class TeachersController {
     @GetMapping()
     public List<TeacherSlimGetDTO> findAllSlimTeachers(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                       @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                                       @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                        @RequestParam(value = "faculty", required = false) String facultyName) {
-        return teacherListMapper.toTeachersSlimGetDTO(teacherService.findAllPeople(new FindAllData(page, peoplePerPage, isDeleted, facultyName)));
+        return teacherListMapper.toTeachersSlimGetDTO(teacherService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyName)));
     }
 
     @PostMapping("/register")

@@ -10,9 +10,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentGroupListMapper;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 
-@Mapper(componentModel = "spring",
-        uses = {DepartmentMapper.class, StudentGroupListMapper.class},
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "spring", uses = {DepartmentMapper.class, StudentGroupListMapper.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface TeacherMapper {
     @Named(value = "postTeacher")
     Teacher toTeacher(TeacherPostDTO teacherPost);

@@ -36,7 +36,7 @@ public class TeachersJournalValidator implements Validator {
         TeachersJournalValidationData validationData = new TeachersJournalValidationData(journal, journalRepository, teacherRepository, errors);
 
         if(checkExistenceOfTheJournal(validationData)) {
-            checkExistenceOfTheTeacher(validationData);
+
         } else {
             checkExistenceOfTheTeacher(validationData);
         }

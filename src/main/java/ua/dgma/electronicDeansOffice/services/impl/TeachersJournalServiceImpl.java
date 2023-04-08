@@ -107,29 +107,33 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
 
     @Override
     public void updateById(UpdateTeachersJournalData data) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUpdatedJournal(), journalRepository));
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getId(), journalRepository));
         validateObject(new ValidationData<>(journalValidator, data.getUpdatedJournal(), data.getBindingResult()));
 
         TeachersJournal updatedJournal = data.getUpdatedJournal();
-        updatedJournal.setId(data.getId());
-        updatedJournal.setPages(pageRepository.findAllByJournal_Id(data.getId()));
-        setTeacher(updatedJournal);
-        setJournalComment(updatedJournal);
 
-        journalRepository.save(updatedJournal);
+        TeachersJournal existingJournal = findByid(data.getId());
+        existingJournal.setComment(updatedJournal.getComment());
+
+//        updatedJournal.setId(data.getId());
+//        updatedJournal.setPages(pageRepository.findAllByJournal_Id(data.getId()));
+//        setTeacher(updatedJournal);
+//        setJournalComment(updatedJournal);
+
+        journalRepository.save(existingJournal);
     }
 
-    private void setJournalComment(TeachersJournal journal) {
-        journal.setComment("Personal journal of the teacher " + journal.getTeacher().getSurname() + " " + journal.getTeacher().getName() + " " + journal.getTeacher().getPatronymic());
-    }
+//    private void setJournalComment(TeachersJournal journal) {
+//        journal.setComment("Personal journal of the teacher " + journal.getTeacher().getSurname() + " " + journal.getTeacher().getName() + " " + journal.getTeacher().getPatronymic());
+//    }
 
     private void setJournalComment(TeachersJournal journal, Teacher teacher) {
         journal.setComment("Personal journal of the teacher " + teacher.getSurname() + " " + teacher.getName() + " " + teacher.getPatronymic());
     }
 
-    private void setTeacher(TeachersJournal journal) {
-        journal.setTeacher(teacherRepository.getByUid(journal.getTeacher().getUid()).get());
-    }
+//    private void setTeacher(TeachersJournal journal) {
+//        journal.setTeacher(teacherRepository.getByUid(journal.getTeacher().getUid()).get());
+//    }
 
     private void setTeacher(TeachersJournal journal, Teacher teacher) {
         journal.setTeacher(teacherRepository.getByUid(teacher.getUid()).get());
