@@ -5,22 +5,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
-import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
+import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.services.impl.data.findAllByFacultyData;
-import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
-import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
+import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
 
 @Service
@@ -32,6 +31,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     private final ExceptionData exceptionData;
     private final PeopleSpecifications specifications;
     private Class<P> persistentClass;
+    private String className;
 
     @Autowired
     protected PeopleServiceImpl(PeopleRepository<P> repository,
@@ -42,6 +42,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
         this.validator = validator;
         this.exceptionData = exceptionData;
         this.specifications = specifications;
+        this.className = getPersistentClass().getSimpleName();
     }
 
     /*  This method defines class that is required for the ExceptionData in the future */
@@ -52,14 +53,14 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     public P findByUid(Long uid) {
-        return repository.getByUid(uid).orElseThrow(() -> new NotFoundException(new ExceptionData<>(getPersistentClass().getSimpleName(), "uid", uid)));
+        return repository.getByUid(uid).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "uid", uid)));
     }
 
     @Override
     public List<P> findByEmail(String email) {
         List<P> people = new ArrayList<>();
 
-        people.add(repository.getByEmail(email).orElseThrow(() -> new NotFoundException(new ExceptionData<>(getPersistentClass().getSimpleName(), "email", email))));
+        people.add(repository.getByEmail(email).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "email", email))));
 
         return people;
     };
@@ -71,40 +72,30 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     }
 
     @Override
-    public List<P> findAllPeople(Integer page,
-                                 Integer peoplePerPage,
-                                 Boolean isDeleted,
-                                 String facultyName) {
-        if(facultyName == null)
-            return findAllWithPaginationOrWithout(page, peoplePerPage, isDeleted);
+    public List<P> findAllPeople(FindAllData data) {
+        if(data.getFacultyName() == null)
+            return findAllWithPaginationOrWithout(data);
         else
-            return findAllWithPaginationOrWithoutByFaculty(page, peoplePerPage, isDeleted, facultyName);
+            return findAllWithPaginationOrWithoutByFaculty(data);
     }
 
-    @Override
-    public List<P> findAllWithPaginationOrWithout(Integer page,
-                                                  Integer peoplePerPage,
-                                                  Boolean isDeleted) {
-        if(checkPaginationParameters(page, peoplePerPage))
-            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(isDeleted)));
+    public List<P> findAllWithPaginationOrWithout(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())));
         else
-            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(isDeleted)), PageRequest.of(page, peoplePerPage)).getContent();
+            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
-    @Override
-    public abstract List<P> findAllWithPaginationOrWithoutByFaculty(Integer page,
-                                                           Integer peoplePerPage,
-                                                           Boolean isDeleted,
-                                                           String facultyName);
+    public abstract List<P> findAllWithPaginationOrWithoutByFaculty(FindAllData data);
 
 
     @Override
     @Transactional
-    public abstract void registerNew(P p, BindingResult bindingResult);
+    public abstract void registerNew(RegisterPersonData<P> data);
 
     @Override
     @Transactional
-    public abstract void updateByUid(Long uid, P p, BindingResult bindingResult);
+    public abstract void updateByUid(UpdatePersonData<P> data);
 
     @Override
     @Transactional
@@ -112,17 +103,9 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     @Transactional
-    public void softDeleteByUId(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(getPersistentClass().getSimpleName(), uid, repository));
+    public abstract void softDeleteByUId(Long uid);
 
-        P person = findByUid(uid);
-        person.setDeleted(true);
-
-        repository.save(person);
-    }
-
-    @Override
     public void checkExistsWithSuchSurname(String surname) {
-        if(!repository.existsBySurname(surname)) throw new NotFoundException(new ExceptionData<>(getPersistentClass().getSimpleName(), "surname", surname));
+        if(!repository.existsBySurname(surname)) throw new NotFoundException(new ExceptionData<>(className, "surname", surname));
     }
 }

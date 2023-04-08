@@ -5,13 +5,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Student;
+import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.specifications.StudentSpecifications;
-import ua.dgma.electronicDeansOffice.services.specifications.impl.SpecificationsImpl;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
@@ -29,6 +31,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     private final StudentGroupRepository studentGroupRepository;
     private final StudentValidator studentValidator;
     private final StudentSpecifications specifications;
+    private String className;
 
     @Autowired
     protected StudentServiceImpl(StudentRepository studentRepository,
@@ -41,32 +44,35 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
         this.studentValidator = studentValidator;
         this.studentGroupRepository = studentGroupRepository;
         this.specifications = specifications;
+        this.className = Student.class.getSimpleName();
     }
 
     @Override
-    public List<Student> findAllWithPaginationOrWithoutByFaculty(Integer page, Integer peoplePerPage, Boolean isDeleted, String facultyName) {
-        if(checkPaginationParameters(page, peoplePerPage))
-            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(facultyName).and(specifications.getObjectByDeletedCriteria(isDeleted))));
+    public List<Student> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))));
         else
-            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(facultyName).and(specifications.getObjectByDeletedCriteria(isDeleted))), PageRequest.of(page, peoplePerPage)).getContent();
+            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
     @Override
-    public void registerNew(Student student, BindingResult bindingResult) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(Student.class.getSimpleName(), student.getUid(), studentRepository));
-        validateObject(new ValidationData<>(studentValidator, student, bindingResult));
+    public void registerNew(RegisterPersonData<Student> data) {
+        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(className, data.getNewPerson().getUid(), studentRepository));
+        validateObject(new ValidationData<>(studentValidator, data.getNewPerson(), data.getBindingResult()));
 
-        student.setStudentGroup(studentGroupRepository.getByName(student.getStudentGroup().getName()).get());
+        Student newStudent = data.getNewPerson();
+        newStudent.setStudentGroup(studentGroupRepository.getByName(newStudent.getStudentGroup().getName()).get());
 
-        studentRepository.save(student);
+        studentRepository.save(newStudent);
     }
 
     @Override
-    public void updateByUid(Long uid, Student updatedStudent, BindingResult bindingResult) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(Student.class.getSimpleName(), uid, studentRepository));
-        validateObject(new ValidationData<>(studentValidator, updatedStudent, bindingResult));
+    public void updateByUid(UpdatePersonData<Student> data) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), studentRepository));
+        validateObject(new ValidationData<>(studentValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
-        updatedStudent.setUid(uid);
+        Student updatedStudent = data.getUpdatedPerson();
+        updatedStudent.setUid(data.getUid());
         updatedStudent.setStudentGroup(studentGroupRepository.getByName(updatedStudent.getStudentGroup().getName()).get());
 
         studentRepository.save(updatedStudent);
@@ -74,7 +80,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Override
     public void deleteByUId(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(Student.class.getSimpleName(), uid, studentRepository));
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
 
         if(studentGroupRepository.getByGroupLeader_Uid(Long.valueOf(uid)).isPresent())
             studentGroupRepository.getByGroupLeader_Uid(uid).stream().findFirst().ifPresent(studentGroup -> studentGroup.setGroupLeader(null));
@@ -82,4 +88,13 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
         studentRepository.deleteByUid(uid);
     }
 
+    @Override
+    public void softDeleteByUId(Long uid) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
+
+        Student student = findByUid(uid);
+        student.setDeleted(true);
+
+        studentRepository.save(student);
+    }
 }

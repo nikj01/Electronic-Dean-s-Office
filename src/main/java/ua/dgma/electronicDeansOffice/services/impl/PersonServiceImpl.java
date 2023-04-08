@@ -3,14 +3,13 @@ package ua.dgma.electronicDeansOffice.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
-import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
-import ua.dgma.electronicDeansOffice.models.Person;
-import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.models.Teacher;
+import ua.dgma.electronicDeansOffice.models.*;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -31,6 +30,7 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
     private final PeopleService<DeaneryWorker> deaneryWorkerService;
     private final PeopleService<Teacher> teacherService;
     private final PeopleService<Student> studentService;
+    private String className;
 
     @Autowired
     protected PersonServiceImpl(PeopleRepository<Person> personRepository,
@@ -47,14 +47,15 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
         this.deaneryWorkerService = deaneryWorkerService;
         this.teacherService = teacherService;
         this.studentService = studentService;
+        this.className = Person.class.getSimpleName();
     }
 
     @Override
-    public List<Person> findAllWithPaginationOrWithoutByFaculty(Integer page, Integer peoplePerPage, Boolean isDeleted, String facultyName) {
+    public List<Person> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
         List<Person> peopleAtFaculty = new ArrayList<>();
-        List<DeaneryWorker> deaneryWorkers = deaneryWorkerService.findAllWithPaginationOrWithoutByFaculty(null, null, isDeleted, facultyName);
-        List<Teacher> teachers = teacherService.findAllWithPaginationOrWithoutByFaculty(null, null, isDeleted, facultyName);
-        List<Student> students = studentService.findAllWithPaginationOrWithoutByFaculty(null, null, isDeleted, facultyName);
+        List<DeaneryWorker> deaneryWorkers = deaneryWorkerService.findAllPeople(data);
+        List<Teacher> teachers = teacherService.findAllPeople(data);
+        List<Student> students = studentService.findAllPeople(data);
 
         peopleAtFaculty.addAll(deaneryWorkers);
         peopleAtFaculty.addAll(teachers);
@@ -64,18 +65,17 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
     }
 
     @Override
-    public void registerNew(Person person, BindingResult bindingResult) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(Person.class.getSimpleName(), person.getUid().longValue(), personRepository));
-//        validateObject(new ValidationData<>(personValidator, person, bindingResult));
-        personRepository.save(person);
+    public void registerNew(RegisterPersonData data) {
+        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(className, data.getNewPerson().getUid().longValue(), personRepository));
+        personRepository.save(data.getNewPerson());
     }
 
     @Override
-    public void updateByUid(Long uid, Person updatedPerson, BindingResult bindingResult) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(Person.class.getSimpleName(), uid, personRepository));
-//        validateObject(new ValidationData<>(personValidator , updatedPerson, bindingResult));
+    public void updateByUid(UpdatePersonData data) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), personRepository));
 
-        updatedPerson.setUid(uid);
+        Person updatedPerson = data.getUpdatedPerson();
+        updatedPerson.setUid(data.getUid());
 
         personRepository.save(updatedPerson);
     }
@@ -85,4 +85,13 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
         personRepository.deleteByUid(uid);
     }
 
+    @Override
+    public void softDeleteByUId(Long uid) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, personRepository));
+
+        Person person = findByUid(uid);
+        person.setDeleted(true);
+
+        personRepository.save(person);
+    }
 }

@@ -15,9 +15,10 @@ import javax.persistence.criteria.*;
 @NoArgsConstructor
 @Component
 public class SpecificationsImpl<P> implements DeaneryWorkerSpecifications,
-        TeacherSpecifications,
-        StudentSpecifications,
-        StudentGroupSpecifications {
+                                              TeacherSpecifications,
+                                              StudentSpecifications,
+                                              StudentGroupSpecifications,
+                                              DepartmentSpecifications {
     @NonNull
     private Root<P> root;
     @NonNull
@@ -53,15 +54,14 @@ public class SpecificationsImpl<P> implements DeaneryWorkerSpecifications,
         };
     }
 
-    public Specification<StudentGroup> getStudentGroupByCuratorCriteria(Long curatorUid) {
+    public Specification<StudentGroup> getStudentGroupByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("curator"), curatorUid);
+            return criteriaBuilder.equal(root.get("department").get("faculty").get("name"), facultyName);
         };
     }
-
-    public Specification<StudentGroup> getStudentGroupByDepartmentCriteria(String departmentName) {
+    public Specification<Department> getDepartmentByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("department").get("name"), departmentName);
+            return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
         };
     }
 }

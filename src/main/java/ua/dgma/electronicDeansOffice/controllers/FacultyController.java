@@ -12,6 +12,9 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.FacultyListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.FacultyMapper;
 import ua.dgma.electronicDeansOffice.models.Faculty;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.faculty.RegisterFacultyData;
+import ua.dgma.electronicDeansOffice.services.impl.data.faculty.UpdateFacultyData;
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 
 import javax.validation.Valid;
@@ -48,8 +51,8 @@ public class FacultyController {
     @GetMapping("")
     public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
                                                         @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
-                                                        @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted) {
-        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findAllWithPaginationOrWithout(page, facultiesPerPage, isDeleted));
+                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted) {
+        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findAllFaculties(new FindAllData(page, facultiesPerPage, deleted)));
     }
 
     @PostMapping("/register")
@@ -57,7 +60,7 @@ public class FacultyController {
                                                        BindingResult bindingResult) {
         Faculty newFaculty = facultyMapper.toFaculty(newPostFaculty);
 
-        facultyService.registerNew(newFaculty, bindingResult);
+        facultyService.registerNew(new RegisterFacultyData(newFaculty, bindingResult));
     }
 
     @PatchMapping("/update")
@@ -66,7 +69,7 @@ public class FacultyController {
                                                     BindingResult bindingResult) {
         Faculty updatedFaculty = facultyMapper.toFaculty(facultyPatchDTO);
 
-        facultyService.updateByName(name, updatedFaculty, bindingResult);
+        facultyService.updateByName(new UpdateFacultyData(name, updatedFaculty, bindingResult));
     }
 
     @DeleteMapping("/delete")

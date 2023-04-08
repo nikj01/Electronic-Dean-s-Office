@@ -2,17 +2,18 @@ package ua.dgma.electronicDeansOffice.services.interfaces;
 
 import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
+import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
 
 import java.util.List;
 
 public interface StudentGroupService {
     StudentGroup findById(Long id);
     StudentGroup findByName(String name);
-    List<StudentGroup> findAllWithPaginationOrWithout(Integer page, Integer studentGroupsPerPage, Boolean isDeleted);
-    List<StudentGroup> findAllGroupsByCurator(Long curatorUid, Boolean isDeleted);
-    List<StudentGroup> findAllGroupsByDepartment(String departmentName, Boolean isDeleted);
-    void registerNew(StudentGroup studentGroup, BindingResult bindingResult);
-    void updateByName(String name, StudentGroup updatedStudentGroup, BindingResult bindingResult);
+    List<StudentGroup> findAllStudentGroups(FindAllData data);
+    void registerNew(RegisterStudentGroupData data);
+    void updateByName(UpdateStudentGroupData data);
     void deleteByName(String name);
     void softDeleteByName(String name);
 

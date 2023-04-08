@@ -8,7 +8,6 @@ import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.utill.validators.data.PersonValidationData;
-import ua.dgma.electronicDeansOffice.utill.validators.data.TeacherValidationData;
 
 @Component
 public class PeopleValidator implements Validator {
@@ -30,14 +29,14 @@ public class PeopleValidator implements Validator {
         Person person = (Person) target;
         PersonValidationData validationData = new PersonValidationData(person, repository, errors);
 
-        if(checkPersonId(validationData)) {
+        if(checkPersonsId(validationData)) {
 
         } else {
             checkExistenceOfThePersonById(validationData);
         }
     }
 
-    private boolean checkPersonId(PersonValidationData data) {
+    private boolean checkPersonsId(PersonValidationData data) {
         if(data.getPerson().getUid() == null) return true; else return false;
     }
 

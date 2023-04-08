@@ -2,14 +2,16 @@ package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -30,12 +32,11 @@ public class JournalPage {
     private String pageName;
 
     @OneToMany(
-            fetch = FetchType.EAGER,
-            orphanRemoval = true
+            fetch = FetchType.LAZY
     )
     @Fetch(value = FetchMode.SELECT)
 //    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
-    private Set<StudentGroup> studentGroups = new HashSet<>();
+    private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "page",
@@ -52,7 +53,6 @@ public class JournalPage {
 
     @NotEmpty
     @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private TeachersJournal journal;

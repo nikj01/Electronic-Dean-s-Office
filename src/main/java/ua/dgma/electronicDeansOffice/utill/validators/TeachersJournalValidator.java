@@ -16,16 +16,13 @@ import java.util.Optional;
 public class TeachersJournalValidator implements Validator {
     private final TeachersJournalRepository journalRepository;
     private final TeacherRepository teacherRepository;
-    private final TeachersJournalValidationData data;
 
 
     @Autowired
     public TeachersJournalValidator(TeachersJournalRepository journalRepository,
-                                    TeacherRepository teacherRepository,
-                                    TeachersJournalValidationData data) {
+                                    TeacherRepository teacherRepository) {
         this.journalRepository = journalRepository;
         this.teacherRepository = teacherRepository;
-        this.data = data;
     }
 
     @Override
@@ -36,35 +33,34 @@ public class TeachersJournalValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         TeachersJournal journal = (TeachersJournal) target;
+        TeachersJournalValidationData validationData = new TeachersJournalValidationData(journal, journalRepository, teacherRepository, errors);
 
         if(checkExistenceOfTheJournal(validationData)) {
             checkExistenceOfTheTeacher(validationData);
         } else {
-            findTeachersJournal(validationData);
+            checkExistenceOfTheTeacher(validationData);
         }
-    }
-
-    private TeachersJournalValidationData getData(TeachersJournalValidationData data) {
-        return data;
     }
 
     private boolean checkExistenceOfTheJournal(TeachersJournalValidationData data) {
         if(data.getTeachersJournal().getId() == null) return true; else return false;
     }
 
-    private Optional<TeachersJournal> findTeachersJournal(TeachersJournalValidationData data) {
-        return journalRepository.findById(data.getTeachersJournal().getId());
-    }
-
     private void checkExistenceOfTheTeacher(TeachersJournalValidationData data) {
         if(!findTeacher(data).isPresent())
-            data.getErrors().rejectValue("teacher", "Teacher with uid " + getTeacherFromData().getUid() + " does not exist!");
+            data.getErrors().rejectValue("teacher", "Teacher with uid " + getTeacherFromData(data).getUid() + " does not exist!");
     }
-    private Teacher getTeacherFromData() {
+
+    private Teacher getTeacherFromData(TeachersJournalValidationData data) {
         return data.getTeachersJournal().getTeacher();
     }
 
     private Optional<Teacher> findTeacher(TeachersJournalValidationData data) {
-        return teacherRepository.getByUid(findTeachersJournal(data).get().getTeacher().getUid());
+        return data.getTeacherRepository().getByUid(getTeacherFromData(data).getUid());
     }
+
+//    private Optional<TeachersJournal> findTeachersJournal(TeachersJournalValidationData data) {
+//        return journalRepository.findById(data.getTeachersJournal().getId());
+//    }
+
 }

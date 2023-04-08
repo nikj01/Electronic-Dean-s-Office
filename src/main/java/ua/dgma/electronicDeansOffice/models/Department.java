@@ -45,7 +45,6 @@ public class Department {
     @ManyToOne(cascade = javax.persistence.CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
-//    @JsonBackReference
     private Faculty faculty;
 
     @OneToMany(

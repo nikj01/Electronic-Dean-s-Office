@@ -11,6 +11,9 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.TeacherListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.TeacherMapper;
 import ua.dgma.electronicDeansOffice.models.Teacher;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
 import javax.validation.Valid;
@@ -71,9 +74,9 @@ public class TeachersController {
     @GetMapping()
     public List<TeacherSlimGetDTO> findAllSlimTeachers(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                       @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                                       @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean isDeleted,
                                                        @RequestParam(value = "faculty", required = false) String facultyName) {
-        return teacherListMapper.toTeachersSlimGetDTO(teacherService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
+        return teacherListMapper.toTeachersSlimGetDTO(teacherService.findAllPeople(new FindAllData(page, peoplePerPage, isDeleted, facultyName)));
     }
 
     @PostMapping("/register")
@@ -82,7 +85,7 @@ public class TeachersController {
                                                        BindingResult bindingResult) {
         Teacher newTeacher = teacherMapper.toTeacher(teacherPostDTO);
 
-        teacherService.registerNew(newTeacher, bindingResult);
+        teacherService.registerNew(new RegisterPersonData<>(newTeacher, bindingResult));
     }
 
     @PatchMapping("/update")
@@ -91,7 +94,7 @@ public class TeachersController {
                                                    BindingResult bindingResult) {
         Teacher newTeacher = teacherMapper.toTeacher(teacherPatchDTO);
 
-        teacherService.updateByUid(uid, newTeacher, bindingResult);
+        teacherService.updateByUid(new UpdatePersonData<>(uid, newTeacher, bindingResult));
     }
 
     @DeleteMapping("/delete")

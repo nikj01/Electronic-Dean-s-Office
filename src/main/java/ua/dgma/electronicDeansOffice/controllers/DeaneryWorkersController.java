@@ -13,6 +13,9 @@ import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.DeaneryWorker
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.DeaneryWorkerMapper;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.services.impl.DeaneryWorkerServiceImpl;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
 import javax.validation.Valid;
@@ -73,9 +76,9 @@ public class DeaneryWorkersController {
     @GetMapping()
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
                                                                    @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                                   @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                                                   @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                                    @RequestParam(value = "faculty", required = false) String facultyName) {
-        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
+        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyName)));
     }
 
     @PostMapping("/register")
@@ -84,7 +87,7 @@ public class DeaneryWorkersController {
                                                              BindingResult bindingResult) {
         DeaneryWorker newDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(deaneryWorkerPostDTO);
 
-        deaneryWorkerService.registerNew(newDeaneryWorker, bindingResult);
+        deaneryWorkerService.registerNew(new RegisterPersonData<>(newDeaneryWorker, bindingResult));
     }
 
     @PatchMapping("/update")
@@ -93,7 +96,7 @@ public class DeaneryWorkersController {
                                                          BindingResult bindingResult) {
         DeaneryWorker updatedDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(deaneryWorkerPatchDTO);
 
-        deaneryWorkerService.updateByUid(uid, updatedDeaneryWorker, bindingResult);
+        deaneryWorkerService.updateByUid(new UpdatePersonData<>(uid, updatedDeaneryWorker, bindingResult));
     }
 
     @DeleteMapping("/delete")

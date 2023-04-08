@@ -5,22 +5,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
-import ua.dgma.electronicDeansOffice.models.Department;
-import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.models.StudentGroup;
-import ua.dgma.electronicDeansOffice.models.Teacher;
+import ua.dgma.electronicDeansOffice.models.*;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
+import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.StudentGroupSpecifications;
-import ua.dgma.electronicDeansOffice.services.specifications.impl.SpecificationsImpl;
-import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -76,36 +74,38 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     @Override
-    public List<StudentGroup> findAllWithPaginationOrWithout(Integer page, Integer studentGroupsPerPage, Boolean isDeleted) {
-        if(checkPaginationParameters(page, studentGroupsPerPage))
-            return studentGroupRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted));
+    public List<StudentGroup> findAllStudentGroups(FindAllData data) {
+        if(data.getFacultyName() == null)
+            return findAllWithPaginationOrWithout(data);
         else
-            return studentGroupRepository.findAll(specifications.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, studentGroupsPerPage)).getContent();
+            return findAllWithPaginationOrWithoutByFaculty(data);
     }
 
-    @Override
-    public List<StudentGroup> findAllGroupsByCurator(Long curatorUid, Boolean isDeleted) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(Teacher.class.getSimpleName(), curatorUid, teacherRepository));
-
-        return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByCuratorCriteria(curatorUid)).and(specifications.getObjectByDeletedCriteria(isDeleted)));
+    public List<StudentGroup> findAllWithPaginationOrWithout(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return studentGroupRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()));
+        else
+            return studentGroupRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
-    @Override
-    public List<StudentGroup> findAllGroupsByDepartment(String departmentName, Boolean isDeleted) {
-        checkExistsWithSuchName(new CheckExistsByNameData(Department.class.getSimpleName(), departmentName, departmentRepository));
-
-        return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByDepartmentCriteria(departmentName)).and(specifications.getObjectByDeletedCriteria(isDeleted)));
+    public List<StudentGroup> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))));
+        else
+            return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
     @Override
     @Transactional
-    public void registerNew(StudentGroup studentGroup, BindingResult bindingResult) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(StudentGroup.class.getSimpleName(), studentGroup.getName(), studentGroupRepository));
-        validateObject(new DataForAbstractValidator<>(studentGroupValidator, studentGroup));
+    public void registerNew(RegisterStudentGroupData data) {
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, data.getNewStudentGroup().getName(), studentGroupRepository));
+        validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getNewStudentGroup()));
 
-        studentGroup.setDepartment(departmentRepository.getByName(studentGroup.getDepartment().getName()).get());
-        for (Student student: saveStudentGroupWithoutStudents(studentGroup))
-            studentService.registerNew(student, bindingResult);
+        StudentGroup newStudentGroup = data.getNewStudentGroup();
+        newStudentGroup.setDepartment(departmentRepository.getByName(newStudentGroup.getDepartment().getName()).get());
+
+        for (Student student: saveStudentGroupWithoutStudents(newStudentGroup))
+            studentService.registerNew(new RegisterPersonData<>(student, data.getBindingResult()));
     }
 
     public List<Student> saveStudentGroupWithoutStudents(StudentGroup studentGroup) {
@@ -119,15 +119,16 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
     @Override
     @Transactional
-    public void updateByName(String name, StudentGroup updatedStudentGroup, BindingResult bindingResult) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
-        validateObject(new DataForAbstractValidator<>(studentGroupValidator, updatedStudentGroup));
+    public void updateByName(UpdateStudentGroupData data) {
+        checkExistsWithSuchName(new CheckExistsByNameData(className, data.getName(), studentGroupRepository));
+        validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getUpdatedStudentGroup()));
 
-        updatedStudentGroup.setId(studentGroupRepository.getByName(name).get().getId());
+        StudentGroup updatedStudentGroup = data.getUpdatedStudentGroup();
+        updatedStudentGroup.setId(studentGroupRepository.getByName(data.getName()).get().getId());
         updatedStudentGroup.setDepartment(departmentRepository.getByName(updatedStudentGroup.getDepartment().getName()).get());
         updatedStudentGroup.setCurator(teacherRepository.getByUid(updatedStudentGroup.getCurator().getUid().longValue()).get());
         updatedStudentGroup.setGroupLeader(studentRepository.getByUid(updatedStudentGroup.getGroupLeader().getUid().longValue()).get());
-        updatedStudentGroup.setStudents(studentGroupRepository.getByName(name).get().getStudents());
+        updatedStudentGroup.setStudents(studentGroupRepository.getByName(data.getName()).get().getStudents());
 
         studentGroupRepository.save(updatedStudentGroup);
     }

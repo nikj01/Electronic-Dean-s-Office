@@ -13,6 +13,9 @@ import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.PersonListMap
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.services.impl.PersonServiceImpl;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
 import javax.validation.Valid;
@@ -73,9 +76,9 @@ public class PeopleController {
     @GetMapping()
     public List<PersonSlimGetDTO> findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
                                                     @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
-                                                    @RequestParam(value = "isDeleted", required = false, defaultValue = "false") Boolean isDeleted,
+                                                    @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                     @RequestParam(value = "faculty", required = false) String facultyName) {
-        return personListMapper.toPeopleSlimGetDTO(personService.findAllPeople(page, peoplePerPage, isDeleted, facultyName));
+        return personListMapper.toPeopleSlimGetDTO(personService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyName)));
     }
 
     @PostMapping("/register")
@@ -84,7 +87,7 @@ public class PeopleController {
                                                       BindingResult bindingResult) {
         Person newPerson = personMapper.toPerson(newPostPerson);
 
-        personService.registerNew(newPerson, bindingResult);
+        personService.registerNew(new RegisterPersonData<>(newPerson, bindingResult));
     }
 
     @PatchMapping("/update")
@@ -93,7 +96,7 @@ public class PeopleController {
                                                   BindingResult bindingResult) {
         Person updatedPerson = personMapper.toPerson(personPatchDTO);
 
-        personService.updateByUid(uid, updatedPerson, bindingResult);
+        personService.updateByUid(new UpdatePersonData<>(uid, updatedPerson, bindingResult));
     }
 
     @DeleteMapping("/delete")

@@ -2,21 +2,25 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Department;
-import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.department.RegisterDepartmentData;
+import ua.dgma.electronicDeansOffice.services.impl.data.department.UpdateDepartmentData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
-import ua.dgma.electronicDeansOffice.services.specifications.impl.SpecificationsImpl;
+import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -37,7 +41,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final TeacherRepository teacherRepository;
     private final AbstractValidator departmentValidator;
     private final ExceptionData exceptionData;
-    private final DeletedSpecification specification;
+    private final DepartmentSpecifications specifications;
     private String className;
 
     @Autowired
@@ -47,56 +51,59 @@ public class DepartmentServiceImpl implements DepartmentService {
                                  TeacherRepository teacherRepository,
                                  AbstractValidator departmentValidator,
                                  ExceptionData exceptionData,
-                                 DeletedSpecification specification) {
+                                 DepartmentSpecifications specifications) {
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
         this.teacherService = teacherService;
         this.teacherRepository = teacherRepository;
         this.departmentValidator = departmentValidator;
         this.exceptionData = exceptionData;
-        this.specification = specification;
+        this.specifications = specifications;
         className = Department.class.getSimpleName();
     }
 
-
-    @Override
-    public Department findById(Long id) {
-        return departmentRepository.findById(id).orElseThrow(()-> new NotFoundException(new ExceptionData<>(className, "id", id)));
-    }
 
     @Override
     public Department findByName(String name) {
         return departmentRepository.getByName(name).orElseThrow(()-> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
 
-    @Override
-    public List<Department> findAllWithPaginationOrWithout(Integer page, Integer departmentsPerPage, Boolean isDeleted) {
-        if(checkPaginationParameters(page, departmentsPerPage))
-            return departmentRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted));
+    public List<Department> findAllDepartments(FindAllData data) {
+        if(data.getFacultyName() == null)
+            return findAllWithPaginationOrWithout(data);
         else
-            return departmentRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, departmentsPerPage)).getContent();
+            return findAllWithPaginationOrWithoutByFaculty(data);
     }
 
-    @Override
-    public List<Department> findAllDepartmentsByFacultyName(String facultyName) {
-        checkExistsWithSuchName(new CheckExistsByNameData(Faculty.class.getSimpleName(), facultyName, facultyRepository));
-        return departmentRepository.getAllByFacultyName(facultyName);
+    public List<Department> findAllWithPaginationOrWithout(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()));
+        else
+            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+    }
+
+    public List<Department> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return departmentRepository.findAll(Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))));
+        else
+            return departmentRepository.findAll(Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
     @Override
     @Transactional
-    public void registerNew(Department department, BindingResult bindingResult) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(Department.class.getSimpleName(), department.getName(), departmentRepository));
-        validateObject(new DataForAbstractValidator(departmentValidator, department));
+    public void registerNew(RegisterDepartmentData data) {
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, data.getNewDepartment().getName(), departmentRepository));
+        validateObject(new DataForAbstractValidator(departmentValidator, data.getNewDepartment()));
 
-        department.setFaculty(facultyRepository.getByName(department.getFaculty().getName()).get());
+        Department newDepartment = data.getNewDepartment();
+        newDepartment.setFaculty(facultyRepository.getByName(newDepartment.getFaculty().getName()).get());
 
-        if(department.getTeachers() != null) {
-            for (Teacher teacher: saveDepartmentWithoutTeachers(department)) {
-                teacherService.registerNew(teacher, bindingResult);
+        if(newDepartment.getTeachers() != null) {
+            for (Teacher teacher: saveDepartmentWithoutTeachers(newDepartment)) {
+                teacherService.registerNew(new RegisterPersonData<>(teacher, data.getBindingResult()));
             }
         } else {
-            departmentRepository.save(department);
+            departmentRepository.save(newDepartment);
         }
     }
 
@@ -111,14 +118,15 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public void updateByName(String name, Department updatedDepartment, BindingResult bindingResult) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
-        validateObject(new DataForAbstractValidator(departmentValidator, updatedDepartment));
+    public void updateByName(UpdateDepartmentData data) {
+        checkExistsWithSuchName(new CheckExistsByNameData(className, data.getName(), departmentRepository));
+        validateObject(new DataForAbstractValidator(departmentValidator, data.getUpdatedDepartment()));
 
-        updatedDepartment.setId(departmentRepository.getByName(name).get().getId());
+        Department updatedDepartment = data.getUpdatedDepartment();
+        updatedDepartment.setId(departmentRepository.getByName(data.getName()).get().getId());
         updatedDepartment.setFaculty(facultyRepository.getByName(updatedDepartment.getFaculty().getName()).get());
-        updatedDepartment.setTeachers(departmentRepository.getByName(name).get().getTeachers());
-        updatedDepartment.setStudentGroups(departmentRepository.getByName(name).get().getStudentGroups());
+        updatedDepartment.setTeachers(departmentRepository.getByName(data.getName()).get().getTeachers());
+        updatedDepartment.setStudentGroups(departmentRepository.getByName(data.getName()).get().getStudentGroups());
 
         departmentRepository.save(updatedDepartment);
     }

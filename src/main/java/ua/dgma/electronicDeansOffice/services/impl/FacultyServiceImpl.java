@@ -11,6 +11,10 @@ import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.faculty.RegisterFacultyData;
+import ua.dgma.electronicDeansOffice.services.impl.data.faculty.UpdateFacultyData;
+import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
@@ -51,31 +55,28 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty findById(Long id) {
-        return facultyRepository.findById(id).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", id)));
-    }
-
-    @Override
     public Faculty findByName(String name) {
         return facultyRepository.getByName(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
 
     @Override
-    public List<Faculty> findAllWithPaginationOrWithout(Integer page, Integer facultiesPerPage, Boolean isDeleted) {
-        if(checkPaginationParameters(page, facultiesPerPage))
-            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted));
+    public List<Faculty> findAllFaculties(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(data.getDeleted()));
         else
-            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(isDeleted), PageRequest.of(page, facultiesPerPage)).getContent();
+            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(data.getDeleted()), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
     @Override
     @Transactional
-    public void registerNew(Faculty faculty, BindingResult bindingResult) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(Faculty.class.getSimpleName(), faculty.getName(), facultyRepository));
-        validateObject(new DataForAbstractValidator(facultyValidator, faculty));
+    public void registerNew(RegisterFacultyData data) {
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, data.getNewFaculty().getName(), facultyRepository));
+        validateObject(new DataForAbstractValidator(facultyValidator, data.getNewFaculty()));
 
-        for (DeaneryWorker worker: saveFacultyWithoutDeaneryWorkers(faculty))
-            deaneryWorkerService.registerNew(worker, bindingResult);
+        Faculty newFaculty = data.getNewFaculty();
+
+        for (DeaneryWorker worker: saveFacultyWithoutDeaneryWorkers(newFaculty))
+            deaneryWorkerService.registerNew(new RegisterPersonData<>(worker, data.getBindingResult()));
     }
 
     public List<DeaneryWorker> saveFacultyWithoutDeaneryWorkers(Faculty faculty) {
@@ -89,13 +90,14 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     @Transactional
-    public void updateByName(String name, Faculty updatedFaculty, BindingResult bindingResult) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, facultyRepository));
-        validateObject(new DataForAbstractValidator(facultyValidator, updatedFaculty));
+    public void updateByName(UpdateFacultyData data) {
+        checkExistsWithSuchName(new CheckExistsByNameData(className, data.getName(), facultyRepository));
+        validateObject(new DataForAbstractValidator(facultyValidator, data.getUpdatedFaculty()));
 
-        updatedFaculty.setId(facultyRepository.getByName(name).get().getId());
-        updatedFaculty.setDepartments(facultyRepository.getByName(name).get().getDepartments());
-        updatedFaculty.setDeaneryWorkers(facultyRepository.getByName(name).get().getDeaneryWorkers());
+        Faculty updatedFaculty = data.getUpdatedFaculty();
+        updatedFaculty.setId(facultyRepository.getByName(data.getName()).get().getId());
+        updatedFaculty.setDepartments(facultyRepository.getByName(data.getName()).get().getDepartments());
+        updatedFaculty.setDeaneryWorkers(facultyRepository.getByName(data.getName()).get().getDeaneryWorkers());
 
         facultyRepository.save(updatedFaculty);
     }

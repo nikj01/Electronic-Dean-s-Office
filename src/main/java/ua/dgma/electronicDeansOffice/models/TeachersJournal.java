@@ -7,7 +7,9 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @Entity
@@ -22,15 +24,17 @@ public class TeachersJournal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
-    @NotEmpty(message = "The field |TEACHER| cannot be empty!")
+//    @NotNull(message = "The field |TEACHER| cannot be empty!")
     @OneToOne(
-            orphanRemoval = true,
             fetch = FetchType.LAZY)
-//    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JoinColumn
     private Teacher teacher;
+
+    @NotBlank(message = "The field |COMMENT| cannot be empty!")
+    @Column(nullable = false)
+    private String comment;
 
     @OneToMany(
             mappedBy = "journal",
@@ -41,4 +45,6 @@ public class TeachersJournal {
     @Cascade(value = CascadeType.SAVE_UPDATE)
     private List<JournalPage> pages = new ArrayList<>();
 
+    @Column(nullable = false)
+    private boolean deleted;
 }
