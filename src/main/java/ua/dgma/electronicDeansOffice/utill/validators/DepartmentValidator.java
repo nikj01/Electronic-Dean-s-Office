@@ -2,23 +2,16 @@ package ua.dgma.electronicDeansOffice.utill.validators;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.IncorrectPropertyException;
 import ua.dgma.electronicDeansOffice.models.Department;
-import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
-import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DepartmentValidationData;
 
 import java.util.List;
-
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchName;
 
 @Component
 public class DepartmentValidator implements AbstractValidator {
@@ -55,7 +48,7 @@ public class DepartmentValidator implements AbstractValidator {
     }
 
     private void checkExistenceOfTheFaculty(DepartmentValidationData data) {
-        if(!data.getFacultyRepository().getByName(data.getDepartment().getFaculty().getName()).isPresent())
+        if(!data.getFacultyRepository().getByNameContainingIgnoreCase(data.getDepartment().getFaculty().getName()).isPresent())
             throw new IncorrectPropertyException("Faculty with name " + data.getDepartment().getFaculty().getName() + " does not exist!");
     }
 

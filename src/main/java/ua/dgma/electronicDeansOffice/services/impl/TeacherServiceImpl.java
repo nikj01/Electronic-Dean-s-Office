@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import ua.dgma.electronicDeansOffice.repositories.TeachersJournalRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.RegisterTeachersJournalData;
 import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
 import ua.dgma.electronicDeansOffice.services.specifications.TeacherSpecifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
@@ -61,9 +63,9 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
     @Override
     public List<Teacher> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
         if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))));
+            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
         else
-            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
     }
 
     @Override
@@ -76,7 +78,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
         newTeacher.setDepartment(departmentRepository.getByName(newTeacher.getDepartment().getName()).get());
 
         teacherRepository.save(newTeacher);
-        journalService.registerNew(newTeacher, data.getBindingResult());
+        journalService.registerNew(new RegisterTeachersJournalData(newTeacher, data.getBindingResult()));
     }
 
     @Override

@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,9 +51,9 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
     @Override
     public List<DeaneryWorker> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
         if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))));
+            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
         else
-            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
     }
 
     @Override

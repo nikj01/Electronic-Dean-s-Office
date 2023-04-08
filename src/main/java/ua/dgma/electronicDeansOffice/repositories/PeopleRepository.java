@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface PeopleRepository<T extends Person> extends JpaRepository<T, Long>, JpaSpecificationExecutor {
     Optional<T> getByUid(Long uid);
-    Optional<T> getByEmail(String email);
-    List<T> getBySurname(String surname);
+    Optional<List<T>> getByEmailContainingIgnoreCase(String email);
+    Optional<List<T>> getBySurnameContainingIgnoreCase(String surname);
     void deleteByUid(Long uid);
     boolean existsByUid(Long uid);
     boolean existsBySurname(String surname);

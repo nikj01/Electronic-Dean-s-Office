@@ -51,23 +51,11 @@ public class DeaneryWorkersController {
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<DeaneryWorkerGetDTO> findDeaneryWorkerByEmail(@RequestParam("email") String email) {
-        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findByEmail(email));
-    }
-
-    @GetMapping("/slim/findByEmail")
-    @ResponseStatus(HttpStatus.FOUND)
     public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerByEmail(@RequestParam("email") String email) {
         return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<DeaneryWorkerGetDTO> findDeaneryWorkerBySurname(@RequestParam("surname") String surname) {
-        return deaneryWorkerListMapper.toDeaneryWorkersGetDTO(deaneryWorkerService.findBySurname(surname));
-    }
-
-    @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
     public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerBySurname(@RequestParam("surname") String surname) {
         return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findBySurname(surname));

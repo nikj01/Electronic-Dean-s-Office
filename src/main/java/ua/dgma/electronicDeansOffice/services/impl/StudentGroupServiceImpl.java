@@ -64,13 +64,8 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     @Override
-    public StudentGroup findById(Long id) {
-        return studentGroupRepository.findById(id).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", id)));
-    }
-
-    @Override
-    public StudentGroup findByName(String name) {
-        return studentGroupRepository.getByName(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
+    public List<StudentGroup> findByName(String name) {
+        return studentGroupRepository.getByNameContainingIgnoreCase(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
 
     @Override
@@ -145,7 +140,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public void softDeleteByName(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
 
-        StudentGroup studentGroup = findByName(name);
+        StudentGroup studentGroup = studentGroupRepository.getByName(name).get();
         studentGroup.getStudents().stream().forEach(student -> student.setDeleted(true));
         studentGroup.setDeleted(true);
 

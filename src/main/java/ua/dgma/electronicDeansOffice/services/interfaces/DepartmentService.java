@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface DepartmentService {
-    Department findByName(String name);
+    List<Department> findByName(String name);
     List<Department> findAllDepartments(FindAllData data);
     void registerNew(RegisterDepartmentData data);
     void updateByName(UpdateDepartmentData data);

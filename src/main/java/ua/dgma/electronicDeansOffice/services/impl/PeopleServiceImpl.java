@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,17 +59,12 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     public List<P> findByEmail(String email) {
-        List<P> people = new ArrayList<>();
-
-        people.add(repository.getByEmail(email).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "email", email))));
-
-        return people;
+        return repository.getByEmailContainingIgnoreCase(email).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "email", email)));
     };
 
     @Override
     public List<P> findBySurname(String surname) {
-        checkExistsWithSuchSurname(surname);
-        return repository.getBySurname(surname);
+        return repository.getBySurnameContainingIgnoreCase(surname).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "surname", surname)));
     }
 
     @Override
@@ -81,9 +77,9 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     public List<P> findAllWithPaginationOrWithout(FindAllData data) {
         if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), Sort.by("surname"));
         else
-            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
     }
 
     public abstract List<P> findAllWithPaginationOrWithoutByFaculty(FindAllData data);

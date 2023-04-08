@@ -2,10 +2,10 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Teacher;
@@ -13,8 +13,11 @@ import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.JournalPageRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeachersJournalRepository;
+import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.RegisterTeachersJournalData;
+import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.UpdateTeachersJournalData;
 import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
-import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
+import ua.dgma.electronicDeansOffice.services.specifications.impl.TeachersJournalSpecifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.TeachersJournalValidator;
@@ -31,7 +34,7 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     private final TeachersJournalRepository journalRepository;
     private final TeacherRepository teacherRepository;
     private final JournalPageRepository pageRepository;
-    private final DeletedSpecification specification;
+    private final TeachersJournalSpecifications specifications;
     private final TeachersJournalValidator journalValidator;
     private String className;
 
@@ -39,12 +42,12 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     public TeachersJournalServiceImpl(TeachersJournalRepository journalRepository,
                                       TeacherRepository teacherRepository,
                                       JournalPageRepository pageRepository,
-                                      DeletedSpecification specification,
+                                      TeachersJournalSpecifications specifications,
                                       TeachersJournalValidator journalValidator) {
         this.journalRepository = journalRepository;
         this.teacherRepository = teacherRepository;
         this.pageRepository = pageRepository;
-        this.specification = specification;
+        this.specifications = specifications;
         this.journalValidator = journalValidator;
         this.className = TeachersJournal.class.getSimpleName();
     }
@@ -59,37 +62,41 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
         return journalRepository.getByTeacher_Uid(uid).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "teachers_id", uid)));
     }
     @Override
-    public TeachersJournal findByComment(String comment) {
-        return journalRepository.getByCommentContaining(comment).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "comment", comment)));
+    public List<TeachersJournal> findByComment(String comment) {
+        return journalRepository.getByCommentContainingIgnoreCase(comment).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "comment", comment)));
     }
 
     @Override
-    public List<TeachersJournal> findAll(Integer page, Integer journalsPerPage, Boolean isDeleted, String faculutyName) {
-        if(faculutyName == null)
-            return findAllWithPaginationOrWithout(page, journalsPerPage, isDeleted);
+    public List<TeachersJournal> findAll(FindAllData data) {
+        if(data.getFacultyName() == null)
+            return findAllWithPaginationOrWithout(data);
         else
-            return findAllWithPaginationOrWithoutByFaculty(page, journalsPerPage, isDeleted, faculutyName);
+            return findAllWithPaginationOrWithoutByFaculty(data);
     }
 
-    public List<TeachersJournal> findAllWithPaginationOrWithout(Integer page, Integer journalsPerPage, Boolean isDeleted) {
-        if(checkPaginationParameters(page, journalsPerPage))
-            return journalRepository.findAll(Specification.where(specification.getObjectByDeletedCriteria(isDeleted)));
+    public List<TeachersJournal> findAllWithPaginationOrWithout(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return journalRepository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), Sort.by("id"));
         else
-            return journalRepository.findAll(Specification.where(specification.getObjectByDeletedCriteria(isDeleted)), PageRequest.of(page, journalsPerPage)).getContent();
+            return journalRepository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("id"))).getContent();
     }
 
-    public List<TeachersJournal> findAllWithPaginationOrWithoutByFaculty(Integer page, Integer journalsPerPage, Boolean isDeleted, String faculutyName) {
-        return null;
+    public List<TeachersJournal> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return journalRepository.findAll(Specification.where(specifications.getTeacherJournalByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("id"));
+        else
+            return journalRepository.findAll(Specification.where(specifications.getTeacherJournalByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("id"))).getContent();
     }
 
     @Override
-    public void registerNew(Teacher teacher, BindingResult bindingResult) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(teacherClassName(), teacher.getUid(), journalRepository));
+    public void registerNew(RegisterTeachersJournalData data) {
+        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(teacherClassName(), data.getNewTeacher().getUid(), journalRepository));
 //        validateObject(new ValidationData<>(journalValidator, teacher, bindingResult));
 
+        Teacher newTeacher = data.getNewTeacher();
         TeachersJournal newJournal = new TeachersJournal();
-        setTeacher(newJournal, teacher);
-        setJournalComment(newJournal, teacher);
+        setTeacher(newJournal, newTeacher);
+        setJournalComment(newJournal, newTeacher);
 
         journalRepository.save(newJournal);
     }
@@ -99,12 +106,13 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     @Override
-    public void updateById(Long id, TeachersJournal updatedJournal, BindingResult bindingResult) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, updatedJournal, journalRepository));
-        validateObject(new ValidationData<>(journalValidator, updatedJournal, bindingResult));
+    public void updateById(UpdateTeachersJournalData data) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUpdatedJournal(), journalRepository));
+        validateObject(new ValidationData<>(journalValidator, data.getUpdatedJournal(), data.getBindingResult()));
 
-        updatedJournal.setId(id);
-        updatedJournal.setPages(pageRepository.findAllByJournal_Id(id));
+        TeachersJournal updatedJournal = data.getUpdatedJournal();
+        updatedJournal.setId(data.getId());
+        updatedJournal.setPages(pageRepository.findAllByJournal_Id(data.getId()));
         setTeacher(updatedJournal);
         setJournalComment(updatedJournal);
 

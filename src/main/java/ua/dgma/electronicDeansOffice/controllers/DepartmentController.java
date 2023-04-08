@@ -35,13 +35,8 @@ public class DepartmentController {
     }
 
     @GetMapping("/findByName")
-    public DepartmentGetDTO findDepartmentByName(@RequestParam("name") String name) {
-        return departmentMapper.toDepartmentGetDTO(departmentService.findByName(name));
-    }
-
-    @GetMapping("/slim/findByName")
-    public DepartmentSlimGetDTO findSlimDepartmentByName(@RequestParam("name") String name) {
-        return departmentMapper.toDepartmentSlimGetDTO(departmentService.findByName(name));
+    public List<DepartmentSlimGetDTO> findDepartmentByName(@RequestParam("name") String name) {
+        return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findByName(name));
     }
 
     @GetMapping()

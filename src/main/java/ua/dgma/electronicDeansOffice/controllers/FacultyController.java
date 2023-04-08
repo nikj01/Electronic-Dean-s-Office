@@ -38,14 +38,15 @@ public class FacultyController {
 
     @GetMapping("/findByName")
     @ResponseStatus(HttpStatus.FOUND)
-    public FacultyGetDTO findFacultyByName(@RequestParam("name") String name) {
-        return facultyMapper.toFacultyGetDTO(facultyService.findByName(name));
+    public List<FacultySlimGetDTO> findFacultyByName(@RequestParam("name") String name) {
+        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findByName(name));
     }
 
     @GetMapping("/slim/findByName")
     @ResponseStatus(HttpStatus.FOUND)
-    public FacultySlimGetDTO findSlimFacultyByName(@RequestParam("name") String name) {
-        return facultyMapper.toFacultySlimGetDTO(facultyService.findByName(name));
+    public List<FacultySlimGetDTO> findSlimFacultyByName(@RequestParam("name") String name) {
+//        return facultyMapper.toFacultySlimGetDTO(facultyService.findByName(name));
+        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findByName(name));
     }
 
     @GetMapping("")

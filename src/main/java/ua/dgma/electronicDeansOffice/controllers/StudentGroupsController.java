@@ -41,14 +41,8 @@ public class StudentGroupsController {
 
     @GetMapping("/findByName")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGroupGetDTO findStudentGroupByName(@RequestParam("name") String name) {
-        return studentGroupMapper.toStudentGroupGetDTO(studentGroupService.findByName(name));
-    }
-
-    @GetMapping("/slim/findByName")
-    @ResponseStatus(HttpStatus.FOUND)
-    public StudentGroupSlimGetDTO findSlimStudentGroupByName(@RequestParam("name") String name) {
-        return studentGroupMapper.toStudentGroupSlimGetDTO(studentGroupService.findByName(name));
+    public List<StudentGroupSlimGetDTO> findStudentGroupByName(@RequestParam("name") String name) {
+        return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findByName(name));
     }
 
     @GetMapping()

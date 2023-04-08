@@ -18,7 +18,8 @@ public class SpecificationsImpl<P> implements DeaneryWorkerSpecifications,
                                               TeacherSpecifications,
                                               StudentSpecifications,
                                               StudentGroupSpecifications,
-                                              DepartmentSpecifications {
+                                              DepartmentSpecifications,
+                                              TeachersJournalSpecifications {
     @NonNull
     private Root<P> root;
     @NonNull
@@ -62,6 +63,12 @@ public class SpecificationsImpl<P> implements DeaneryWorkerSpecifications,
     public Specification<Department> getDepartmentByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
+        };
+    }
+
+    public Specification<TeachersJournal> getTeacherJournalByFacultyCriteria(String facultyName) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("teacher").get("department").get("faculty").get("name"), facultyName);
         };
     }
 }

@@ -49,23 +49,11 @@ public class TeachersController {
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<TeacherGetDTO> findTeacherByEmail(@RequestParam("email") String email) {
-        return teacherListMapper.toTeachersGetDTO(teacherService.findByEmail(email));
-    }
-
-    @GetMapping("/slim/findByEmail")
-    @ResponseStatus(HttpStatus.FOUND)
     public List<TeacherSlimGetDTO> findSlimTeacherByEmail(@RequestParam("email") String email) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<TeacherGetDTO> findTeacherBySurname(@RequestParam("surname") String surname) {
-        return teacherListMapper.toTeachersGetDTO(teacherService.findBySurname(surname));
-    }
-
-    @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
     public List<TeacherSlimGetDTO> findSlimTeacherBySurname(@RequestParam("surname") String surname) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findBySurname(surname));

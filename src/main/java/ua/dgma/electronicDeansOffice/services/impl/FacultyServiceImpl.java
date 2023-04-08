@@ -4,12 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.models.Faculty;
-import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.faculty.RegisterFacultyData;
@@ -18,7 +16,6 @@ import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonDat
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
-import ua.dgma.electronicDeansOffice.services.specifications.impl.SpecificationsImpl;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -55,8 +52,8 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty findByName(String name) {
-        return facultyRepository.getByName(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
+    public List<Faculty> findByName(String name) {
+        return facultyRepository.getByNameContainingIgnoreCase(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
 
     @Override
@@ -114,7 +111,7 @@ public class FacultyServiceImpl implements FacultyService {
     public void softDeleteByName(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, facultyRepository));
 
-        Faculty faculty = findByName(name);
+        Faculty faculty = facultyRepository.getByName(name).get();
         faculty.getDepartments().stream().forEach(department -> department.setDeleted(true));
         faculty.getDepartments().stream().forEach(department -> department.getStudentGroups().forEach(studentGroup -> studentGroup.setDeleted(true)));
         faculty.getDepartments().stream().forEach(department -> department.getStudentGroups().forEach(studentGroup -> studentGroup.getStudents().forEach(student -> student.setDeleted(true))));

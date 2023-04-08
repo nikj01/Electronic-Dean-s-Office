@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Department;
@@ -19,7 +18,6 @@ import ua.dgma.electronicDeansOffice.services.impl.data.department.UpdateDepartm
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
-import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
 import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
@@ -64,8 +62,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
-    public Department findByName(String name) {
-        return departmentRepository.getByName(name).orElseThrow(()-> new NotFoundException(new ExceptionData<>(className, "name", name)));
+    public List<Department> findByName(String name) {
+        return departmentRepository.getByNameContainingIgnoreCase(name).orElseThrow(()-> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
 
     public List<Department> findAllDepartments(FindAllData data) {
@@ -142,7 +140,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void softDeleteByName(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
 
-        Department department = findByName(name);
+        Department department = departmentRepository.getByName(name).get();
         department.getStudentGroups().stream().forEach(studentGroup -> studentGroup.setDeleted(true));
         department.getTeachers().stream().forEach(teacher -> teacher.setDeleted(true));
         department.setDeleted(true);

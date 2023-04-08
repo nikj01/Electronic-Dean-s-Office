@@ -51,23 +51,11 @@ public class PeopleController {
 
     @GetMapping("/findByEmail")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<PersonGetDTO> findPersonByEmail(@RequestParam("email") String email) {
-        return personListMapper.toPeopleGetDTO(personService.findByEmail(email));
-    }
-
-    @GetMapping("/slim/findByEmail")
-    @ResponseStatus(HttpStatus.FOUND)
     public List<PersonSlimGetDTO> findSlimPersonByEmail(@RequestParam("email") String email) {
         return personListMapper.toPeopleSlimGetDTO(personService.findByEmail(email));
     }
 
     @GetMapping("/findBySurname")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<PersonGetDTO> findPersonBySurname(@RequestParam("surname") String surname) {
-        return personListMapper.toPeopleGetDTO(personService.findBySurname(surname));
-    }
-
-    @GetMapping("/slim/findBySurname")
     @ResponseStatus(HttpStatus.FOUND)
     public List<PersonSlimGetDTO> findSlimPersonBySurname(@RequestParam("surname") String surname) {
         return personListMapper.toPeopleSlimGetDTO(personService.findBySurname(surname));
