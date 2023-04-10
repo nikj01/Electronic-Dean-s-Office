@@ -7,7 +7,6 @@ import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class PersonValidationData {
     @NonNull

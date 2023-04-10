@@ -143,8 +143,8 @@ INSERT INTO Teachers (uid, department_id) VALUES
 (100, '1'),
 (101, '1'),
 (102, '1'),
-(103, '1'),
-(104, '1'),
+-- (103, '1'),
+-- (104, '1'),
 (105, '2'),
 (106, '2'),
 (107, '2'),
@@ -185,18 +185,22 @@ INSERT INTO Students (uid, group_id) VALUES
 -- (12723350, '11'),
 -- (12723351, '11');
 --
--- INSERT INTO Teachers_journals (id, teacher_uid) VALUES
--- (DEFAULT, 100),
--- (DEFAULT, 101),
--- (DEFAULT, 102);
---
--- INSERT INTO Journals_pages (id, page_name, journal_id) VALUES
--- (DEFAULT, 'IPZ', 1),
--- (DEFAULT, 'AKM', 1);
---
--- -- INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
--- -- (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
--- -- (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
+INSERT INTO Teachers_journals (id, comment, deleted, teacher_uid) VALUES
+(DEFAULT,'asdad', false,  100),
+(DEFAULT,'asdadsax', false, 101),
+(DEFAULT,'asqwezx', false, 102);
+
+INSERT INTO Journals_pages (id, archive, page_name, journal_id) VALUES
+(DEFAULT, false, 'IPZ', 1),
+(DEFAULT, false, 'ASAP', 1),
+(DEFAULT, false, 'AK', 2),
+(DEFAULT, false, 'OBDZ', 2),
+(DEFAULT, false, 'PM', 3),
+(DEFAULT, false, 'AKM', 3);
+
+-- INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
+-- (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
+-- (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
 -- --
 -- -- INSERT INTO events_student_groups (event_id, student_groups_name) VALUES
 -- -- (1, 'KI 19-1');

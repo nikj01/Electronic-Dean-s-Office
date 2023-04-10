@@ -96,4 +96,9 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         deaneryWorkerRepository.save(deaneryWorker);
     }
 
+    @Override
+    public void markPeopleAsDeleted(List<DeaneryWorker> people) {
+
+    }
+
 }

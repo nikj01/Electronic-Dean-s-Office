@@ -11,8 +11,8 @@ public interface FacultyService {
     List<Faculty> findByName(String name);
     List<Faculty> findAllFaculties(FindAllData data);
     void registerNew(RegisterFacultyData data);
-    void updateByName(UpdateFacultyData data);
-    void deleteByName(String name);
-    void softDeleteByName(String name);
+    void updateFaculty(UpdateFacultyData data);
+    void deleteFaculty(String name);
+    void softDeleteFaculty(String name);
 
 }

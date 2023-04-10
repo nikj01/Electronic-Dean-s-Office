@@ -2,12 +2,8 @@ package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.exceptions.CustomException;
-import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.FacultyListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.FacultyMapper;
@@ -69,17 +65,17 @@ public class FacultyController {
                                                     BindingResult bindingResult) {
         Faculty updatedFaculty = facultyMapper.toFaculty(facultyPatchDTO);
 
-        facultyService.updateByName(new UpdateFacultyData(name, updatedFaculty, bindingResult));
+        facultyService.updateFaculty(new UpdateFacultyData(name, updatedFaculty, bindingResult));
     }
 
     @DeleteMapping("/delete")
     public void deleteFaculty(@RequestParam("name") String name) {
-        facultyService.deleteByName(name);
+        facultyService.deleteFaculty(name);
     }
 
     @DeleteMapping("/soft/delete")
     public void softDeleteFaculty(@RequestParam("name") String name) {
-        facultyService.softDeleteByName(name);
+        facultyService.softDeleteFaculty(name);
     }
 
 }

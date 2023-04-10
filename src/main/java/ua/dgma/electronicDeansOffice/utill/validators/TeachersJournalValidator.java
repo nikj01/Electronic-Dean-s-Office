@@ -35,11 +35,8 @@ public class TeachersJournalValidator implements Validator {
         TeachersJournal journal = (TeachersJournal) target;
         TeachersJournalValidationData validationData = new TeachersJournalValidationData(journal, journalRepository, teacherRepository, errors);
 
-        if(checkExistenceOfTheJournal(validationData)) {
-
-        } else {
+        if(!checkExistenceOfTheJournal(validationData))
             checkExistenceOfTheTeacher(validationData);
-        }
     }
 
     private boolean checkExistenceOfTheJournal(TeachersJournalValidationData data) {
@@ -58,9 +55,4 @@ public class TeachersJournalValidator implements Validator {
     private Optional<Teacher> findTeacher(TeachersJournalValidationData data) {
         return data.getTeacherRepository().getByUid(getTeacherFromData(data).getUid());
     }
-
-//    private Optional<TeachersJournal> findTeachersJournal(TeachersJournalValidationData data) {
-//        return journalRepository.findById(data.getTeachersJournal().getId());
-//    }
-
 }

@@ -24,9 +24,9 @@ public class TeachersJournal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @NotNull(message = "The field |TEACHER| cannot be empty!")
     @OneToOne(
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY
+    )
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JoinColumn

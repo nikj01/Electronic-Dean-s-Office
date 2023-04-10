@@ -14,7 +14,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = StudentGroupMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface StudentGroupListMapper {
-
     @IterableMapping(qualifiedByName = "group")
     List<StudentGroupGetDTO> toStudentGroupsGetDTO(List<StudentGroup> studentGroups);
     @IterableMapping(qualifiedByName = "slimGroup")

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import ua.dgma.electronicDeansOffice.models.Department;
 
 @Data
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class UpdateDepartmentData {
     @NonNull

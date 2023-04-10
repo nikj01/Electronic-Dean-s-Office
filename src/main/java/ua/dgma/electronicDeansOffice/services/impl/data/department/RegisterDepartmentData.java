@@ -8,7 +8,6 @@ import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.models.Department;
 
 @Data
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class RegisterDepartmentData {
     @NonNull

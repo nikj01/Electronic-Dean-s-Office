@@ -8,7 +8,6 @@ import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.models.Person;
 
 @Data
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class RegisterPersonData<P extends Person> {
     @NonNull

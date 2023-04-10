@@ -37,7 +37,6 @@ public class StudentGroup {
     )
     private String name;
 
-//    @NotNull(message = "The field |GROUP LEADER| cannot be empty!")
     @OneToOne(
             fetch = FetchType.LAZY
     )
@@ -51,16 +50,15 @@ public class StudentGroup {
 
     @OneToMany(
             mappedBy = "studentGroup",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     @Fetch(value = FetchMode.SELECT)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<Student> students = new ArrayList<>();
 
-    @NotNull(message = "The field |CURATOR| cannot be empty!")
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JoinColumn
     private Teacher curator;
 
@@ -72,7 +70,7 @@ public class StudentGroup {
 
     @ManyToMany(
             mappedBy = "studentGroups",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL
     )
     @OnDelete(action = OnDeleteAction.NO_ACTION)

@@ -22,6 +22,7 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.TeachersJournalValidator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
@@ -58,10 +59,6 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     @Override
-    public TeachersJournal findByTeacherUid(Long uid) {
-        return journalRepository.getByTeacher_Uid(uid).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "teachers_id", uid)));
-    }
-    @Override
     public List<TeachersJournal> findByComment(String comment) {
         return journalRepository.getByCommentContainingIgnoreCase(comment).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "comment", comment)));
     }
@@ -73,15 +70,13 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
         else
             return findAllWithPaginationOrWithoutByFaculty(data);
     }
-
-    public List<TeachersJournal> findAllWithPaginationOrWithout(FindAllData data) {
+    private List<TeachersJournal> findAllWithPaginationOrWithout(FindAllData data) {
         if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
             return journalRepository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), Sort.by("id"));
         else
             return journalRepository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("id"))).getContent();
     }
-
-    public List<TeachersJournal> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+    private List<TeachersJournal> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
         if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
             return journalRepository.findAll(Specification.where(specifications.getTeacherJournalByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("id"));
         else
@@ -91,18 +86,26 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     @Override
     public void registerNew(RegisterTeachersJournalData data) {
         checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(teacherClassName(), data.getNewTeacher().getUid(), journalRepository));
-//        validateObject(new ValidationData<>(journalValidator, teacher, bindingResult));
 
         Teacher newTeacher = data.getNewTeacher();
         TeachersJournal newJournal = new TeachersJournal();
-        setTeacher(newJournal, newTeacher);
-        setJournalComment(newJournal, newTeacher);
 
-        journalRepository.save(newJournal);
+        setTeacherInNewJournal(newJournal, newTeacher);
+        setCommentOnNewJournal(newJournal, newTeacher);
+
+        saveTeachersJournal(newJournal);
     }
-
     private String teacherClassName() {
         return Teacher.class.getSimpleName();
+    }
+    private void setCommentOnNewJournal(TeachersJournal journal, Teacher teacher) {
+        journal.setComment("Personal journal of the teacher " + teacher.getSurname() + " " + teacher.getName() + " " + teacher.getPatronymic());
+    }
+    private void setTeacherInNewJournal(TeachersJournal journal, Teacher teacher) {
+        journal.setTeacher(teacherRepository.getByUid(teacher.getUid()).get());
+    }
+    private void saveTeachersJournal(TeachersJournal journal) {
+        journalRepository.save(journal);
     }
 
     @Override
@@ -111,32 +114,14 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
         validateObject(new ValidationData<>(journalValidator, data.getUpdatedJournal(), data.getBindingResult()));
 
         TeachersJournal updatedJournal = data.getUpdatedJournal();
-
         TeachersJournal existingJournal = findByid(data.getId());
-        existingJournal.setComment(updatedJournal.getComment());
 
-//        updatedJournal.setId(data.getId());
-//        updatedJournal.setPages(pageRepository.findAllByJournal_Id(data.getId()));
-//        setTeacher(updatedJournal);
-//        setJournalComment(updatedJournal);
+        setNewCommentInExistingJournal(existingJournal, updatedJournal.getComment());
 
-        journalRepository.save(existingJournal);
+        saveTeachersJournal(existingJournal);
     }
-
-//    private void setJournalComment(TeachersJournal journal) {
-//        journal.setComment("Personal journal of the teacher " + journal.getTeacher().getSurname() + " " + journal.getTeacher().getName() + " " + journal.getTeacher().getPatronymic());
-//    }
-
-    private void setJournalComment(TeachersJournal journal, Teacher teacher) {
-        journal.setComment("Personal journal of the teacher " + teacher.getSurname() + " " + teacher.getName() + " " + teacher.getPatronymic());
-    }
-
-//    private void setTeacher(TeachersJournal journal) {
-//        journal.setTeacher(teacherRepository.getByUid(journal.getTeacher().getUid()).get());
-//    }
-
-    private void setTeacher(TeachersJournal journal, Teacher teacher) {
-        journal.setTeacher(teacherRepository.getByUid(teacher.getUid()).get());
+    private void setNewCommentInExistingJournal(TeachersJournal journal, String newComment) {
+        journal.setComment(newComment);
     }
 
     @Override
@@ -149,9 +134,28 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     public void softDeleteById(Long id) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, id, journalRepository));
 
-        TeachersJournal journal = findByid(id);
-        journal.setDeleted(true);
+        saveTeachersJournal(markTeachersJournalAsDeleted(findByid(id)));
+    }
+    private TeachersJournal markTeachersJournalAsDeleted(TeachersJournal existingJournal) {
+        existingJournal.setDeleted(true);
+        return existingJournal;
+    }
 
-        journalRepository.save(journal);
+    @Override
+    public void removeTeachersFromJournals(List<Teacher> teachers) {
+        for (Teacher teacher : teachers)
+            removeTeacherFromJournal(teacher);
+    }
+    private void removeTeacherFromJournal(Teacher teacher) {
+        getJournalByTeacher(teacher.getUid()).setTeacher(null);
+    }
+    private TeachersJournal getJournalByTeacher(Long uid) {
+        return journalRepository.getByTeacher_Uid(uid).get();
+    }
+
+    @Override
+    public void markTeachersJournalsAsDeleted(List<Teacher> teachers) {
+        for (Teacher teacher : teachers)
+            markTeachersJournalAsDeleted(getJournalByTeacher(teacher.getUid()));
     }
 }

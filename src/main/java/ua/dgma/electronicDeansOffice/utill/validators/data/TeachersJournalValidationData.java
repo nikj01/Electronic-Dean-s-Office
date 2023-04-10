@@ -8,7 +8,6 @@ import ua.dgma.electronicDeansOffice.repositories.TeachersJournalRepository;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class TeachersJournalValidationData {
     @NonNull

@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Component
 public class StudentGroupValidator implements AbstractValidator {
-
     private final StudentGroupRepository studentGroupRepository;
     private final DepartmentRepository departmentRepository;
     private final TeacherRepository teacherRepository;

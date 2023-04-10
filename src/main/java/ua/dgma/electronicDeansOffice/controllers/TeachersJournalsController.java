@@ -39,12 +39,6 @@ public class TeachersJournalsController {
         return journalMapper.toJournalGetDTO(journalService.findByid(id));
     }
 
-    @GetMapping("/findByTeacher")
-    @ResponseStatus(HttpStatus.FOUND)
-    public TeachersJournalGetDTO findJournalByTeacher(@RequestParam("uid") Long uid) {
-        return journalMapper.toJournalGetDTO(journalService.findByTeacherUid(uid));
-    }
-
     @GetMapping("/findByComment")
     @ResponseStatus(HttpStatus.FOUND)
     public List<TeachersJournalSlimGetDTO> findJournalByComment(@RequestParam("comment") String comment) {

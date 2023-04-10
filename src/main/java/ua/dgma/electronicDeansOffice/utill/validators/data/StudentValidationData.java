@@ -9,7 +9,6 @@ import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class StudentValidationData {
     @NonNull

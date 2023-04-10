@@ -35,25 +35,29 @@ public class JournalPage {
             fetch = FetchType.LAZY
     )
     @Fetch(value = FetchMode.SELECT)
-//    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "page",
-            fetch = FetchType.EAGER,
-            orphanRemoval = true
+            fetch = FetchType.LAZY
     )
-    private Set<Event> events = new HashSet<>();
+    @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
+    private List<Event> events = new ArrayList<>();
 
     @OneToMany(
-            fetch = FetchType.EAGER,
-            orphanRemoval = true
+            fetch = FetchType.LAZY
     )
-    private Set<Report> reports = new HashSet<>();
+    @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
+    private List<Report> reports = new ArrayList<>();
 
-    @NotEmpty
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private TeachersJournal journal;
+
+    @Column(nullable = false)
+    private boolean archive;
 }

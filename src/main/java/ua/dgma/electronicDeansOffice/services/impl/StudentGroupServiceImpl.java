@@ -23,7 +23,6 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
@@ -60,7 +59,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         this.studentGroupValidator = studentGroupValidator;
         this.exceptionData = exceptionData;
         this.specifications = specifications;
-        className = StudentGroup.class.getSimpleName();
+        this.className = StudentGroup.class.getSimpleName();
     }
 
     @Override
@@ -75,15 +74,13 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         else
             return findAllWithPaginationOrWithoutByFaculty(data);
     }
-
-    public List<StudentGroup> findAllWithPaginationOrWithout(FindAllData data) {
+    private List<StudentGroup> findAllWithPaginationOrWithout(FindAllData data) {
         if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
             return studentGroupRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()));
         else
             return studentGroupRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
-
-    public List<StudentGroup> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+    private List<StudentGroup> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
         if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
             return studentGroupRepository.findAll(Specification.where(specifications.getStudentGroupByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))));
         else
@@ -93,23 +90,37 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void registerNew(RegisterStudentGroupData data) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, data.getNewStudentGroup().getName(), studentGroupRepository));
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getStudentGroupName(data), studentGroupRepository));
         validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getNewStudentGroup()));
 
         StudentGroup newStudentGroup = data.getNewStudentGroup();
-        newStudentGroup.setDepartment(departmentRepository.getByName(newStudentGroup.getDepartment().getName()).get());
 
-        for (Student student: saveStudentGroupWithoutStudents(newStudentGroup))
+        setDepartmentInStudentGroup(newStudentGroup);
+
+        saveStudentGroup(newStudentGroup);
+        saveNewStudents(getNewStudentsFromNewStudentGroup(newStudentGroup), data);
+    }
+    private String getStudentGroupName(RegisterStudentGroupData data) {
+        return data.getNewStudentGroup().getName();
+    }
+    private void setDepartmentInStudentGroup(StudentGroup studentGroup) {
+        studentGroup.setDepartment(getDepartmentByName(getDepartmentName(studentGroup)));
+    }
+    private Department getDepartmentByName(String departmentName) {
+        return departmentRepository.getByName(departmentName).get();
+    }
+    private String getDepartmentName(StudentGroup studentGroup) {
+        return studentGroup.getDepartment().getName();
+    }
+    private void saveStudentGroup(StudentGroup studentGroup) {
+        studentGroupRepository.save(studentGroup);
+    }
+    private void saveNewStudents(List<Student> students, RegisterStudentGroupData data) {
+        for (Student student: students)
             studentService.registerNew(new RegisterPersonData<>(student, data.getBindingResult()));
     }
-
-    public List<Student> saveStudentGroupWithoutStudents(StudentGroup studentGroup) {
-        List<Student> newStudents = studentGroup.getStudents();
-
-        studentGroup.setStudents(new ArrayList<>());
-        studentGroupRepository.save(studentGroup);
-
-        return newStudents;
+    private List<Student> getNewStudentsFromNewStudentGroup(StudentGroup studentGroup) {
+        return studentGroup.getStudents();
     }
 
     @Override
@@ -119,19 +130,49 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getUpdatedStudentGroup()));
 
         StudentGroup updatedStudentGroup = data.getUpdatedStudentGroup();
-        updatedStudentGroup.setId(studentGroupRepository.getByName(data.getName()).get().getId());
-        updatedStudentGroup.setDepartment(departmentRepository.getByName(updatedStudentGroup.getDepartment().getName()).get());
-        updatedStudentGroup.setCurator(teacherRepository.getByUid(updatedStudentGroup.getCurator().getUid().longValue()).get());
-        updatedStudentGroup.setGroupLeader(studentRepository.getByUid(updatedStudentGroup.getGroupLeader().getUid().longValue()).get());
-        updatedStudentGroup.setStudents(studentGroupRepository.getByName(data.getName()).get().getStudents());
 
-        studentGroupRepository.save(updatedStudentGroup);
+        setIdInStudentGroup(updatedStudentGroup, data);
+        setDepartmentInStudentGroup(updatedStudentGroup);
+        setStudentsInStudentGroup(updatedStudentGroup, data);
+        setCuratorInStudentGroup(updatedStudentGroup, data);
+        setGroupLeaderInStudentGroup(updatedStudentGroup, data);
+
+        saveStudentGroup(updatedStudentGroup);
     }
+    private void setIdInStudentGroup(StudentGroup studentGroup, UpdateStudentGroupData data) {
+        studentGroup.setId(getStudentGroup(getStudentGroupName(data)).getId());
+    }
+    private StudentGroup getStudentGroup(String groupName) {
+        return studentGroupRepository.getByName(groupName).get();
+    }
+    private String getStudentGroupName(UpdateStudentGroupData data) {
+        return data.getName();
+    }
+    private void setStudentsInStudentGroup(StudentGroup studentGroup, UpdateStudentGroupData data) {
+        studentGroup.setStudents(getExistingStudents(data));
+    }
+    private List<Student> getExistingStudents(UpdateStudentGroupData data) {
+        return getStudentGroup(getStudentGroupName(data)).getStudents();
+    }
+    private void setCuratorInStudentGroup(StudentGroup studentGroup, UpdateStudentGroupData data) {
+        studentGroup.setCurator(teacherRepository.getByUid(getCuratorUid(studentGroup)).get());
+    }
+    private Long getCuratorUid(StudentGroup studentGroup) {
+        return studentGroup.getCurator().getUid().longValue();
+    }
+    private void setGroupLeaderInStudentGroup(StudentGroup studentGroup, UpdateStudentGroupData data) {
+        studentGroup.setGroupLeader(studentRepository.getByUid(getLeaderUid(studentGroup)).get());
+    }
+    private Long getLeaderUid(StudentGroup studentGroup) {
+        return studentGroup.getGroupLeader().getUid().longValue();
+    }
+
 
     @Override
     @Transactional
     public void deleteByName(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
+
         studentGroupRepository.deleteByName(name);
     }
 
@@ -140,10 +181,21 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public void softDeleteByName(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
 
-        StudentGroup studentGroup = studentGroupRepository.getByName(name).get();
-        studentGroup.getStudents().stream().forEach(student -> student.setDeleted(true));
-        studentGroup.setDeleted(true);
+        markStudentsAsDeleted(getStudentGroup(name));
 
-        studentGroupRepository.save(studentGroup);
+        saveStudentGroup(markStudentGroupAsDeleted(getStudentGroup(name)));
+    }
+    private void markStudentsAsDeleted(StudentGroup studentGroup) {
+        studentGroup.getStudents().stream().forEach(student -> student.setDeleted(true));
+    }
+    private StudentGroup markStudentGroupAsDeleted(StudentGroup studentGroup) {
+        studentGroup.setDeleted(true);
+        return studentGroup;
+    }
+
+    @Override
+    public void markStudentGroupsAsDeleted(List<StudentGroup> studentGroups) {
+        for (StudentGroup group : studentGroups)
+            markStudentGroupAsDeleted(group);
     }
 }

@@ -15,5 +15,5 @@ public interface StudentGroupService {
     void updateByName(UpdateStudentGroupData data);
     void deleteByName(String name);
     void softDeleteByName(String name);
-
+    void markStudentGroupsAsDeleted(List<StudentGroup> studentGroups);
 }

@@ -94,4 +94,9 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
 
         personRepository.save(person);
     }
+
+    @Override
+    public void markPeopleAsDeleted(List<Person> people) {
+
+    }
 }

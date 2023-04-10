@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
 
 @Data
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class UpdateStudentGroupData {
     @NonNull

@@ -1,6 +1,8 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.NotReadablePropertyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -49,6 +51,20 @@ public class CustomControllerAdvice {
     @ExceptionHandler(ObjectExistsException.class)
     private ResponseEntity<ErrorResponse> handleException(ObjectExistsException e) {
         ErrorResponse response = new ErrorResponse(new Date(), 400, "Object exists", e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    private ResponseEntity<ErrorResponse> handleException(NullPointerException e) {
+        ErrorResponse response = new ErrorResponse(new Date(), 400, e.getClass().getSimpleName(), e.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    private ResponseEntity<ErrorResponse> handleException(DataIntegrityViolationException e) {
+        ErrorResponse response = new ErrorResponse(new Date(), 400, e.getClass().getSimpleName(), e.getCause().getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

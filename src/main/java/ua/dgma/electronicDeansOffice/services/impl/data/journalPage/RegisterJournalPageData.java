@@ -1,17 +1,17 @@
-package ua.dgma.electronicDeansOffice.services.impl.data.faculty;
+package ua.dgma.electronicDeansOffice.services.impl.data.journalPage;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import ua.dgma.electronicDeansOffice.models.Faculty;
+import ua.dgma.electronicDeansOffice.models.JournalPage;
 
 @Data
 @RequiredArgsConstructor
-public class RegisterFacultyData {
+public class RegisterJournalPageData {
     @NonNull
-    private Faculty newFaculty;
+    private JournalPage newJournalPage;
     @NonNull
     private BindingResult bindingResult;
+
 }

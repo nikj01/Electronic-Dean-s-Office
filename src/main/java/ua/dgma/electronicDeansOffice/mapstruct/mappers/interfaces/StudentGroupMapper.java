@@ -10,7 +10,6 @@ import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import java.util.List;
 @Mapper(componentModel = "spring", uses = {StudentMapper.class, StudentListMapper.class, PersonMapper.class, DepartmentMapper.class}, injectionStrategy = InjectionStrategy.FIELD)
 public interface StudentGroupMapper {
-
     @Named(value = "postGroup")
     StudentGroup toStudentGroup(StudentGroupPostDTO studentGroup);
     @Named(value = "patchGroup")

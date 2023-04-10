@@ -17,7 +17,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @EqualsAndHashCode(exclude = "studentGroups")
 @Table(name = "Events")
 public class Event {
@@ -26,28 +25,17 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     @NotBlank(message = "The field |EVENT THEME| cannot be empty!")
     @Column(nullable = false)
     private String eventTheme;
 
-    /*
-    *   CHECK THE ANNOTATION "@NOT_BLANK" AND "NULLABLE"!
-    */
-    @NonNull
     @NotBlank
     private String description;
 
-    @NonNull
     @NotEmpty(message = "The field |EVENT TYPE| cannot be empty!")
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private EventType eventType;
 
-
-    /*
-    *   CHECK WHAT DOES MEAN "@REFERENCE"!
-    */
     @ManyToMany
     @Cascade(value = org.hibernate.annotations.CascadeType.DELETE)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -55,15 +43,12 @@ public class Event {
     private List<StudentGroup> studentGroups;
 
 
-    @NonNull
     @NotEmpty(message = "The field |DATE| cannot be empty!")
     @Column(nullable = false)
     private LocalDate date;
 
-    @NonNull
     @NotEmpty(message = "The field |JOURNAL PAGE| cannot be empty!")
     @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             name = "page_id",

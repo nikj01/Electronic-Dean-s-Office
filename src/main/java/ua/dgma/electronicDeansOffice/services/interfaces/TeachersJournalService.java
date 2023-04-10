@@ -13,11 +13,12 @@ import java.util.Optional;
 public interface TeachersJournalService {
 
     TeachersJournal findByid(Long id);
-    TeachersJournal findByTeacherUid(Long uid);
     List<TeachersJournal> findByComment(String comment);
     List<TeachersJournal> findAll(FindAllData data);
     void registerNew(RegisterTeachersJournalData data);
     void updateById(UpdateTeachersJournalData data);
     void deleteById(Long id);
     void softDeleteById(Long id);
+    void removeTeachersFromJournals(List<Teacher> teachers);
+    void markTeachersJournalsAsDeleted(List<Teacher> teachers);
 }

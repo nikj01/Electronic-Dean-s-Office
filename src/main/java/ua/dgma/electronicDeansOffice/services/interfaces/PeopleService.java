@@ -1,6 +1,7 @@
 package ua.dgma.electronicDeansOffice.services.interfaces;
 
 import ua.dgma.electronicDeansOffice.models.Person;
+import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
@@ -18,4 +19,5 @@ public interface PeopleService<P extends Person> {
     void updateByUid(UpdatePersonData<P> data);
     void deleteByUId(Long uid);
     void softDeleteByUId(Long uid);
+    void markPeopleAsDeleted(List<P> people);
 }

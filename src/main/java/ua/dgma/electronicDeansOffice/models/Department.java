@@ -42,7 +42,7 @@ public class Department {
     private String name;
 
     @NotNull(message = "The field |FACULTY| cannot be empty!")
-    @ManyToOne(cascade = javax.persistence.CascadeType.ALL)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Faculty faculty;
@@ -54,7 +54,7 @@ public class Department {
     )
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
-    private Set<StudentGroup> studentGroups = new HashSet<>();
+    private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "department",
