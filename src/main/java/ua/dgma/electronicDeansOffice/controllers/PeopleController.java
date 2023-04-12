@@ -2,12 +2,8 @@ package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.exceptions.CustomException;
-import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.PersonListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;
@@ -84,17 +80,17 @@ public class PeopleController {
                                                   BindingResult bindingResult) {
         Person updatedPerson = personMapper.toPerson(personPatchDTO);
 
-        personService.updateByUid(new UpdatePersonData<>(uid, updatedPerson, bindingResult));
+        personService.update(new UpdatePersonData<>(uid, updatedPerson, bindingResult));
     }
 
     @DeleteMapping("/delete")
     public void deletePerson(@RequestParam("uid") Long uid) {
-        personService.deleteByUId(uid);
+        personService.delete(uid);
     }
 
     @DeleteMapping("/soft/delete")
     public void softDeletePerson(@RequestParam("uid") Long uid) {
-        personService.softDeleteByUId(uid);
+        personService.softDelete(uid);
     }
 
 }

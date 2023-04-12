@@ -53,12 +53,12 @@ public class JournalPageController {
                                                 BindingResult bindingResult) {
         JournalPage updatedJournalPage = pageMapper.toJournalPage(journalPagePatchDto);
 
-        pageService.updateById(new UpdateJournalPageData(id, updatedJournalPage, bindingResult));
+        pageService.update(new UpdateJournalPageData(id, updatedJournalPage, bindingResult));
     }
 
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@RequestParam("id") Long id) {
-        pageService.deleteById(id);
+        pageService.delete(id);
     }
 }

@@ -1,6 +1,5 @@
 package ua.dgma.electronicDeansOffice.services.interfaces;
 
-import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
@@ -10,10 +9,10 @@ import java.util.List;
 
 public interface StudentGroupService {
     List<StudentGroup> findByName(String name);
-    List<StudentGroup> findAllStudentGroups(FindAllData data);
+    List<StudentGroup> findAll(FindAllData data);
     void registerNew(RegisterStudentGroupData data);
-    void updateByName(UpdateStudentGroupData data);
-    void deleteByName(String name);
-    void softDeleteByName(String name);
-    void markStudentGroupsAsDeleted(List<StudentGroup> studentGroups);
+    void update(UpdateStudentGroupData data);
+    void delete(String name);
+    void softDelete(String name);
+    void softDeleteStudentGroups(List<StudentGroup> studentGroups);
 }

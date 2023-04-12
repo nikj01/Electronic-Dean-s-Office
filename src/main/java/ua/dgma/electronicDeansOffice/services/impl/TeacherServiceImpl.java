@@ -7,8 +7,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
+import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Teacher;
-import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
@@ -17,6 +17,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.RegisterTeachersJournalData;
+import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
 import ua.dgma.electronicDeansOffice.services.specifications.TeacherSpecifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
@@ -45,12 +46,11 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
     public TeacherServiceImpl(TeacherRepository teacherRepository,
                               TeachersJournalRepository journalRepository,
                               TeacherValidator teacherValidator,
-                              ExceptionData exceptionData,
                               DepartmentRepository departmentRepository,
                               StudentGroupRepository groupRepository,
                               TeacherSpecifications specifications,
                               TeachersJournalService journalService) {
-        super(teacherRepository, teacherValidator, exceptionData, specifications);
+        super(teacherRepository, specifications);
         this.teacherRepository = teacherRepository;
         this.journalRepository = journalRepository;
         this.teacherValidator = teacherValidator;
@@ -61,12 +61,17 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
         this.className = Teacher.class.getSimpleName();
     }
 
+//    @Override
+//    public List<Teacher> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+//        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+//            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
+//        else
+//            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
+//    }
+
     @Override
-    public List<Teacher> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
-        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
-        else
-            return teacherRepository.findAll(Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
+    protected Specification getSpec(FindAllData data) {
+        return Specification.where(specifications.findTeachersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
     }
 
     @Override
@@ -78,92 +83,65 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher>{
 
         setDepartmentForTeacher(newTeacher);
 
-        saveTeacher(newTeacher);
+        savePerson(newTeacher);
         makeNewTeachersJournal(newTeacher, data);
     }
-
-    private Long getPersonUid(RegisterPersonData data) {
-        return data.getNewPerson().getUid().longValue();
-    }
     private void setDepartmentForTeacher(Teacher teacher) {
-        teacher.setDepartment(departmentRepository.getByName(getDepartmentName(teacher)).get());
+        teacher.setDepartment(getDepartment(teacher));
+    }
+    private Department getDepartment(Teacher teacher) {
+        return departmentRepository.getByName(getDepartmentName(teacher)).get();
     }
     private String getDepartmentName(Teacher teacher) {
         return teacher.getDepartment().getName();
-    }
-    private void saveTeacher(Teacher teacher) {
-        teacherRepository.save(teacher);
     }
     private void makeNewTeachersJournal(Teacher teacher, RegisterPersonData data) {
         journalService.registerNew(new RegisterTeachersJournalData(teacher, data.getBindingResult()));
     }
 
     @Override
-    public void updateByUid(UpdatePersonData<Teacher> data) {
+    public void update(UpdatePersonData<Teacher> data) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), teacherRepository));
         validateObject(new ValidationData<>(teacherValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
         Teacher updatedTeacher = data.getUpdatedPerson();
 
-        setIdOnUpdatedTeacher(updatedTeacher, data);
+        SetIdInUpdatedPerson(updatedTeacher, data);
         setDepartmentForTeacher(updatedTeacher);
 
-        saveTeacher(updatedTeacher);
-    }
-
-    private void setIdOnUpdatedTeacher(Teacher updatedTeacher, UpdatePersonData data) {
-        updatedTeacher.setUid(data.getUid());
+        savePerson(updatedTeacher);
     }
 
     @Override
-    public void deleteByUId(Long uid) {
+    public void delete(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, teacherRepository));
 
-        deleteTeacherFromJournal(getTeachersJournalByTeacherId(uid));
+        removeTeacherFromStudentGroups(getTeacher(uid));
 
-        deleteTeacher(uid);
-    }
-
-    private void deleteTeacherFromJournal(TeachersJournal journal) {
-        removeTeacher(journal);
-
-        saveJournal(journal);
-    }
-    private TeachersJournal getTeachersJournalByTeacherId(Long uid) {
-        return journalRepository.getByTeacher_Uid(uid).get();
-    }
-
-    private void removeTeacher(TeachersJournal journal) {
-        journal.setTeacher(null);
-    }
-    private void saveJournal(TeachersJournal journal) {
-        journalRepository.save(journal);
-    }
-    private void deleteTeacher(Long uid) {
-        Teacher teacher = teacherRepository.getByUid(uid).get();
-        teacher.getStudentGroups().stream().forEach(studentGroup -> studentGroup.setCurator(null));
-        getTeachersJournalByTeacherId(uid).setTeacher(null);
         teacherRepository.deleteByUid(uid);
     }
+    private Teacher getTeacher(Long teacherUid) {
+        return teacherRepository.getByUid(teacherUid).get();
+    }
+    private void removeTeacherFromStudentGroups(Teacher teacher) {
+        teacher.getStudentGroups().stream().forEach(studentGroup -> studentGroup.setCurator(null));
+    }
 
     @Override
-    public void softDeleteByUId(Long uid) {
+    public void softDelete(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, teacherRepository));
 
-        markTeachersJournalAsDeleted(uid);
-        saveTeacher(markTeacherAsDeleted(findByUid(uid)));
+        journalService.softDelete(getTeachersJournalId(uid));
+
+        savePerson(markPersonAsDeleted(findByUid(uid)));
     }
-    private Teacher markTeacherAsDeleted(Teacher teacher) {
-        teacher.setDeleted(true);
-        return teacher;
-    }
-    private void markTeachersJournalAsDeleted(Long teachersUid) {
-        journalService.softDeleteById(getTeachersJournalByTeacherId(teachersUid).getId());
+    private Long getTeachersJournalId(Long teacherUid) {
+        return journalRepository.getByTeacher_Uid(teacherUid).get().getId();
     }
 
     @Override
-    public void markPeopleAsDeleted(List<Teacher> people) {
+    public void softDeletePeople(List<Teacher> people) {
         for (Teacher teacher : people)
-            markTeacherAsDeleted(teacher);
+            softDelete(teacher.getUid());
     }
 }

@@ -82,16 +82,16 @@ public class TeachersController {
                                                    BindingResult bindingResult) {
         Teacher newTeacher = teacherMapper.toTeacher(teacherPatchDTO);
 
-        teacherService.updateByUid(new UpdatePersonData<>(uid, newTeacher, bindingResult));
+        teacherService.update(new UpdatePersonData<>(uid, newTeacher, bindingResult));
     }
 
     @DeleteMapping("/delete")
     public void deleteTeacher(@RequestParam("uid") Long uid) {
-        teacherService.deleteByUId(uid);
+        teacherService.delete(uid);
     }
 
     @DeleteMapping("/soft/delete")
     public void softDeleteTeacher(@RequestParam("uid") Long uid) {
-        teacherService.softDeleteByUId(uid);
+        teacherService.softDelete(uid);
     }
 }

@@ -2,13 +2,8 @@ package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.exceptions.CustomException;
-import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupPatchDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
@@ -50,7 +45,7 @@ public class StudentGroupsController {
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                                  @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                                  @RequestParam(value = "faculty", required = false) String facultyName) {
-        return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAllStudentGroups(new FindAllData(page, groupsPerPage, deleted, facultyName)));
+        return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAll(new FindAllData(page, groupsPerPage, deleted, facultyName)));
     }
 
     @PostMapping("/register")
@@ -68,17 +63,17 @@ public class StudentGroupsController {
                                    @RequestBody @Valid   StudentGroupPatchDTO studentGroupPatchDTO) {
         StudentGroup studentGroup = studentGroupMapper.toStudentGroup(studentGroupPatchDTO);
 
-        studentGroupService.updateByName(new UpdateStudentGroupData(studentGroupName, studentGroup));
+        studentGroupService.update(new UpdateStudentGroupData(studentGroupName, studentGroup));
     }
 
     @DeleteMapping("/delete")
     public void deleteStudentGroup(@RequestParam("name") String name) {
-        studentGroupService.deleteByName(name);
+        studentGroupService.delete(name);
     }
 
     @DeleteMapping("/soft/delete")
     public void softDeleteStudentGroup(@RequestParam("name") String name) {
-        studentGroupService.softDeleteByName(name);
+        studentGroupService.softDelete(name);
     }
 
 }

@@ -7,6 +7,7 @@ import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.JournalPage;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.JournalPageRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.RegisterJournalPageData;
@@ -62,28 +63,43 @@ public class JournalPageServiceImpl implements JournalPageService {
         saveJournalPage(newJournalPage);
     }
 
+    public void setTeachersJournalInNewPage(JournalPage page) {
+        page.setJournal(getJournal(page));
+    }
+
+    private TeachersJournal getJournal(JournalPage page) {
+        return journalService.findByid(getJournalId(page));
+    }
+
+    private Long getJournalId(JournalPage page) {
+        return page.getJournal().getId();
+    }
+
     public void setStudentGroupsInNewPage(JournalPage page) {
-        if(page.getStudentGroups() != null)
+//        if (page.getStudentGroups() != null)
             page.setStudentGroups(getStudentGroupsFromPage(page));
     }
+
     public List<StudentGroup> getStudentGroupsFromPage(JournalPage journalPage) {
         List<StudentGroup> existingStudentGroups = new ArrayList<>();
 
         for (StudentGroup group : journalPage.getStudentGroups())
-            existingStudentGroups.add(groupRepository.getByName(group.getName()).get());
+            existingStudentGroups.add(getStudentGroup(group.getName()));
 
         return existingStudentGroups;
     }
-    public void setTeachersJournalInNewPage(JournalPage page) {
-        page.setJournal(journalService.findByid(page.getJournal().getId()));
+
+    private StudentGroup getStudentGroup(String groupName) {
+        return groupRepository.getByName(groupName).get();
     }
+
     public void saveJournalPage(JournalPage page) {
         pageRepository.save(page);
     }
 
     @Override
     @Transactional
-    public void updateById(UpdateJournalPageData data) {
+    public void update(UpdateJournalPageData data) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getId(), pageRepository));
         validateObject(new ValidationData<>(pageValidator, data.getUpdatedJournalPage(), data.getBindingResult()));
 
@@ -100,19 +116,20 @@ public class JournalPageServiceImpl implements JournalPageService {
     public void setNewNameOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
         existingPage.setPageName(updatedPage.getPageName());
     }
+
     public void setUpdatedStudentGroupsOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
         existingPage.setStudentGroups(getStudentGroupsFromPage(updatedPage));
     }
+
     public void setArchiveFlagOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
         existingPage.setArchive(updatedPage.isArchive());
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, id, pageRepository));
 
         pageRepository.deleteById(id);
     }
-
 }

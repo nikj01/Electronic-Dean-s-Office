@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.services.specifications.impl;
+package ua.dgma.electronicDeansOffice.services.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
 import ua.dgma.electronicDeansOffice.models.TeachersJournal;

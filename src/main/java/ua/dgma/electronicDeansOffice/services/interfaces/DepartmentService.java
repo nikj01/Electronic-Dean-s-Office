@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.department.RegisterDepartmentData;
 import ua.dgma.electronicDeansOffice.services.impl.data.department.UpdateDepartmentData;
@@ -19,4 +20,5 @@ public interface DepartmentService {
     void updateByName(UpdateDepartmentData data);
     void deleteByName(String name);
     void softDeleteByName(String name);
+    void softDeleteDepartments(List<Department> departments);
 }

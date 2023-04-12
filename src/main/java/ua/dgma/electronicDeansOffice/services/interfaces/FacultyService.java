@@ -9,10 +9,9 @@ import java.util.List;
 
 public interface FacultyService {
     List<Faculty> findByName(String name);
-    List<Faculty> findAllFaculties(FindAllData data);
+    List<Faculty> findAll(FindAllData data);
     void registerNew(RegisterFacultyData data);
-    void updateFaculty(UpdateFacultyData data);
-    void deleteFaculty(String name);
-    void softDeleteFaculty(String name);
-
+    void update(UpdateFacultyData data);
+    void delete(String name);
+    void softDelete(String name);
 }

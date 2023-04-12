@@ -37,11 +37,10 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Autowired
     protected StudentServiceImpl(StudentRepository studentRepository,
-                                 ExceptionData exceptionData,
                                  StudentValidator studentValidator,
                                  StudentGroupRepository studentGroupRepository,
                                  StudentSpecifications specifications) {
-        super(studentRepository, studentValidator, exceptionData, specifications);
+        super(studentRepository, specifications);
         this.studentRepository = studentRepository;
         this.studentValidator = studentValidator;
         this.studentGroupRepository = studentGroupRepository;
@@ -49,27 +48,41 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
         this.className = Student.class.getSimpleName();
     }
 
+//    @Override
+//    public List<Student> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+//        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+//            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
+//        else
+//            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
+//    }
+
     @Override
-    public List<Student> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
-        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
-        else
-            return studentRepository.findAll(Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
+    protected Specification getSpec(FindAllData data) {
+        return Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
     }
 
     @Override
     public void registerNew(RegisterPersonData<Student> data) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(className, data.getNewPerson().getUid(), studentRepository));
+        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(className, getPersonUid(data), studentRepository));
         validateObject(new ValidationData<>(studentValidator, data.getNewPerson(), data.getBindingResult()));
 
         Student newStudent = data.getNewPerson();
-        newStudent.setStudentGroup(studentGroupRepository.getByName(newStudent.getStudentGroup().getName()).get());
+        setStudentGroupForStudent(newStudent);
 
-        studentRepository.save(newStudent);
+        savePerson(newStudent);
+    }
+    private void setStudentGroupForStudent(Student student) {
+        student.setStudentGroup(getStudentGroup(student));
+    }
+    private StudentGroup getStudentGroup(Student student) {
+        return studentGroupRepository.getByName(getStudentGroupName(student)).get();
+    }
+    private String getStudentGroupName(Student student) {
+        return student.getStudentGroup().getName();
     }
 
     @Override
-    public void updateByUid(UpdatePersonData<Student> data) {
+    public void update(UpdatePersonData<Student> data) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), studentRepository));
         validateObject(new ValidationData<>(studentValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
@@ -81,7 +94,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     }
 
     @Override
-    public void deleteByUId(Long uid) {
+    public void delete(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
 
         if(studentGroupRepository.getByGroupLeader_Uid(Long.valueOf(uid)).isPresent())
@@ -91,7 +104,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     }
 
     @Override
-    public void softDeleteByUId(Long uid) {
+    public void softDelete(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
 
         Student student = findByUid(uid);
@@ -101,8 +114,8 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     }
 
     @Override
-    public void markPeopleAsDeleted(List<Student> people) {
-        for (Student student : people) {}
-//            markTeacherAsDeleted(teacher);
+    public void softDeletePeople(List<Student> people) {
+        for (Student student : people)
+            softDelete(student.getUid());
     }
 }

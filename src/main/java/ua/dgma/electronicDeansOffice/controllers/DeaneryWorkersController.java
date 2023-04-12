@@ -2,17 +2,12 @@ package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.exceptions.CustomException;
-import ua.dgma.electronicDeansOffice.exceptions.ErrorResponse;
-import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.*;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.DeaneryWorkerListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.DeaneryWorkerMapper;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
-import ua.dgma.electronicDeansOffice.services.impl.DeaneryWorkerServiceImpl;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
@@ -84,17 +79,17 @@ public class DeaneryWorkersController {
                                                          BindingResult bindingResult) {
         DeaneryWorker updatedDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(deaneryWorkerPatchDTO);
 
-        deaneryWorkerService.updateByUid(new UpdatePersonData<>(uid, updatedDeaneryWorker, bindingResult));
+        deaneryWorkerService.update(new UpdatePersonData<>(uid, updatedDeaneryWorker, bindingResult));
     }
 
     @DeleteMapping("/delete")
     public void deleteDeaneryWorker(@RequestParam("uid") Long uid) {
-        deaneryWorkerService.deleteByUId(uid);
+        deaneryWorkerService.delete(uid);
     }
 
     @DeleteMapping("/soft/delete")
     public void softDeletePerson(@RequestParam("uid") Long uid) {
-        deaneryWorkerService.softDeleteByUId(uid);
+        deaneryWorkerService.softDelete(uid);
     }
 
 }

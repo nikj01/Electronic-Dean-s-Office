@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
@@ -14,6 +15,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.faculty.RegisterFacultyData;
 import ua.dgma.electronicDeansOffice.services.impl.data.faculty.UpdateFacultyData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
+import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
@@ -32,17 +34,20 @@ public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository facultyRepository;
     private final PeopleService<DeaneryWorker> deaneryWorkerService;
+    private final DepartmentService departmentService;
     private final AbstractValidator facultyValidator;
-    private final DeletedSpecification specification;
+    private final DeletedSpecification<Faculty> specification;
     private String className;
 
     @Autowired
     public FacultyServiceImpl(FacultyRepository facultyRepository,
                               PeopleService<DeaneryWorker> deaneryWorkerService,
+                              DepartmentService departmentService,
                               AbstractValidator facultyValidator,
-                              DeletedSpecification specification) {
+                              DeletedSpecification<Faculty> specification) {
         this.facultyRepository = facultyRepository;
         this.deaneryWorkerService = deaneryWorkerService;
+        this.departmentService = departmentService;
         this.facultyValidator = facultyValidator;
         this.specification = specification;
         className = Faculty.class.getSimpleName();
@@ -54,11 +59,23 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public List<Faculty> findAllFaculties(FindAllData data) {
-        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(data.getDeleted()));
+    public List<Faculty> findAll(FindAllData data) {
+        if (checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return findAllWithSpec(data);
         else
-            return facultyRepository.findAll(specification.getObjectByDeletedCriteria(data.getDeleted()), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+            return findAllWithSpecAndPagination(data);
+    }
+
+    private List<Faculty> findAllWithSpec(FindAllData data) {
+        return facultyRepository.findAll(getSpec(data));
+    }
+
+    private List<Faculty> findAllWithSpecAndPagination(FindAllData data) {
+        return facultyRepository.findAll(getSpec(data), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+    }
+
+    private Specification getSpec(FindAllData data) {
+        return Specification.where(specification.getObjectByDeletedCriteria(data.getDeleted()));
     }
 
     @Override
@@ -70,26 +87,30 @@ public class FacultyServiceImpl implements FacultyService {
         Faculty newFaculty = data.getNewFaculty();
 
         saveFaculty(newFaculty);
-        saveNewDeaneryWorkers(getNewDeaneryWorkersFromNewFaculty(newFaculty), data);
+        saveNewDeaneryWorkers(getDeaneryWorkersFromFaculty(newFaculty), data);
     }
+
     private String getFacultyName(RegisterFacultyData data) {
         return data.getNewFaculty().getName();
     }
+
     private void saveFaculty(Faculty faculty) {
         facultyRepository.save(faculty);
     }
+
     private void saveNewDeaneryWorkers(List<DeaneryWorker> deaneryWorkers, RegisterFacultyData data) {
         for (DeaneryWorker worker : deaneryWorkers)
             deaneryWorkerService.registerNew(new RegisterPersonData<>(worker, data.getBindingResult()));
     }
-    private List<DeaneryWorker> getNewDeaneryWorkersFromNewFaculty(Faculty faculty) {
+
+    private List<DeaneryWorker> getDeaneryWorkersFromFaculty(Faculty faculty) {
         return faculty.getDeaneryWorkers();
     }
 
 
     @Override
     @Transactional
-    public void updateFaculty(UpdateFacultyData data) {
+    public void update(UpdateFacultyData data) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, data.getName(), facultyRepository));
         checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, data.getUpdatedFaculty().getName(), facultyRepository));
         validateObject(new DataForAbstractValidator(facultyValidator, data.getUpdatedFaculty()));
@@ -99,65 +120,72 @@ public class FacultyServiceImpl implements FacultyService {
         setDepartmentsInFaculty(updatedFaculty, data);
         setDeaneryWorkersInFaculty(updatedFaculty, data);
 
-//        Faculty existingFaculty = facultyRepository.getByName(data.getName()).get();
-//        Faculty updatedFaculty = data.getUpdatedFaculty();
-//
-//        setFacultyName(existingFaculty, updatedFaculty);
-
         saveFaculty(updatedFaculty);
     }
 
     private void setIdInFaculty(Faculty faculty, UpdateFacultyData data) {
         faculty.setId(getExistingFacultyId(data));
     }
+
     private Long getExistingFacultyId(UpdateFacultyData data) {
         return getExistingFaculty(getFacultyName(data)).getId();
     }
-    private String getFacultyName(UpdateFacultyData data) {
-        return data.getName();
-    }
+
     private Faculty getExistingFaculty(String facultyName) {
         return facultyRepository.getByName(facultyName).get();
     }
+
+    private String getFacultyName(UpdateFacultyData data) {
+        return data.getName();
+    }
+
     private void setDepartmentsInFaculty(Faculty faculty, UpdateFacultyData data) {
         faculty.setDepartments(getDepartments(data));
     }
+
     private List<Department> getDepartments(UpdateFacultyData data) {
         return getExistingFaculty(getFacultyName(data)).getDepartments();
     }
+
     private void setDeaneryWorkersInFaculty(Faculty faculty, UpdateFacultyData data) {
         faculty.setDeaneryWorkers(getDeaneryWorkers(data));
     }
+
     private List<DeaneryWorker> getDeaneryWorkers(UpdateFacultyData data) {
         return getExistingFaculty(getFacultyName(data)).getDeaneryWorkers();
     }
 
     @Override
     @Transactional
-    public void deleteFaculty(String name) {
+    public void delete(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, facultyRepository));
 
-        departmentService.deleteDepartments(getFacultyByName(name));
         facultyRepository.deleteByName(name);
-    }
-    private Faculty getFacultyByName(String facultyName) {
-        return facultyRepository.getByName(facultyName).get();
     }
 
     @Override
     @Transactional
-    public void softDeleteFaculty(String name) {
+    public void softDelete(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, facultyRepository));
 
-        Faculty faculty = facultyRepository.getByName(name).get();
-        faculty.getDepartments().stream().forEach(department -> department.setDeleted(true));
-        faculty.getDepartments().stream().forEach(department -> department.getStudentGroups().forEach(studentGroup -> studentGroup.setDeleted(true)));
-        faculty.getDepartments().stream().forEach(department -> department.getStudentGroups().forEach(studentGroup -> studentGroup.getStudents().forEach(student -> student.setDeleted(true))));
-        faculty.getDepartments().stream().forEach(department -> department.getTeachers().forEach(teacher -> teacher.setDeleted(true)));
-        faculty.getDeaneryWorkers().stream().forEach(deaneryWorker -> deaneryWorker.setDeleted(true));
-        faculty.setDeleted(true);
+        Faculty faculty = getExistingFaculty(name);
 
-        facultyRepository.save(faculty);
+        softDeleteDeaneryWorkers(faculty.getDeaneryWorkers());
+        softDeleteDepartments(faculty.getDepartments());
+
+        saveFaculty(markFacultyAsDeleted(faculty));
     }
 
+    private void softDeleteDeaneryWorkers(List<DeaneryWorker> deaneryWorkers) {
+        deaneryWorkerService.softDeletePeople(deaneryWorkers);
+    }
+
+    private void softDeleteDepartments(List<Department> departments) {
+        departmentService.softDeleteDepartments(departments);
+    }
+
+    private Faculty markFacultyAsDeleted(Faculty faculty) {
+        faculty.setDeleted(true);
+        return faculty;
+    }
 }

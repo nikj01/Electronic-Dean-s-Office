@@ -143,8 +143,8 @@ INSERT INTO Teachers (uid, department_id) VALUES
 (100, '1'),
 (101, '1'),
 (102, '1'),
--- (103, '1'),
--- (104, '1'),
+(103, '1'),
+(104, '1'),
 (105, '2'),
 (106, '2'),
 (107, '2'),
@@ -186,9 +186,16 @@ INSERT INTO Students (uid, group_id) VALUES
 -- (12723351, '11');
 --
 INSERT INTO Teachers_journals (id, comment, deleted, teacher_uid) VALUES
-(DEFAULT,'asdad', false,  100),
-(DEFAULT,'asdadsax', false, 101),
-(DEFAULT,'asqwezx', false, 102);
+(DEFAULT,'100', false, 100),
+(DEFAULT,'101', false, 101),
+(DEFAULT,'102', false, 102),
+(DEFAULT,'103', false, 103),
+(DEFAULT,'104', false, 104),
+(DEFAULT,'105', false, 105),
+(DEFAULT,'106', false, 106),
+(DEFAULT,'107', false, 107),
+(DEFAULT,'108', false, 108),
+(DEFAULT,'109', false, 109);
 
 INSERT INTO Journals_pages (id, archive, page_name, journal_id) VALUES
 (DEFAULT, false, 'IPZ', 1),

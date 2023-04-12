@@ -6,9 +6,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
+import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
@@ -18,7 +19,6 @@ import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
@@ -28,26 +28,19 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPagina
 public abstract class PeopleServiceImpl<P extends Person> implements PeopleService<P> {
 
     private final PeopleRepository<P> repository;
-    private final Validator validator;
-    private final ExceptionData exceptionData;
     private final PeopleSpecifications specifications;
     private Class<P> persistentClass;
     private String className;
 
     @Autowired
     protected PeopleServiceImpl(PeopleRepository<P> repository,
-                                Validator validator,
-                                ExceptionData exceptionData,
                                 PeopleSpecifications specifications) {
         this.repository = repository;
-        this.validator = validator;
-        this.exceptionData = exceptionData;
         this.specifications = specifications;
         this.className = getPersistentClass().getSimpleName();
     }
 
     /*  This method defines class that is required for the ExceptionData in the future */
-    @Override
     public Class<P> getPersistentClass() {
         return persistentClass = (Class<P>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
@@ -60,7 +53,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     @Override
     public List<P> findByEmail(String email) {
         return repository.getByEmailContainingIgnoreCase(email).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "email", email)));
-    };
+    }
 
     @Override
     public List<P> findBySurname(String surname) {
@@ -69,39 +62,57 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     public List<P> findAllPeople(FindAllData data) {
-        if(data.getFacultyName() == null)
-            return findAllWithPaginationOrWithout(data);
+        if (checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return findAllWithSpec(getSpec(data));
         else
-            return findAllWithPaginationOrWithoutByFaculty(data);
+            return findAllWithSpecAndPagination(getSpec(data), data);
     }
 
-    public List<P> findAllWithPaginationOrWithout(FindAllData data) {
-        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), Sort.by("surname"));
-        else
-            return repository.findAll(Specification.where(specifications.getObjectByDeletedCriteria(data.getDeleted())), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
+    private List<P> findAllWithSpec(Specification spec) {
+        return repository.findAll(spec);
     }
 
-    public abstract List<P> findAllWithPaginationOrWithoutByFaculty(FindAllData data);
+    private List<P> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
+        return repository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+    }
 
+    protected abstract Specification getSpec(FindAllData data);
 
     @Override
     @Transactional
     public abstract void registerNew(RegisterPersonData<P> data);
 
-    @Override
-    @Transactional
-    public abstract void updateByUid(UpdatePersonData<P> data);
+    protected Long getPersonUid(RegisterPersonData data) {
+        return data.getNewPerson().getUid().longValue();
+    }
+
+    protected void savePerson(P person) {
+        repository.save(person);
+    }
 
     @Override
     @Transactional
-    public abstract void deleteByUId(Long uid);
+    public abstract void update(UpdatePersonData<P> data);
+
+    protected void SetIdInUpdatedPerson(P person, UpdatePersonData data) {
+        person.setUid(data.getUid());
+    }
 
     @Override
     @Transactional
-    public abstract void softDeleteByUId(Long uid);
+    public abstract void delete(Long uid);
+
+    @Override
+    @Transactional
+    public abstract void softDelete(Long uid);
+
+    protected P markPersonAsDeleted(P person) {
+        person.setDeleted(true);
+        return person;
+    }
 
     public void checkExistsWithSuchSurname(String surname) {
-        if(!repository.existsBySurname(surname)) throw new NotFoundException(new ExceptionData<>(className, "surname", surname));
+        if (!repository.existsBySurname(surname))
+            throw new NotFoundException(new ExceptionData<>(className, "surname", surname));
     }
 }

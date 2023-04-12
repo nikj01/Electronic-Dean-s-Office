@@ -1,12 +1,9 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.repositories.DeaneryWorkerRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
@@ -22,7 +19,8 @@ import ua.dgma.electronicDeansOffice.utill.validators.DeaneryWorkerValidator;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchName;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,10 +35,9 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
     @Autowired
     protected DeaneryWorkerServiceImpl(DeaneryWorkerRepository deaneryWorkerRepository,
                                        DeaneryWorkerValidator deaneryWorkerValidator,
-                                       ExceptionData exceptionData,
                                        FacultyRepository facultyRepository,
                                        DeaneryWorkerSpecifications specifications) {
-        super(deaneryWorkerRepository, deaneryWorkerValidator, exceptionData, specifications);
+        super(deaneryWorkerRepository, specifications);
         this.deaneryWorkerRepository = deaneryWorkerRepository;
         this.deaneryWorkerValidator = deaneryWorkerValidator;
         this.facultyRepository = facultyRepository;
@@ -48,12 +45,17 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         this.className = DeaneryWorker.class.getSimpleName();
     }
 
+//    @Override
+//    public List<DeaneryWorker> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
+//        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+//            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
+//        else
+//            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
+//    }
+
     @Override
-    public List<DeaneryWorker> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
-        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
-        else
-            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
+    protected Specification getSpec(FindAllData data) {
+        return Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
     }
 
     @Override
@@ -68,7 +70,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
     }
 
     @Override
-    public void updateByUid(UpdatePersonData<DeaneryWorker> data) {
+    public void update(UpdatePersonData<DeaneryWorker> data) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), deaneryWorkerRepository));
         validateObject(new ValidationData<>(deaneryWorkerValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
@@ -80,14 +82,14 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
     }
 
     @Override
-    public void deleteByUId(Long uid) {
+    public void delete(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, deaneryWorkerRepository));
 
         deaneryWorkerRepository.deleteByUid(uid);
     }
 
     @Override
-    public void softDeleteByUId(Long uid) {
+    public void softDelete(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, deaneryWorkerRepository));
 
         DeaneryWorker deaneryWorker = findByUid(uid);
@@ -97,8 +99,9 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
     }
 
     @Override
-    public void markPeopleAsDeleted(List<DeaneryWorker> people) {
-
+    public void softDeletePeople(List<DeaneryWorker> people) {
+        for (DeaneryWorker worker : people)
+            softDelete(worker.getUid());
     }
 
 }

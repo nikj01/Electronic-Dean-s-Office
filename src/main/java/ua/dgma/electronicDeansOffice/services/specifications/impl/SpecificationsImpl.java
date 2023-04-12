@@ -37,38 +37,56 @@ public class SpecificationsImpl<P> implements DeaneryWorkerSpecifications,
 
     public Specification<DeaneryWorker> findDeaneryWorkersByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
+            if (facultyName == null)
+                return criteriaBuilder.isNotNull(root.get("faculty"));
+            else
+                return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
         };
 
     }
 
     public Specification<Teacher> findTeachersByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("department").get("faculty").get("name"), facultyName);
+            if (facultyName == null)
+                return criteriaBuilder.isNotNull(root.get("department").get("faculty"));
+            else
+                return criteriaBuilder.equal(root.get("department").get("faculty").get("name"), facultyName);
         };
     }
 
 
     public Specification<Student> findStudentsByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("studentGroup").get("department").get("faculty").get("name"), facultyName);
+            if (facultyName == null)
+                return criteriaBuilder.isNotNull(root.get("studentGroup").get("department").get("faculty"));
+            else
+                return criteriaBuilder.equal(root.get("studentGroup").get("department").get("faculty").get("name"), facultyName);
         };
     }
 
     public Specification<StudentGroup> getStudentGroupByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("department").get("faculty").get("name"), facultyName);
+            if (facultyName == null)
+                return criteriaBuilder.isNotNull(root.get("department").get("faculty"));
+            else
+                return criteriaBuilder.equal(root.get("department").get("faculty").get("name"), facultyName);
         };
     }
     public Specification<Department> getDepartmentByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
+            if (facultyName == null)
+                return criteriaBuilder.isNotNull(root.get("faculty"));
+            else
+                return criteriaBuilder.equal(root.get("faculty").get("name"), facultyName);
         };
     }
 
     public Specification<TeachersJournal> getTeacherJournalByFacultyCriteria(String facultyName) {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("teacher").get("department").get("faculty").get("name"), facultyName);
+            if (facultyName == null)
+                return criteriaBuilder.isNotNull(root.get("teacher").get("department").get("faculty"));
+            else
+                return criteriaBuilder.equal(root.get("teacher").get("department").get("faculty").get("name"), facultyName);
         };
     }
 }

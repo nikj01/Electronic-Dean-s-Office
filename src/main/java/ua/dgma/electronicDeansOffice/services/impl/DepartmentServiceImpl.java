@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
-import ua.dgma.electronicDeansOffice.models.*;
+import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.models.Faculty;
+import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
@@ -17,7 +20,6 @@ import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonDat
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
-import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
 import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
@@ -36,7 +38,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final FacultyRepository facultyRepository;
     private final PeopleService<Teacher> teacherService;
     private final StudentGroupService groupService;
-    private final TeachersJournalService journalService;
     private final AbstractValidator departmentValidator;
     private final DepartmentSpecifications specifications;
     private String className;
@@ -46,14 +47,12 @@ public class DepartmentServiceImpl implements DepartmentService {
                                  FacultyRepository facultyRepository,
                                  PeopleService<Teacher> teacherService,
                                  StudentGroupService groupService,
-                                 TeachersJournalService journalService,
                                  AbstractValidator departmentValidator,
                                  DepartmentSpecifications specifications) {
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
         this.teacherService = teacherService;
         this.groupService = groupService;
-        this.journalService = journalService;
         this.departmentValidator = departmentValidator;
         this.specifications = specifications;
         className = Department.class.getSimpleName();
@@ -62,28 +61,28 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> findByName(String name) {
-        return departmentRepository.getByNameContainingIgnoreCase(name).orElseThrow(()-> new NotFoundException(new ExceptionData<>(className, "name", name)));
+        return departmentRepository.getByNameContainingIgnoreCase(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
     }
 
     public List<Department> findAllDepartments(FindAllData data) {
-        if(data.getFacultyName() == null)
-            return findAllWithPaginationOrWithout(data);
+        if (checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
+            return findAllWithSpec(getSpec(data));
         else
-            return findAllWithPaginationOrWithoutByFaculty(data);
+            return findAllWithSpecAndPagination(getSpec(data), data);
     }
 
-    private List<Department> findAllWithPaginationOrWithout(FindAllData data) {
-        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()));
-        else
-            return departmentRepository.findAll(specifications.getObjectByDeletedCriteria(data.getDeleted()), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+    private List<Department> findAllWithSpec(Specification spec) {
+        return departmentRepository.findAll(spec);
     }
-    private List<Department> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
-        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-            return departmentRepository.findAll(Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))));
-        else
-            return departmentRepository.findAll(Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+
+    private List<Department> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
+        return departmentRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
+
+    private Specification getSpec(FindAllData data) {
+        return Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+    }
+
 
     @Override
     @Transactional
@@ -96,29 +95,35 @@ public class DepartmentServiceImpl implements DepartmentService {
         setFacultyInDepartment(newDepartment);
 
         saveDepartment(newDepartment);
-        saveNewTeachers(getNewTeachersFromNewDepartment(newDepartment), data);
+        saveNewTeachers(getTeachers(newDepartment), data);
     }
 
     private String getDepartmentName(RegisterDepartmentData data) {
         return data.getNewDepartment().getName();
     }
+
     private void setFacultyInDepartment(Department department) {
-        department.setFaculty(getFacultyByName(getFacultyName(department)));
+        department.setFaculty(getExistingFaculty(department));
     }
-    private Faculty getFacultyByName(String facultyName) {
-        return facultyRepository.getByName(facultyName).get();
+
+    private Faculty getExistingFaculty(Department department) {
+        return facultyRepository.getByName(getFacultyName(department)).get();
     }
+
     private String getFacultyName(Department department) {
         return department.getFaculty().getName();
     }
+
     private void saveDepartment(Department department) {
         departmentRepository.save(department);
     }
+
     private void saveNewTeachers(List<Teacher> teachers, RegisterDepartmentData data) {
-        for (Teacher teacher: teachers)
+        for (Teacher teacher : teachers)
             teacherService.registerNew(new RegisterPersonData<>(teacher, data.getBindingResult()));
     }
-    private List<Teacher> getNewTeachersFromNewDepartment(Department department) {
+
+    private List<Teacher> getTeachers(Department department) {
         return department.getTeachers();
     }
 
@@ -136,20 +141,33 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         saveDepartment(updatedDepartment);
     }
+
     private void setIdInDepartment(Department department, UpdateDepartmentData data) {
-        department.setId(getDepartment(getDepartmentName(data)).getId());
+        department.setId(getExistingDepartment(data).getId());
     }
-    private Department getDepartment(String departmentName) {
-        return departmentRepository.getByName(departmentName).get();
+
+    private Department getExistingDepartment(UpdateDepartmentData data) {
+        return departmentRepository.getByName(getDepartmentName(data)).get();
     }
+
     private String getDepartmentName(UpdateDepartmentData data) {
         return data.getName();
     }
+
     private void setTeachersInDepartment(Department department, UpdateDepartmentData data) {
-        department.setTeachers(getDepartment(getDepartmentName(data)).getTeachers());
+        department.setTeachers(getExistingTeachers(data));
     }
+
+    private List<Teacher> getExistingTeachers(UpdateDepartmentData data) {
+        return getExistingDepartment(data).getTeachers();
+    }
+
     private void setStudentGroupsInDepartment(Department department, UpdateDepartmentData data) {
-        department.setStudentGroups(getDepartment(getDepartmentName(data)).getStudentGroups());
+        department.setStudentGroups(getExistingStudentGroups(data));
+    }
+
+    private List<StudentGroup> getExistingStudentGroups(UpdateDepartmentData data) {
+        return getExistingDepartment(data).getStudentGroups();
     }
 
     @Override
@@ -157,15 +175,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void deleteByName(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
 
-        journalService.removeTeachersFromJournals(getDepartment(name).getTeachers());
         departmentRepository.deleteByName(name);
-    }
-
-    @Override
-    @Transactional
-    public void deleteDepartments(List<Department> departments) {
-        for (Department department : departments)
-            deleteByName(department.getName());
     }
 
     @Override
@@ -173,23 +183,35 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void softDeleteByName(String name) {
         checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
 
-        markStudentGroupsAsDeleted(getDepartment(name));
-        markTeachersAsDeleted(getDepartment(name));
-        markTeachersJournalsAsDeleted(getDepartment(name));
+        Department department = getExistingDepartment(name);
 
-        saveDepartment(markDepartmentAsDeleted(getDepartment(name)));
+        softDeleteStudentGroups(department.getStudentGroups());
+        softDeleteTeachers(department.getTeachers());
+
+        saveDepartment(markDepartmentAsDeleted(department));
     }
-    private void markStudentGroupsAsDeleted(Department department) {
-        groupService.markStudentGroupsAsDeleted(department.getStudentGroups());
+
+    private Department getExistingDepartment(String departmentName) {
+        return departmentRepository.getByName(departmentName).get();
     }
-    private void markTeachersAsDeleted(Department department) {
-        teacherService.markPeopleAsDeleted(department.getTeachers());
+
+    private void softDeleteStudentGroups(List<StudentGroup> studentGroups) {
+        groupService.softDeleteStudentGroups(studentGroups);
     }
-    private void markTeachersJournalsAsDeleted(Department department) {
-        journalService.markTeachersJournalsAsDeleted(department.getTeachers());
+
+    private void softDeleteTeachers(List<Teacher> teachers) {
+        teacherService.softDeletePeople(teachers);
     }
+
     private Department markDepartmentAsDeleted(Department department) {
         department.setDeleted(true);
         return department;
+    }
+
+    @Override
+    @Transactional
+    public void softDeleteDepartments(List<Department> departments) {
+        for (Department department : departments)
+            softDeleteByName(department.getName());
     }
 }

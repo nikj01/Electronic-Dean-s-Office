@@ -28,7 +28,7 @@ public class TeachersJournal {
             fetch = FetchType.LAZY
     )
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
     private Teacher teacher;
 

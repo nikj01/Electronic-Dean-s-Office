@@ -60,15 +60,15 @@ public class TeachersJournalsController {
 
         TeachersJournal updatedJournal = journalMapper.toJournal(journalPatchDTO);
 
-        journalService.updateById(new UpdateTeachersJournalData(id, updatedJournal, bindingResult));
+        journalService.update(new UpdateTeachersJournalData(id, updatedJournal, bindingResult));
     }
 
     @DeleteMapping("/delete")
     public void deleteJournal(@RequestParam("id") Long id) {
-        journalService.deleteById(id);
+        journalService.delete(id);
     }
     @DeleteMapping("/soft/delete")
     public void softDeleteJournal(@RequestParam("id") Long id) {
-        journalService.softDeleteById(id);
+        journalService.softDelete(id);
     }
 }

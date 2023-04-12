@@ -48,7 +48,7 @@ public class FacultyController {
     public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
                                                         @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
                                                         @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted) {
-        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findAllFaculties(new FindAllData(page, facultiesPerPage, deleted)));
+        return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findAll(new FindAllData(page, facultiesPerPage, deleted)));
     }
 
     @PostMapping("/register")
@@ -65,17 +65,17 @@ public class FacultyController {
                                                     BindingResult bindingResult) {
         Faculty updatedFaculty = facultyMapper.toFaculty(facultyPatchDTO);
 
-        facultyService.updateFaculty(new UpdateFacultyData(name, updatedFaculty, bindingResult));
+        facultyService.update(new UpdateFacultyData(name, updatedFaculty, bindingResult));
     }
 
     @DeleteMapping("/delete")
     public void deleteFaculty(@RequestParam("name") String name) {
-        facultyService.deleteFaculty(name);
+        facultyService.delete(name);
     }
 
     @DeleteMapping("/soft/delete")
     public void softDeleteFaculty(@RequestParam("name") String name) {
-        facultyService.softDeleteFaculty(name);
+        facultyService.softDelete(name);
     }
 
 }

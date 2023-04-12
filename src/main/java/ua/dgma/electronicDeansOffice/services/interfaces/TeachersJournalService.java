@@ -1,6 +1,5 @@
 package ua.dgma.electronicDeansOffice.services.interfaces;
 
-import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
@@ -8,7 +7,6 @@ import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.Register
 import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.UpdateTeachersJournalData;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TeachersJournalService {
 
@@ -16,9 +14,7 @@ public interface TeachersJournalService {
     List<TeachersJournal> findByComment(String comment);
     List<TeachersJournal> findAll(FindAllData data);
     void registerNew(RegisterTeachersJournalData data);
-    void updateById(UpdateTeachersJournalData data);
-    void deleteById(Long id);
-    void softDeleteById(Long id);
-    void removeTeachersFromJournals(List<Teacher> teachers);
-    void markTeachersJournalsAsDeleted(List<Teacher> teachers);
+    void update(UpdateTeachersJournalData data);
+    void delete(Long id);
+    void softDelete(Long id);
 }
