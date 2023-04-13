@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
+import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.repositories.DeaneryWorkerRepository;
 import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
@@ -24,8 +25,7 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExists
 
 @Service
 @Transactional(readOnly = true)
-public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
-
+public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
     private final DeaneryWorkerRepository deaneryWorkerRepository;
     private final FacultyRepository facultyRepository;
     private final DeaneryWorkerValidator deaneryWorkerValidator;
@@ -45,28 +45,37 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         this.className = DeaneryWorker.class.getSimpleName();
     }
 
-//    @Override
-//    public List<DeaneryWorker> findAllWithPaginationOrWithoutByFaculty(FindAllData data) {
-//        if(checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
-//            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), Sort.by("surname"));
-//        else
-//            return deaneryWorkerRepository.findAll(Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted()))), PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("surname"))).getContent();
-//    }
-
     @Override
     protected Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
     }
 
     @Override
-    public void registerNew(RegisterPersonData<DeaneryWorker> data) {
+    public void register(RegisterPersonData<DeaneryWorker> data) {
+        checkExistsWithSuchName(new CheckExistsByNameData<>(className, getFacultyId(data), facultyRepository));
         validateObject(new ValidationData<>(deaneryWorkerValidator, data.getNewPerson(), data.getBindingResult()));
-        checkExistsWithSuchName(new CheckExistsByNameData<>(className, data.getNewPerson().getFaculty().getName(), facultyRepository));
 
         DeaneryWorker newDeaneryWorker = data.getNewPerson();
-        newDeaneryWorker.setFaculty(facultyRepository.getByName(newDeaneryWorker.getFaculty().getName()).get());
 
-        deaneryWorkerRepository.save(newDeaneryWorker);
+        setFacultyForDeaneryWorker(newDeaneryWorker);
+
+        savePerson(newDeaneryWorker);
+    }
+
+    private String getFacultyId(RegisterPersonData<DeaneryWorker> data) {
+        return data.getNewPerson().getFaculty().getName();
+    }
+
+    private void setFacultyForDeaneryWorker(DeaneryWorker deaneryWorker) {
+        deaneryWorker.setFaculty(getExistingFaculty(deaneryWorker));
+    }
+
+    private Faculty getExistingFaculty(DeaneryWorker deaneryWorker) {
+        return facultyRepository.findById(getFacultyId(deaneryWorker)).get();
+    }
+
+    private Long getFacultyId(DeaneryWorker deaneryWorker) {
+        return deaneryWorker.getFaculty().getId();
     }
 
     @Override
@@ -75,10 +84,11 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         validateObject(new ValidationData<>(deaneryWorkerValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
         DeaneryWorker updatedDeaneryWorker = data.getUpdatedPerson();
-        updatedDeaneryWorker.setUid(data.getUid());
-        updatedDeaneryWorker.setFaculty(facultyRepository.getByName(updatedDeaneryWorker.getFaculty().getName()).get());
 
-        deaneryWorkerRepository.save(updatedDeaneryWorker);
+        setIdInUpdatedPerson(updatedDeaneryWorker, data);
+        setFacultyForDeaneryWorker(updatedDeaneryWorker);
+
+        savePerson(updatedDeaneryWorker);
     }
 
     @Override
@@ -92,10 +102,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
     public void softDelete(Long uid) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, deaneryWorkerRepository));
 
-        DeaneryWorker deaneryWorker = findByUid(uid);
-        deaneryWorker.setDeleted(true);
-
-        deaneryWorkerRepository.save(deaneryWorker);
+        savePerson(markPersonAsDeleted(findByUid(uid)));
     }
 
     @Override
@@ -103,5 +110,4 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker>{
         for (DeaneryWorker worker : people)
             softDelete(worker.getUid());
     }
-
 }

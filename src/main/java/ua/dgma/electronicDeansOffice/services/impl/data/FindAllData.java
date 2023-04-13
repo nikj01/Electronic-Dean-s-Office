@@ -10,16 +10,21 @@ public class FindAllData {
     private Integer page;
     private Integer objectsPerPage;
     private Boolean deleted;
-    private String facultyName;
+    private Long facultyId;
 
-    public FindAllData(Integer page, Integer objectsPerPage, Boolean deleted, String facultyName) {
+    public FindAllData(Integer page,
+                       Integer objectsPerPage,
+                       Boolean deleted,
+                       Long facultyId) {
         this.page = page;
         this.objectsPerPage = objectsPerPage;
         this.deleted = deleted;
-        this.facultyName = facultyName;
+        this.facultyId = facultyId;
     }
 
-    public FindAllData(Integer page, Integer objectsPerPage, Boolean deleted) {
+    public FindAllData(Integer page,
+                       Integer objectsPerPage,
+                       Boolean deleted) {
         this.page = page;
         this.objectsPerPage = objectsPerPage;
         this.deleted = deleted;

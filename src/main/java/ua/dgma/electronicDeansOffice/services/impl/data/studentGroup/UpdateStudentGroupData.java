@@ -10,7 +10,7 @@ import ua.dgma.electronicDeansOffice.models.StudentGroup;
 @RequiredArgsConstructor
 public class UpdateStudentGroupData {
     @NonNull
-    private String name;
+    private Long id;
     @NonNull
     private StudentGroup updatedStudentGroup;
 }

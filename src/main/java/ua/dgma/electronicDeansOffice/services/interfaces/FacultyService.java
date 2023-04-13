@@ -8,10 +8,11 @@ import ua.dgma.electronicDeansOffice.services.impl.data.faculty.UpdateFacultyDat
 import java.util.List;
 
 public interface FacultyService {
-    List<Faculty> findByName(String name);
+    Faculty findOne(Long facultyId);
+    List<Faculty> findByName(String facultyName);
     List<Faculty> findAll(FindAllData data);
-    void registerNew(RegisterFacultyData data);
+    void register(RegisterFacultyData data);
     void update(UpdateFacultyData data);
-    void delete(String name);
-    void softDelete(String name);
+    void delete(Long facultyId);
+    void softDelete(Long facultyId);
 }

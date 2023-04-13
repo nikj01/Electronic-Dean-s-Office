@@ -36,7 +36,7 @@ public class TeachersJournalsController {
     @GetMapping("/findById")
     @ResponseStatus(HttpStatus.FOUND)
     public TeachersJournalGetDTO findJournalById(@RequestParam("id") Long id) {
-        return journalMapper.toJournalGetDTO(journalService.findByid(id));
+        return journalMapper.toJournalGetDTO(journalService.findOne(id));
     }
 
     @GetMapping("/findByComment")
@@ -49,8 +49,8 @@ public class TeachersJournalsController {
     public List<TeachersJournalSlimGetDTO> findAllJournals(@RequestParam(value = "page", required = false) Integer page,
                                                            @RequestParam(value = "journalsPerPage", required = false) Integer journalsPerPage,
                                                            @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
-                                                           @RequestParam(value = "faculty", required = false) String facultyName) {
-        return journalListMapper.toTeachersJournalsSlimGetDTO(journalService.findAll(new FindAllData(page, journalsPerPage, deleted, facultyName)));
+                                                           @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return journalListMapper.toTeachersJournalsSlimGetDTO(journalService.findAll(new FindAllData(page, journalsPerPage, deleted, facultyId)));
     }
 
     @PatchMapping("/update")

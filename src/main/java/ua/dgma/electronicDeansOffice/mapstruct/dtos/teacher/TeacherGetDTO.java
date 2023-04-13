@@ -4,11 +4,9 @@ import lombok.Data;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
 import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
-import ua.dgma.electronicDeansOffice.models.StudentGroup;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class TeacherGetDTO {

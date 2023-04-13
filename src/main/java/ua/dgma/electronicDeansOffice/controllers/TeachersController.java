@@ -63,8 +63,8 @@ public class TeachersController {
     public List<TeacherSlimGetDTO> findAllSlimTeachers(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
-                                                       @RequestParam(value = "faculty", required = false) String facultyName) {
-        return teacherListMapper.toTeachersSlimGetDTO(teacherService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyName)));
+                                                       @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return teacherListMapper.toTeachersSlimGetDTO(teacherService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyId)));
     }
 
     @PostMapping("/register")
@@ -73,7 +73,7 @@ public class TeachersController {
                                                        BindingResult bindingResult) {
         Teacher newTeacher = teacherMapper.toTeacher(teacherPostDTO);
 
-        teacherService.registerNew(new RegisterPersonData<>(newTeacher, bindingResult));
+        teacherService.register(new RegisterPersonData<>(newTeacher, bindingResult));
     }
 
     @PatchMapping("/update")

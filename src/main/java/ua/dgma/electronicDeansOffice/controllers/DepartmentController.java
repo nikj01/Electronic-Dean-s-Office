@@ -34,6 +34,11 @@ public class DepartmentController {
         this.departmentListMapper = departmentListMapper;
     }
 
+    @GetMapping("/findById")
+    public DepartmentGetDTO findDepartmentById(@RequestParam("id") Long id) {
+        return departmentMapper.toDepartmentGetDTO(departmentService.findOne(id));
+    }
+
     @GetMapping("/findByName")
     public List<DepartmentSlimGetDTO> findDepartmentByName(@RequestParam("name") String name) {
         return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findByName(name));
@@ -43,8 +48,8 @@ public class DepartmentController {
     public List<DepartmentSlimGetDTO> findAllSlimDepartments(@RequestParam(value = "page", required = false) Integer page,
                                                              @RequestParam(value = "departmentsPerPage", required = false) Integer departmentsPerPage,
                                                              @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
-                                                             @RequestParam(value = "faculty", required = false) String facultyName) {
-        return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findAllDepartments(new FindAllData(page, departmentsPerPage, deleted, facultyName)));
+                                                             @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findAllDepartments(new FindAllData(page, departmentsPerPage, deleted, facultyId)));
     }
 
     @PostMapping("/register")
@@ -52,24 +57,24 @@ public class DepartmentController {
                                                           BindingResult bindingResult) {
         Department newDepartment = departmentMapper.toDepartment(newPostDepartment);
 
-        departmentService.registerNew(new RegisterDepartmentData(newDepartment, bindingResult));
+        departmentService.register(new RegisterDepartmentData(newDepartment, bindingResult));
     }
 
     @PatchMapping("/update")
-    public void updateDepartment(@RequestParam("name") String name,
-                                 @RequestBody @Valid   DepartmentPatchDTO departmentPatchDTO) {
+    public void updateDepartment(@RequestParam("id") Long id,
+                                 @RequestBody @Valid DepartmentPatchDTO departmentPatchDTO) {
         Department updatedDepartment = departmentMapper.toDepartment(departmentPatchDTO);
 
-        departmentService.updateByName(new UpdateDepartmentData(name, updatedDepartment));
+        departmentService.update(new UpdateDepartmentData(id, updatedDepartment));
     }
 
     @DeleteMapping("/delete")
-    public void deleteDepartment(@RequestParam("name") String name) {
-        departmentService.deleteByName(name);
+    public void deleteDepartment(@RequestParam("id") Long departmentId) {
+        departmentService.delete(departmentId);
     }
 
     @DeleteMapping("/soft/delete")
-    public void softDeleteDepartment(@RequestParam("name") String name) {
-        departmentService.softDeleteByName(name);
+    public void softDeleteDepartment(@RequestParam("id") Long departmentId) {
+        departmentService.softDelete(departmentId);
     }
 }

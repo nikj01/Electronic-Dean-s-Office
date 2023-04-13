@@ -6,5 +6,5 @@ import ua.dgma.electronicDeansOffice.models.Student;
 
 @Component
 public interface StudentSpecifications extends PeopleSpecifications {
-    Specification<Student> findStudentsByFacultyCriteria(String facultyName);
+    Specification<Student> findStudentsByFacultyCriteria(Long facultyId);
 }

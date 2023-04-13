@@ -46,13 +46,13 @@ public class JournalPageServiceImpl implements JournalPageService {
     }
 
     @Override
-    public JournalPage findById(Long id) {
-        return pageRepository.findById(id).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", id)));
+    public JournalPage findOne(Long pageId) {
+        return pageRepository.findById(pageId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", pageId)));
     }
 
     @Override
     @Transactional
-    public void registerNew(RegisterJournalPageData data) {
+    public void register(RegisterJournalPageData data) {
         validateObject(new ValidationData<>(pageValidator, data.getNewJournalPage(), data.getBindingResult()));
 
         JournalPage newJournalPage = data.getNewJournalPage();
@@ -63,24 +63,24 @@ public class JournalPageServiceImpl implements JournalPageService {
         saveJournalPage(newJournalPage);
     }
 
-    public void setTeachersJournalInNewPage(JournalPage page) {
+    private void setTeachersJournalInNewPage(JournalPage page) {
         page.setJournal(getJournal(page));
     }
 
     private TeachersJournal getJournal(JournalPage page) {
-        return journalService.findByid(getJournalId(page));
+        return journalService.findOne(getJournalId(page));
     }
 
     private Long getJournalId(JournalPage page) {
         return page.getJournal().getId();
     }
 
-    public void setStudentGroupsInNewPage(JournalPage page) {
-//        if (page.getStudentGroups() != null)
+    private void setStudentGroupsInNewPage(JournalPage page) {
+        if (page.getStudentGroups() != null)
             page.setStudentGroups(getStudentGroupsFromPage(page));
     }
 
-    public List<StudentGroup> getStudentGroupsFromPage(JournalPage journalPage) {
+    private List<StudentGroup> getStudentGroupsFromPage(JournalPage journalPage) {
         List<StudentGroup> existingStudentGroups = new ArrayList<>();
 
         for (StudentGroup group : journalPage.getStudentGroups())
@@ -93,7 +93,7 @@ public class JournalPageServiceImpl implements JournalPageService {
         return groupRepository.getByName(groupName).get();
     }
 
-    public void saveJournalPage(JournalPage page) {
+    private void saveJournalPage(JournalPage page) {
         pageRepository.save(page);
     }
 
@@ -103,7 +103,7 @@ public class JournalPageServiceImpl implements JournalPageService {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getId(), pageRepository));
         validateObject(new ValidationData<>(pageValidator, data.getUpdatedJournalPage(), data.getBindingResult()));
 
-        JournalPage existingJournalPage = findById(data.getId());
+        JournalPage existingJournalPage = findOne(data.getId());
         JournalPage updatedJournalPage = data.getUpdatedJournalPage();
 
         setNewNameOnExistingPage(existingJournalPage, updatedJournalPage);
@@ -113,23 +113,23 @@ public class JournalPageServiceImpl implements JournalPageService {
         saveJournalPage(existingJournalPage);
     }
 
-    public void setNewNameOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
+    private void setNewNameOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
         existingPage.setPageName(updatedPage.getPageName());
     }
 
-    public void setUpdatedStudentGroupsOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
+    private void setUpdatedStudentGroupsOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
         existingPage.setStudentGroups(getStudentGroupsFromPage(updatedPage));
     }
 
-    public void setArchiveFlagOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
+    private void setArchiveFlagOnExistingPage(JournalPage existingPage, JournalPage updatedPage) {
         existingPage.setArchive(updatedPage.isArchive());
     }
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, id, pageRepository));
+    public void delete(Long pageId) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, pageId, pageRepository));
 
-        pageRepository.deleteById(id);
+        pageRepository.deleteById(pageId);
     }
 }

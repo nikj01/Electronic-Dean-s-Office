@@ -11,7 +11,6 @@ import java.util.List;
 
 @Data
 public class TeacherPatchDTO {
-
     @NotBlank(message = "The field |SURNAME| cannot be empty!")
     private String surname;
     @NotBlank(message = "The field |NAME| cannot be empty!")

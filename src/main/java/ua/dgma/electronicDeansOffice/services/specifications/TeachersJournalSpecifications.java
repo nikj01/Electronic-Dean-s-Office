@@ -5,5 +5,5 @@ import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
 
 public interface TeachersJournalSpecifications extends DeletedSpecification {
-    Specification<TeachersJournal> getTeacherJournalByFacultyCriteria(String facultyName);
+    Specification<TeachersJournal> getTeacherJournalByFacultyCriteria(Long facultyId);
 }

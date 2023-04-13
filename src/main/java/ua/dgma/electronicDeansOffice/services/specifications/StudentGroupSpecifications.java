@@ -4,5 +4,5 @@ import org.springframework.data.jpa.domain.Specification;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
 
 public interface StudentGroupSpecifications extends DeletedSpecification {
-    Specification<StudentGroup> getStudentGroupByFacultyCriteria(String facultyName);
+    Specification<StudentGroup> getStudentGroupByFacultyCriteria(Long facultyId);
 }

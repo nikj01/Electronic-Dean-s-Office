@@ -42,7 +42,6 @@ public class Event {
     @Reference
     private List<StudentGroup> studentGroups;
 
-
     @NotEmpty(message = "The field |DATE| cannot be empty!")
     @Column(nullable = false)
     private LocalDate date;

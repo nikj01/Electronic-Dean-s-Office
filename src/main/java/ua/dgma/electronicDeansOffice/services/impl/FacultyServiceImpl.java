@@ -19,6 +19,7 @@ import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.DeletedSpecification;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -31,7 +32,6 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Service
 @Transactional(readOnly = true)
 public class FacultyServiceImpl implements FacultyService {
-
     private final FacultyRepository facultyRepository;
     private final PeopleService<DeaneryWorker> deaneryWorkerService;
     private final DepartmentService departmentService;
@@ -54,8 +54,13 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public List<Faculty> findByName(String name) {
-        return facultyRepository.getByNameContainingIgnoreCase(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
+    public Faculty findOne(Long facultyId) {
+        return facultyRepository.findById(facultyId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", facultyId)));
+    }
+
+    @Override
+    public List<Faculty> findByName(String facultyName) {
+        return facultyRepository.getByNameContainingIgnoreCase(facultyName).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", facultyName)));
     }
 
     @Override
@@ -80,7 +85,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     @Transactional
-    public void registerNew(RegisterFacultyData data) {
+    public void register(RegisterFacultyData data) {
         checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getFacultyName(data), facultyRepository));
         validateObject(new DataForAbstractValidator(facultyValidator, data.getNewFaculty()));
 
@@ -100,7 +105,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     private void saveNewDeaneryWorkers(List<DeaneryWorker> deaneryWorkers, RegisterFacultyData data) {
         for (DeaneryWorker worker : deaneryWorkers)
-            deaneryWorkerService.registerNew(new RegisterPersonData<>(worker, data.getBindingResult()));
+            deaneryWorkerService.register(new RegisterPersonData<>(worker, data.getBindingResult()));
     }
 
     private List<DeaneryWorker> getDeaneryWorkersFromFaculty(Faculty faculty) {
@@ -111,7 +116,7 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     @Transactional
     public void update(UpdateFacultyData data) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, data.getName(), facultyRepository));
+        checkExistsWithSuchID(new CheckExistsByIdData(className, data.getId(), facultyRepository));
         checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, data.getUpdatedFaculty().getName(), facultyRepository));
         validateObject(new DataForAbstractValidator(facultyValidator, data.getUpdatedFaculty()));
 
@@ -131,12 +136,12 @@ public class FacultyServiceImpl implements FacultyService {
         return getExistingFaculty(getFacultyName(data)).getId();
     }
 
-    private Faculty getExistingFaculty(String facultyName) {
-        return facultyRepository.getByName(facultyName).get();
+    private Faculty getExistingFaculty(Long facultyId) {
+        return facultyRepository.findById(facultyId).get();
     }
 
-    private String getFacultyName(UpdateFacultyData data) {
-        return data.getName();
+    private Long getFacultyName(UpdateFacultyData data) {
+        return data.getId();
     }
 
     private void setDepartmentsInFaculty(Faculty faculty, UpdateFacultyData data) {
@@ -157,18 +162,18 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     @Transactional
-    public void delete(String name) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, facultyRepository));
+    public void delete(Long facultyId) {
+        checkExistsWithSuchID(new CheckExistsByIdData(className, facultyId, facultyRepository));
 
-        facultyRepository.deleteByName(name);
+        facultyRepository.deleteById(facultyId);
     }
 
     @Override
     @Transactional
-    public void softDelete(String name) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, facultyRepository));
+    public void softDelete(Long facultyId) {
+        checkExistsWithSuchID(new CheckExistsByIdData(className, facultyId, facultyRepository));
 
-        Faculty faculty = getExistingFaculty(name);
+        Faculty faculty = getExistingFaculty(facultyId);
 
         softDeleteDeaneryWorkers(faculty.getDeaneryWorkers());
         softDeleteDepartments(faculty.getDepartments());

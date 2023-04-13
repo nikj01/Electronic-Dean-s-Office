@@ -10,7 +10,6 @@ import java.util.List;
 
 @Data
 public class PersonPostDTO {
-
     @NotNull(message = "The field |UID| cannot be empty!")
     private Long uid;
     @NotBlank(message = "The field |SURNAME| cannot be empty!")

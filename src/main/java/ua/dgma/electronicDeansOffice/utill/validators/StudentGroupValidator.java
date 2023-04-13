@@ -60,9 +60,9 @@ public class StudentGroupValidator implements AbstractValidator {
     private void checkExistenceOfTheStudentsByUid(StudentGroupValidationData data) {
         List<Student> newStudents = data.getStudentGroup().getStudents();
 
-        for (Student student : newStudents) {
-            checkStudentByUid(data, student);
-        }
+        if(newStudents != null)
+            for (Student student : newStudents)
+                checkStudentByUid(data, student);
     }
 
     private void checkStudentByUid(StudentGroupValidationData data, Student student) {

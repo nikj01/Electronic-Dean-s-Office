@@ -10,7 +10,7 @@ import ua.dgma.electronicDeansOffice.models.Department;
 @RequiredArgsConstructor
 public class UpdateDepartmentData {
     @NonNull
-    private String name;
+    private Long id;
     @NonNull
     private Department updatedDepartment;
 }

@@ -32,6 +32,12 @@ public class FacultyController {
         this.facultyMapper = facultyMapper;
     }
 
+    @GetMapping("/findById")
+    @ResponseStatus(HttpStatus.FOUND)
+    public FacultyGetDTO findFacultyById(@RequestParam("id") Long id) {
+        return facultyMapper.toFacultyGetDTO(facultyService.findOne(id));
+    }
+
     @GetMapping("/findByName")
     @ResponseStatus(HttpStatus.FOUND)
     public List<FacultySlimGetDTO> findFacultyByName(@RequestParam("name") String name) {
@@ -56,26 +62,26 @@ public class FacultyController {
                                                        BindingResult bindingResult) {
         Faculty newFaculty = facultyMapper.toFaculty(newPostFaculty);
 
-        facultyService.registerNew(new RegisterFacultyData(newFaculty, bindingResult));
+        facultyService.register(new RegisterFacultyData(newFaculty, bindingResult));
     }
 
     @PatchMapping("/update")
-    public void updateFaculty(@RequestParam("name") String name,
-                              @RequestBody @Valid   FacultyPatchDTO facultyPatchDTO,
-                                                    BindingResult bindingResult) {
+    public void updateFaculty(@RequestParam("id") Long facultyId,
+                              @RequestBody @Valid FacultyPatchDTO facultyPatchDTO,
+                                                  BindingResult bindingResult) {
         Faculty updatedFaculty = facultyMapper.toFaculty(facultyPatchDTO);
 
-        facultyService.update(new UpdateFacultyData(name, updatedFaculty, bindingResult));
+        facultyService.update(new UpdateFacultyData(facultyId, updatedFaculty, bindingResult));
     }
 
     @DeleteMapping("/delete")
-    public void deleteFaculty(@RequestParam("name") String name) {
-        facultyService.delete(name);
+    public void deleteFaculty(@RequestParam("id") Long facultyId) {
+        facultyService.delete(facultyId);
     }
 
     @DeleteMapping("/soft/delete")
-    public void softDeleteFaculty(@RequestParam("name") String name) {
-        facultyService.softDelete(name);
+    public void softDeleteFaculty(@RequestParam("id") Long facultyId) {
+        facultyService.softDelete(facultyId);
     }
 
 }

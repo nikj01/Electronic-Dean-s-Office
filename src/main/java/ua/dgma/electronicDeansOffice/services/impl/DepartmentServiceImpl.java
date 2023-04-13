@@ -21,6 +21,7 @@ import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -33,7 +34,6 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Service
 @Transactional(readOnly = true)
 public class DepartmentServiceImpl implements DepartmentService {
-
     private final DepartmentRepository departmentRepository;
     private final FacultyRepository facultyRepository;
     private final PeopleService<Teacher> teacherService;
@@ -58,12 +58,17 @@ public class DepartmentServiceImpl implements DepartmentService {
         className = Department.class.getSimpleName();
     }
 
-
     @Override
-    public List<Department> findByName(String name) {
-        return departmentRepository.getByNameContainingIgnoreCase(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
+    public Department findOne(Long departmentId) {
+        return departmentRepository.findById(departmentId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", departmentId)));
     }
 
+    @Override
+    public List<Department> findByName(String departmentName) {
+        return departmentRepository.getByNameContainingIgnoreCase(departmentName).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", departmentName)));
+    }
+
+    @Override
     public List<Department> findAllDepartments(FindAllData data) {
         if (checkPaginationParameters(data.getPage(), data.getObjectsPerPage()))
             return findAllWithSpec(getSpec(data));
@@ -80,14 +85,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
     }
-
 
     @Override
     @Transactional
-    public void registerNew(RegisterDepartmentData data) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getDepartmentName(data), departmentRepository));
+    public void register(RegisterDepartmentData data) {
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getDepartmentId(data), departmentRepository));
         validateObject(new DataForAbstractValidator(departmentValidator, data.getNewDepartment()));
 
         Department newDepartment = data.getNewDepartment();
@@ -98,7 +102,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         saveNewTeachers(getTeachers(newDepartment), data);
     }
 
-    private String getDepartmentName(RegisterDepartmentData data) {
+    private String getDepartmentId(RegisterDepartmentData data) {
         return data.getNewDepartment().getName();
     }
 
@@ -107,11 +111,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private Faculty getExistingFaculty(Department department) {
-        return facultyRepository.getByName(getFacultyName(department)).get();
+        return facultyRepository.findById(getFacultyId(department)).get();
     }
 
-    private String getFacultyName(Department department) {
-        return department.getFaculty().getName();
+    private Long getFacultyId(Department department) {
+        return department.getFaculty().getId();
     }
 
     private void saveDepartment(Department department) {
@@ -120,7 +124,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private void saveNewTeachers(List<Teacher> teachers, RegisterDepartmentData data) {
         for (Teacher teacher : teachers)
-            teacherService.registerNew(new RegisterPersonData<>(teacher, data.getBindingResult()));
+            teacherService.register(new RegisterPersonData<>(teacher, data.getBindingResult()));
     }
 
     private List<Teacher> getTeachers(Department department) {
@@ -129,8 +133,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public void updateByName(UpdateDepartmentData data) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, data.getName(), departmentRepository));
+    public void update(UpdateDepartmentData data) {
+        checkExistsWithSuchID(new CheckExistsByIdData(className, data.getId(), departmentRepository));
         validateObject(new DataForAbstractValidator(departmentValidator, data.getUpdatedDepartment()));
 
         Department updatedDepartment = data.getUpdatedDepartment();
@@ -147,11 +151,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private Department getExistingDepartment(UpdateDepartmentData data) {
-        return departmentRepository.getByName(getDepartmentName(data)).get();
+        return departmentRepository.findById(getDepartmentId(data)).get();
     }
 
-    private String getDepartmentName(UpdateDepartmentData data) {
-        return data.getName();
+    private Long getDepartmentId(UpdateDepartmentData data) {
+        return data.getId();
     }
 
     private void setTeachersInDepartment(Department department, UpdateDepartmentData data) {
@@ -172,18 +176,18 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     @Transactional
-    public void deleteByName(String name) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
+    public void delete(Long departmentId) {
+        checkExistsWithSuchID(new CheckExistsByIdData(className, departmentId, departmentRepository));
 
-        departmentRepository.deleteByName(name);
+        departmentRepository.deleteById(departmentId);
     }
 
     @Override
     @Transactional
-    public void softDeleteByName(String name) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, departmentRepository));
+    public void softDelete(Long departmentId) {
+        checkExistsWithSuchID(new CheckExistsByIdData(className, departmentId, departmentRepository));
 
-        Department department = getExistingDepartment(name);
+        Department department = getExistingDepartment(departmentId);
 
         softDeleteStudentGroups(department.getStudentGroups());
         softDeleteTeachers(department.getTeachers());
@@ -191,8 +195,8 @@ public class DepartmentServiceImpl implements DepartmentService {
         saveDepartment(markDepartmentAsDeleted(department));
     }
 
-    private Department getExistingDepartment(String departmentName) {
-        return departmentRepository.getByName(departmentName).get();
+    private Department getExistingDepartment(Long departmentId) {
+        return departmentRepository.findById(departmentId).get();
     }
 
     private void softDeleteStudentGroups(List<StudentGroup> studentGroups) {
@@ -212,6 +216,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Transactional
     public void softDeleteDepartments(List<Department> departments) {
         for (Department department : departments)
-            softDeleteByName(department.getName());
+            softDelete(department.getId());
     }
 }

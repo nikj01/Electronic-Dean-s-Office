@@ -1,12 +1,7 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultyPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultySlimGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonPostDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
 import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 
 import javax.validation.constraints.NotBlank;
@@ -16,7 +11,6 @@ import java.util.List;
 
 @Data
 public class DeaneryWorkerPostDTO {
-
     @NotNull(message = "The field |UID| cannot be empty!")
     private Long uid;
     @NotBlank(message = "The field |SURNAME| cannot be empty!")

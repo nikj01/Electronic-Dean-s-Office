@@ -8,7 +8,6 @@ import java.util.List;
 
 @Data
 public class PersonGetDTO {
-
     private Long uid;
     private String surname;
     private String name;

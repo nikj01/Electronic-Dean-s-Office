@@ -2,14 +2,11 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
-import ua.dgma.electronicDeansOffice.models.Department;
-import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
@@ -26,7 +23,6 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPagina
 @Service
 @Transactional(readOnly = true)
 public abstract class PeopleServiceImpl<P extends Person> implements PeopleService<P> {
-
     private final PeopleRepository<P> repository;
     private final PeopleSpecifications specifications;
     private Class<P> persistentClass;
@@ -41,7 +37,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     }
 
     /*  This method defines class that is required for the ExceptionData in the future */
-    public Class<P> getPersistentClass() {
+    private Class<P> getPersistentClass() {
         return persistentClass = (Class<P>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
@@ -68,11 +64,11 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
             return findAllWithSpecAndPagination(getSpec(data), data);
     }
 
-    private List<P> findAllWithSpec(Specification spec) {
+    protected List<P> findAllWithSpec(Specification spec) {
         return repository.findAll(spec);
     }
 
-    private List<P> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
+    protected List<P> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
         return repository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
@@ -80,7 +76,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     @Override
     @Transactional
-    public abstract void registerNew(RegisterPersonData<P> data);
+    public abstract void register(RegisterPersonData<P> data);
 
     protected Long getPersonUid(RegisterPersonData data) {
         return data.getNewPerson().getUid().longValue();
@@ -94,7 +90,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     @Transactional
     public abstract void update(UpdatePersonData<P> data);
 
-    protected void SetIdInUpdatedPerson(P person, UpdatePersonData data) {
+    protected void setIdInUpdatedPerson(P person, UpdatePersonData data) {
         person.setUid(data.getUid());
     }
 

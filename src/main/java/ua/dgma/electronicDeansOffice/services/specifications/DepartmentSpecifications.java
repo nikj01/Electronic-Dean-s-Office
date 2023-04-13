@@ -4,5 +4,5 @@ import org.springframework.data.jpa.domain.Specification;
 import ua.dgma.electronicDeansOffice.models.Department;
 
 public interface DepartmentSpecifications extends DeletedSpecification {
-    Specification<Department> getDepartmentByFacultyCriteria(String facultyName);
+    Specification<Department> getDepartmentByFacultyCriteria(Long facultyId);
 }

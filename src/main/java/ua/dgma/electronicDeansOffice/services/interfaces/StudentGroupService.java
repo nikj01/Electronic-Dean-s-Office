@@ -8,11 +8,12 @@ import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStude
 import java.util.List;
 
 public interface StudentGroupService {
-    List<StudentGroup> findByName(String name);
+    StudentGroup findOne(Long groupId);
+    List<StudentGroup> findByName(String groupName);
     List<StudentGroup> findAll(FindAllData data);
-    void registerNew(RegisterStudentGroupData data);
+    void register(RegisterStudentGroupData data);
     void update(UpdateStudentGroupData data);
-    void delete(String name);
-    void softDelete(String name);
+    void delete(Long groupId);
+    void softDelete(Long groupId);
     void softDeleteStudentGroups(List<StudentGroup> studentGroups);
 }

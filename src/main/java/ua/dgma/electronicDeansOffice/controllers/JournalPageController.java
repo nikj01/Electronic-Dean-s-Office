@@ -35,7 +35,7 @@ public class JournalPageController {
     @GetMapping("/findById")
     @ResponseStatus(HttpStatus.FOUND)
     public JournalPageGetDto findJournalPageById(@RequestParam("id") Long id) {
-        return pageMapper.toPageGetDTO(pageService.findById(id));
+        return pageMapper.toPageGetDTO(pageService.findOne(id));
     }
 
     @PostMapping("/register")
@@ -44,7 +44,7 @@ public class JournalPageController {
                                                 BindingResult bindingResult) {
         JournalPage newJournalPage = pageMapper.toJournalPage(journalPagePostDto);
 
-        pageService.registerNew(new RegisterJournalPageData(newJournalPage, bindingResult));
+        pageService.register(new RegisterJournalPageData(newJournalPage, bindingResult));
     }
     @PatchMapping("/update")
     @ResponseStatus(HttpStatus.OK)

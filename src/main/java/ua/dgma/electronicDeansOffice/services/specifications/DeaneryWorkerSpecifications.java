@@ -6,5 +6,5 @@ import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 
 @Component
 public interface DeaneryWorkerSpecifications extends PeopleSpecifications, DeletedSpecification {
-    Specification<DeaneryWorker> findDeaneryWorkersByFacultyCriteria(String facultyName);
+    Specification<DeaneryWorker> findDeaneryWorkersByFacultyCriteria(Long facultyId);
 }

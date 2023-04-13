@@ -19,6 +19,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStude
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.StudentGroupSpecifications;
+import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
@@ -31,7 +32,6 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Service
 @Transactional(readOnly = true)
 public class StudentGroupServiceImpl implements StudentGroupService {
-
     private final StudentGroupRepository studentGroupRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
@@ -60,8 +60,13 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     @Override
-    public List<StudentGroup> findByName(String name) {
-        return studentGroupRepository.getByNameContainingIgnoreCase(name).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", name)));
+    public StudentGroup findOne(Long groupId) {
+        return studentGroupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", groupId)));
+    }
+
+    @Override
+    public List<StudentGroup> findByName(String groupName) {
+        return studentGroupRepository.getByNameContainingIgnoreCase(groupName).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "name", groupName)));
     }
 
     @Override
@@ -73,21 +78,21 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private List<StudentGroup> findAllWithSpec(Specification spec) {
-        return departmentRepository.findAll(spec);
+        return studentGroupRepository.findAll(spec);
     }
 
     private List<StudentGroup> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
-        return departmentRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+        return studentGroupRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
     private Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.getStudentGroupByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return Specification.where(specifications.getStudentGroupByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
     }
 
     @Override
     @Transactional
-    public void registerNew(RegisterStudentGroupData data) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getStudentGroupName(data), studentGroupRepository));
+    public void register(RegisterStudentGroupData data) {
+        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getStudentGroupId(data), studentGroupRepository));
         validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getNewStudentGroup()));
 
         StudentGroup newStudentGroup = data.getNewStudentGroup();
@@ -98,7 +103,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         saveNewStudents(getNewStudents(newStudentGroup), data);
     }
 
-    private String getStudentGroupName(RegisterStudentGroupData data) {
+    private String getStudentGroupId(RegisterStudentGroupData data) {
         return data.getNewStudentGroup().getName();
     }
 
@@ -107,11 +112,11 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private Department getExistingDepartment(StudentGroup studentGroup) {
-        return departmentRepository.getByName(getDepartmentName(studentGroup)).get();
+        return departmentRepository.findById(getDepartmentName(studentGroup)).get();
     }
 
-    private String getDepartmentName(StudentGroup studentGroup) {
-        return studentGroup.getDepartment().getName();
+    private Long getDepartmentName(StudentGroup studentGroup) {
+        return studentGroup.getDepartment().getId();
     }
 
     private void saveStudentGroup(StudentGroup studentGroup) {
@@ -119,8 +124,10 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private void saveNewStudents(List<Student> students, RegisterStudentGroupData data) {
-        for (Student student : students)
-            studentService.registerNew(new RegisterPersonData<>(student, data.getBindingResult()));
+        if(students != null) {
+            for (Student student : students)
+                studentService.register(new RegisterPersonData<>(student, data.getBindingResult()));
+        }
     }
 
     private List<Student> getNewStudents(StudentGroup studentGroup) {
@@ -130,7 +137,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void update(UpdateStudentGroupData data) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, data.getName(), studentGroupRepository));
+        checkExistsWithSuchID(new CheckExistsByIdData(className, data.getId(), studentGroupRepository));
         validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getUpdatedStudentGroup()));
 
         StudentGroup updatedStudentGroup = data.getUpdatedStudentGroup();
@@ -149,11 +156,11 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private StudentGroup getExistingStudentGroup(UpdateStudentGroupData data) {
-        return studentGroupRepository.getByName(getStudentGroupName(data)).get();
+        return studentGroupRepository.findById(getStudentGroupId(data)).get();
     }
 
-    private String getStudentGroupName(UpdateStudentGroupData data) {
-        return data.getName();
+    private Long getStudentGroupId(UpdateStudentGroupData data) {
+        return data.getId();
     }
 
     private void setStudentsInStudentGroup(StudentGroup studentGroup, UpdateStudentGroupData data) {
@@ -190,26 +197,26 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
     @Override
     @Transactional
-    public void delete(String name) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
+    public void delete(Long groupId) {
+        checkExistsWithSuchID(new CheckExistsByIdData(className, groupId, studentGroupRepository));
 
-        studentGroupRepository.deleteByName(name);
+        studentGroupRepository.deleteById(groupId);
     }
 
     @Override
     @Transactional
-    public void softDelete(String name) {
-        checkExistsWithSuchName(new CheckExistsByNameData(className, name, studentGroupRepository));
+    public void softDelete(Long groupId) {
+        checkExistsWithSuchID(new CheckExistsByIdData(className, groupId, studentGroupRepository));
 
-        StudentGroup studentGroup = getExistingStudentGroup(name);
+        StudentGroup studentGroup = getExistingStudentGroup(groupId);
 
         softDeleteStudents(studentGroup.getStudents());
 
-        saveStudentGroup(markStudentGroupAsDeleted(getExistingStudentGroup(name)));
+        saveStudentGroup(markStudentGroupAsDeleted(getExistingStudentGroup(groupId)));
     }
 
-    private StudentGroup getExistingStudentGroup(String groupName) {
-        return studentGroupRepository.getByName(groupName).get();
+    private StudentGroup getExistingStudentGroup(Long groupId) {
+        return studentGroupRepository.findById(groupId).get();
     }
 
     private void softDeleteStudents(List<Student> students) {
@@ -225,6 +232,6 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Transactional
     public void softDeleteStudentGroups(List<StudentGroup> studentGroups) {
         for (StudentGroup group : studentGroups)
-            softDelete(group.getName());
+            softDelete(group.getId());
     }
 }

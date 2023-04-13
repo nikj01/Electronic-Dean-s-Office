@@ -60,8 +60,8 @@ public class DeaneryWorkersController {
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
                                                                    @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                                    @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
-                                                                   @RequestParam(value = "faculty", required = false) String facultyName) {
-        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyName)));
+                                                                   @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyId)));
     }
 
     @PostMapping("/register")
@@ -70,7 +70,7 @@ public class DeaneryWorkersController {
                                                              BindingResult bindingResult) {
         DeaneryWorker newDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(deaneryWorkerPostDTO);
 
-        deaneryWorkerService.registerNew(new RegisterPersonData<>(newDeaneryWorker, bindingResult));
+        deaneryWorkerService.register(new RegisterPersonData<>(newDeaneryWorker, bindingResult));
     }
 
     @PatchMapping("/update")

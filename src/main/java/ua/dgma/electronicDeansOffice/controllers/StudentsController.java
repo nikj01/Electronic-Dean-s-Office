@@ -61,8 +61,8 @@ public class StudentsController {
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
-                                                       @RequestParam(value = "faculty", required = false) String facultyName) {
-        return studentListMapper.toStudentsSlimGetDTO(studentService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyName)));
+                                                       @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return studentListMapper.toStudentsSlimGetDTO(studentService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyId)));
     }
 
     @PostMapping("/register")
@@ -71,7 +71,7 @@ public class StudentsController {
                                                        BindingResult bindingResult) {
         Student newStudent = studentMapper.toStudent(newPostStudent);
 
-        studentService.registerNew(new RegisterPersonData<>(newStudent, bindingResult));
+        studentService.register(new RegisterPersonData<>(newStudent, bindingResult));
     }
 
     @PatchMapping("/update")

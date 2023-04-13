@@ -2,13 +2,11 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
-import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.JournalPageRepository;
@@ -29,9 +27,8 @@ import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class TeachersJournalServiceImpl implements TeachersJournalService {
-
     private final TeachersJournalRepository journalRepository;
     private final TeacherRepository teacherRepository;
     private final JournalPageRepository pageRepository;
@@ -54,13 +51,13 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     @Override
-    public TeachersJournal findByid(Long id) {
-        return journalRepository.findById(id).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", id)));
+    public TeachersJournal findOne(Long journalId) {
+        return journalRepository.findById(journalId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", journalId)));
     }
 
     @Override
-    public List<TeachersJournal> findByComment(String comment) {
-        return journalRepository.getByCommentContainingIgnoreCase(comment).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "comment", comment)));
+    public List<TeachersJournal> findByComment(String journalComment) {
+        return journalRepository.getByCommentContainingIgnoreCase(journalComment).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "comment", journalComment)));
     }
 
     @Override
@@ -72,19 +69,20 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     private List<TeachersJournal> findAllWithSpec(Specification spec) {
-        return pageRepository.findAll(spec);
+        return journalRepository.findAll(spec);
     }
 
     private List<TeachersJournal> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
-        return pageRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+        return journalRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
     }
 
     private Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.getTeacherJournalByFacultyCriteria(data.getFacultyName()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return Specification.where(specifications.getTeacherJournalByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
     }
 
     @Override
-    public void registerNew(RegisterTeachersJournalData data) {
+    @Transactional
+    public void register(RegisterTeachersJournalData data) {
         checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(teacherClassName(), data.getNewTeacher().getUid(), journalRepository));
 
         Teacher newTeacher = data.getNewTeacher();
@@ -121,12 +119,13 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     @Override
+    @Transactional
     public void update(UpdateTeachersJournalData data) {
         checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getId(), journalRepository));
         validateObject(new ValidationData<>(journalValidator, data.getUpdatedJournal(), data.getBindingResult()));
 
         TeachersJournal updatedJournal = data.getUpdatedJournal();
-        TeachersJournal existingJournal = findByid(data.getId());
+        TeachersJournal existingJournal = findOne(data.getId());
 
         setNewCommentInExistingJournal(existingJournal, updatedJournal.getComment());
 
@@ -138,17 +137,19 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     @Override
-    public void delete(Long id) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, id, journalRepository));
+    @Transactional
+    public void delete(Long journalId) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, journalId, journalRepository));
 
-        journalRepository.deleteById(id);
+        journalRepository.deleteById(journalId);
     }
 
     @Override
-    public void softDelete(Long id) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, id, journalRepository));
+    @Transactional
+    public void softDelete(Long journalId) {
+        checkExistsWithSuchID(new CheckExistsByIdData<>(className, journalId, journalRepository));
 
-        saveTeachersJournal(markTeachersJournalAsDeleted(findByid(id)));
+        saveTeachersJournal(markTeachersJournalAsDeleted(findOne(journalId)));
     }
 
     private TeachersJournal markTeachersJournalAsDeleted(TeachersJournal existingJournal) {

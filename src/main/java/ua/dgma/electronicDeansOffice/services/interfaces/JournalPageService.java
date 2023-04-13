@@ -5,9 +5,8 @@ import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.RegisterJour
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.UpdateJournalPageData;
 
 public interface JournalPageService {
-
-    JournalPage findById(Long id);
-    void registerNew(RegisterJournalPageData data);
+    JournalPage findOne(Long pageId);
+    void register(RegisterJournalPageData data);
     void update(UpdateJournalPageData data);
-    void delete(Long id);
+    void delete(Long pageId);
 }

@@ -6,5 +6,5 @@ import ua.dgma.electronicDeansOffice.models.Teacher;
 
 @Component
 public interface TeacherSpecifications extends PeopleSpecifications, DeletedSpecification {
-    Specification<Teacher> findTeachersByFacultyCriteria(String facultyName);
+    Specification<Teacher> findTeachersByFacultyCriteria(Long facultyId);
 }

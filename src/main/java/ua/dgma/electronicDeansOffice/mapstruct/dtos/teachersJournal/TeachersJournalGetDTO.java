@@ -3,7 +3,6 @@ package ua.dgma.electronicDeansOffice.mapstruct.dtos.teachersJournal;
 import lombok.Data;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPageSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherSlimGetDTO;
 
 import java.util.List;
 

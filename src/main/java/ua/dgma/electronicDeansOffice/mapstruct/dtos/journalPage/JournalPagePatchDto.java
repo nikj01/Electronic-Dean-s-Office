@@ -3,7 +3,6 @@ package ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage;
 import lombok.Data;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 

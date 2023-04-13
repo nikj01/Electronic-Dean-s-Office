@@ -61,8 +61,8 @@ public class PeopleController {
     public List<PersonSlimGetDTO> findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
                                                     @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                     @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
-                                                    @RequestParam(value = "faculty", required = false) String facultyName) {
-        return personListMapper.toPeopleSlimGetDTO(personService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyName)));
+                                                    @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return personListMapper.toPeopleSlimGetDTO(personService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyId)));
     }
 
     @PostMapping("/register")
@@ -71,7 +71,7 @@ public class PeopleController {
                                                       BindingResult bindingResult) {
         Person newPerson = personMapper.toPerson(newPostPerson);
 
-        personService.registerNew(new RegisterPersonData<>(newPerson, bindingResult));
+        personService.register(new RegisterPersonData<>(newPerson, bindingResult));
     }
 
     @PatchMapping("/update")

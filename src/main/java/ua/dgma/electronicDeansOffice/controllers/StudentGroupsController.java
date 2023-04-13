@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupPatchDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
@@ -34,6 +35,12 @@ public class StudentGroupsController {
         this.studentGroupListMapper = studentGroupListMapper;
     }
 
+    @GetMapping("/findById")
+    @ResponseStatus(HttpStatus.FOUND)
+    public StudentGroupGetDTO findStudentGroupById(@RequestParam("id") Long id) {
+        return studentGroupMapper.toStudentGroupGetDTO(studentGroupService.findOne(id));
+    }
+
     @GetMapping("/findByName")
     @ResponseStatus(HttpStatus.FOUND)
     public List<StudentGroupSlimGetDTO> findStudentGroupByName(@RequestParam("name") String name) {
@@ -44,8 +51,8 @@ public class StudentGroupsController {
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroups(@RequestParam(value = "page", required = false) Integer page,
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                                  @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
-                                                                 @RequestParam(value = "faculty", required = false) String facultyName) {
-        return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAll(new FindAllData(page, groupsPerPage, deleted, facultyName)));
+                                                                 @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAll(new FindAllData(page, groupsPerPage, deleted, facultyId)));
     }
 
     @PostMapping("/register")
@@ -54,26 +61,26 @@ public class StudentGroupsController {
                                                             BindingResult bindingResult) {
         StudentGroup studentGroup = studentGroupMapper.toStudentGroup(newPostStudentGroup);
 
-        studentGroupService.registerNew(new RegisterStudentGroupData(studentGroup, bindingResult));
+        studentGroupService.register(new RegisterStudentGroupData(studentGroup, bindingResult));
     }
 
     @PatchMapping("/update")
     @ResponseStatus(HttpStatus.OK)
-    public void updateStudentGroup(@RequestParam("name") String studentGroupName,
-                                   @RequestBody @Valid   StudentGroupPatchDTO studentGroupPatchDTO) {
+    public void updateStudentGroup(@RequestParam("id") Long groupId,
+                                   @RequestBody @Valid StudentGroupPatchDTO studentGroupPatchDTO) {
         StudentGroup studentGroup = studentGroupMapper.toStudentGroup(studentGroupPatchDTO);
 
-        studentGroupService.update(new UpdateStudentGroupData(studentGroupName, studentGroup));
+        studentGroupService.update(new UpdateStudentGroupData(groupId, studentGroup));
     }
 
     @DeleteMapping("/delete")
-    public void deleteStudentGroup(@RequestParam("name") String name) {
-        studentGroupService.delete(name);
+    public void deleteStudentGroup(@RequestParam("id") Long groupId) {
+        studentGroupService.delete(groupId);
     }
 
     @DeleteMapping("/soft/delete")
-    public void softDeleteStudentGroup(@RequestParam("name") String name) {
-        studentGroupService.softDelete(name);
+    public void softDeleteStudentGroup(@RequestParam("id") Long groupId) {
+        studentGroupService.softDelete(groupId);
     }
 
 }

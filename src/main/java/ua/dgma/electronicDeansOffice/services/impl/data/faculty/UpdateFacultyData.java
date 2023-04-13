@@ -11,7 +11,7 @@ import ua.dgma.electronicDeansOffice.models.Faculty;
 @RequiredArgsConstructor
 public class UpdateFacultyData {
     @NonNull
-    private String name;
+    private Long id;
     @NonNull
     private Faculty updatedFaculty;
     @NonNull
