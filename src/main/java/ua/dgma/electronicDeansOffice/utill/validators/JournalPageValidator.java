@@ -66,8 +66,9 @@ public class JournalPageValidator implements Validator {
     }
 
     private void checkExistenceOfTheStudentGroups(JournalPageValidationData data) {
-        for (String studentGroup : getStudentGroupsNamesFromPage(data))
-            findStudentGroupByName(data, studentGroup);
+        if (getStudentGroupsNamesFromPage(data) != null)
+            for (String studentGroup : getStudentGroupsNamesFromPage(data))
+                findStudentGroupByName(data, studentGroup);
     }
 
     private List<String> getStudentGroupsNamesFromPage(JournalPageValidationData data) {

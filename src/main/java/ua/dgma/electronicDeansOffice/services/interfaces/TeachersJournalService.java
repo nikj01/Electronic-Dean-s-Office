@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface TeachersJournalService {
     TeachersJournal findOne(Long journalId);
+    TeachersJournal findOneByTeacher(Long teacherId);
     List<TeachersJournal> findByComment(String journalComment);
     List<TeachersJournal> findAll(FindAllData data);
     void register(RegisterTeachersJournalData data);

@@ -9,10 +9,10 @@ import ua.dgma.electronicDeansOffice.models.JournalPage;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.JournalPageRepository;
-import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.RegisterJournalPageData;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.UpdateJournalPageData;
 import ua.dgma.electronicDeansOffice.services.interfaces.JournalPageService;
+import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
@@ -29,18 +29,18 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExists
 public class JournalPageServiceImpl implements JournalPageService {
     private final JournalPageRepository pageRepository;
     private final TeachersJournalService journalService;
-    private final StudentGroupRepository groupRepository;
+    private final StudentGroupService groupService;
     private final JournalPageValidator pageValidator;
     private String className;
 
     @Autowired
     public JournalPageServiceImpl(JournalPageRepository pageRepository,
                                   TeachersJournalService journalService,
-                                  StudentGroupRepository groupRepository,
+                                  StudentGroupService groupService,
                                   JournalPageValidator pageValidator) {
         this.pageRepository = pageRepository;
         this.journalService = journalService;
-        this.groupRepository = groupRepository;
+        this.groupService = groupService;
         this.pageValidator = pageValidator;
         this.className = JournalPage.class.getSimpleName();
     }
@@ -83,14 +83,18 @@ public class JournalPageServiceImpl implements JournalPageService {
     private List<StudentGroup> getStudentGroupsFromPage(JournalPage journalPage) {
         List<StudentGroup> existingStudentGroups = new ArrayList<>();
 
-        for (StudentGroup group : journalPage.getStudentGroups())
-            existingStudentGroups.add(getStudentGroup(group.getName()));
+        for (StudentGroup group : getStudentGroups(journalPage))
+            existingStudentGroups.add(getStudentGroup(group.getId()));
 
         return existingStudentGroups;
     }
 
-    private StudentGroup getStudentGroup(String groupName) {
-        return groupRepository.getByName(groupName).get();
+    private List<StudentGroup> getStudentGroups(JournalPage page) {
+        return page.getStudentGroups();
+    }
+
+    private StudentGroup getStudentGroup(Long groupId) {
+        return groupService.findOne(groupId);
     }
 
     private void saveJournalPage(JournalPage page) {

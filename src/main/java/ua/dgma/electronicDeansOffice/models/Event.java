@@ -2,14 +2,15 @@ package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 import org.springframework.data.annotation.Reference;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,21 +33,21 @@ public class Event {
     @NotBlank
     private String description;
 
-    @NotEmpty(message = "The field |EVENT TYPE| cannot be empty!")
+    @NotNull(message = "The field |EVENT TYPE| cannot be empty!")
     @Column(nullable = false)
     private EventType eventType;
 
     @ManyToMany
-    @Cascade(value = org.hibernate.annotations.CascadeType.DELETE)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Reference
     private List<StudentGroup> studentGroups;
 
-    @NotEmpty(message = "The field |DATE| cannot be empty!")
+    @NotNull(message = "The field |DATE| cannot be empty!")
     @Column(nullable = false)
     private LocalDate date;
 
-    @NotEmpty(message = "The field |JOURNAL PAGE| cannot be empty!")
+    @NotNull(message = "The field |JOURNAL PAGE| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
@@ -57,10 +58,9 @@ public class Event {
     private JournalPage page;
 
     @OneToOne(
-            mappedBy = "event",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "event"
     )
+    @Cascade(value = CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Report report;
 }

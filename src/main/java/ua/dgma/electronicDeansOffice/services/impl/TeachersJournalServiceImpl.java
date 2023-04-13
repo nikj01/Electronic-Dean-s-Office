@@ -56,6 +56,11 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     @Override
+    public TeachersJournal findOneByTeacher(Long teacherId) {
+        return journalRepository.getByTeacher_Uid(teacherId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "teacher_id", teacherId)));
+    }
+
+    @Override
     public List<TeachersJournal> findByComment(String journalComment) {
         return journalRepository.getByCommentContainingIgnoreCase(journalComment).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "comment", journalComment)));
     }

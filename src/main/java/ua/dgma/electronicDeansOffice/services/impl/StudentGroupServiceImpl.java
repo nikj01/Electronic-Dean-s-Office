@@ -16,6 +16,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
+import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.StudentGroupSpecifications;
@@ -33,27 +34,28 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Transactional(readOnly = true)
 public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentGroupRepository studentGroupRepository;
-    private final TeacherRepository teacherRepository;
-    private final StudentRepository studentRepository;
+//    private final TeacherRepository teacherRepository;
+//    private final StudentRepository studentRepository;
+//    private final DepartmentRepository departmentRepository;
+
+    private final PeopleService<Teacher> teacherService;
     private final PeopleService<Student> studentService;
-    private final DepartmentRepository departmentRepository;
+    private final DepartmentService departmentService;
     private final AbstractValidator studentGroupValidator;
     private final StudentGroupSpecifications specifications;
     private String className;
 
     @Autowired
     public StudentGroupServiceImpl(StudentGroupRepository studentGroupRepository,
-                                   TeacherRepository teacherRepository,
-                                   StudentRepository studentRepository,
+                                   PeopleService<Teacher> teacherService,
                                    PeopleService<Student> studentService,
-                                   DepartmentRepository departmentRepository,
+                                   DepartmentService departmentService,
                                    AbstractValidator studentGroupValidator,
                                    StudentGroupSpecifications specifications) {
         this.studentGroupRepository = studentGroupRepository;
-        this.teacherRepository = teacherRepository;
-        this.studentRepository = studentRepository;
+        this.teacherService = teacherService;
+        this.departmentService = departmentService;
         this.studentService = studentService;
-        this.departmentRepository = departmentRepository;
         this.studentGroupValidator = studentGroupValidator;
         this.specifications = specifications;
         this.className = StudentGroup.class.getSimpleName();
@@ -100,7 +102,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         setDepartmentInStudentGroup(newStudentGroup);
 
         saveStudentGroup(newStudentGroup);
-        saveNewStudents(getNewStudents(newStudentGroup), data);
+        saveNewStudents(newStudentGroup, data);
     }
 
     private String getStudentGroupId(RegisterStudentGroupData data) {
@@ -112,7 +114,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private Department getExistingDepartment(StudentGroup studentGroup) {
-        return departmentRepository.findById(getDepartmentName(studentGroup)).get();
+        return departmentService.findOne(getDepartmentName(studentGroup));
     }
 
     private Long getDepartmentName(StudentGroup studentGroup) {
@@ -123,14 +125,14 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         studentGroupRepository.save(studentGroup);
     }
 
-    private void saveNewStudents(List<Student> students, RegisterStudentGroupData data) {
-        if(students != null) {
-            for (Student student : students)
+    private void saveNewStudents(StudentGroup studentGroup, RegisterStudentGroupData data) {
+        if(getStudentsFromGroup(studentGroup) != null) {
+            for (Student student : getStudentsFromGroup(studentGroup))
                 studentService.register(new RegisterPersonData<>(student, data.getBindingResult()));
         }
     }
 
-    private List<Student> getNewStudents(StudentGroup studentGroup) {
+    private List<Student> getStudentsFromGroup(StudentGroup studentGroup) {
         return studentGroup.getStudents();
     }
 
@@ -176,7 +178,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private Teacher getTeacher(StudentGroup studentGroup) {
-        return teacherRepository.getByUid(getCuratorUid(studentGroup)).get();
+        return teacherService.findByUid(getCuratorUid(studentGroup));
     }
 
     private Long getCuratorUid(StudentGroup studentGroup) {
@@ -188,7 +190,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private Student getLeader(StudentGroup studentGroup) {
-        return studentRepository.getByUid(getLeaderUid(studentGroup)).get();
+        return studentService.findByUid(getLeaderUid(studentGroup));
     }
 
     private Long getLeaderUid(StudentGroup studentGroup) {

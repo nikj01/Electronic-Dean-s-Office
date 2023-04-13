@@ -18,6 +18,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.department.RegisterDepar
 import ua.dgma.electronicDeansOffice.services.impl.data.department.UpdateDepartmentData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
+import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
@@ -35,7 +36,7 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Transactional(readOnly = true)
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
-    private final FacultyRepository facultyRepository;
+    private final FacultyService facultyService;
     private final PeopleService<Teacher> teacherService;
     private final StudentGroupService groupService;
     private final AbstractValidator departmentValidator;
@@ -44,18 +45,18 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
-                                 FacultyRepository facultyRepository,
+                                 FacultyService facultyService,
                                  PeopleService<Teacher> teacherService,
                                  StudentGroupService groupService,
                                  AbstractValidator departmentValidator,
                                  DepartmentSpecifications specifications) {
         this.departmentRepository = departmentRepository;
-        this.facultyRepository = facultyRepository;
+        this.facultyService = facultyService;
         this.teacherService = teacherService;
         this.groupService = groupService;
         this.departmentValidator = departmentValidator;
         this.specifications = specifications;
-        className = Department.class.getSimpleName();
+        this.className = Department.class.getSimpleName();
     }
 
     @Override
@@ -99,7 +100,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         setFacultyInDepartment(newDepartment);
 
         saveDepartment(newDepartment);
-        saveNewTeachers(getTeachers(newDepartment), data);
+        saveNewTeachers(newDepartment, data);
     }
 
     private String getDepartmentId(RegisterDepartmentData data) {
@@ -111,7 +112,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private Faculty getExistingFaculty(Department department) {
-        return facultyRepository.findById(getFacultyId(department)).get();
+        return facultyService.findOne(getFacultyId(department));
     }
 
     private Long getFacultyId(Department department) {
@@ -122,12 +123,13 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentRepository.save(department);
     }
 
-    private void saveNewTeachers(List<Teacher> teachers, RegisterDepartmentData data) {
-        for (Teacher teacher : teachers)
-            teacherService.register(new RegisterPersonData<>(teacher, data.getBindingResult()));
+    private void saveNewTeachers(Department department, RegisterDepartmentData data) {
+        if (getTeachersFromDepartment(department) != null)
+            for (Teacher teacher : getTeachersFromDepartment(department))
+                teacherService.register(new RegisterPersonData<>(teacher, data.getBindingResult()));
     }
 
-    private List<Teacher> getTeachers(Department department) {
+    private List<Teacher> getTeachersFromDepartment(Department department) {
         return department.getTeachers();
     }
 

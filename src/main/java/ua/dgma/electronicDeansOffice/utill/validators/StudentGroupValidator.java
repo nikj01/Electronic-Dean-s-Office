@@ -30,48 +30,50 @@ public class StudentGroupValidator implements AbstractValidator {
         this.studentRepository = studentRepository;
         this.peopleRepository = peopleRepository;
     }
+
     @Override
     public void validate(Object target) {
         StudentGroup studentGroup = (StudentGroup) target;
         StudentGroupValidationData validationData = new StudentGroupValidationData(studentGroup, studentGroupRepository, studentRepository, departmentRepository, teacherRepository, peopleRepository);
 
-         if(checkExistenceOfTheStudentGroup(validationData)) {
-             checkExistenceOfTheDepartment(validationData);
-             checkExistenceOfTheCurator(validationData);
-             checkIfTheTeacherInDepartment(validationData);
-             checkIfGroupLeaderInGroup(validationData);
-         } else {
-             checkExistenceOfTheDepartment(validationData);
-             checkExistenceOfTheCurator(validationData);
-             checkIfTheTeacherInDepartment(validationData);
-             checkExistenceOfTheStudentsByUid(validationData);
-         }
+        if (checkExistenceOfTheStudentGroup(validationData)) {
+            checkExistenceOfTheDepartment(validationData);
+            checkExistenceOfTheCurator(validationData);
+            checkIfTheTeacherInDepartment(validationData);
+            checkIfGroupLeaderInGroup(validationData);
+        } else {
+            checkExistenceOfTheDepartment(validationData);
+            checkExistenceOfTheCurator(validationData);
+            checkIfTheTeacherInDepartment(validationData);
+            checkExistenceOfTheStudentsByUid(validationData);
+        }
     }
 
     private boolean checkExistenceOfTheStudentGroup(StudentGroupValidationData data) {
-        if(data.getStudentGroupRepository().getByName((data.getStudentGroup().getName())).isPresent()) return true; else return false;
+        if (data.getStudentGroupRepository().getByName((data.getStudentGroup().getName())).isPresent()) return true;
+        else return false;
     }
 
     private void checkExistenceOfTheDepartment(StudentGroupValidationData data) {
-        if(!data.getDepartmentRepository().getByName(data.getStudentGroup().getDepartment().getName().toString()).isPresent())
+        if (!data.getDepartmentRepository().getByName(data.getStudentGroup().getDepartment().getName().toString()).isPresent())
             throw new IncorrectPropertyException("Department with name " + data.getStudentGroup().getDepartment().getName() + " does not exist!");
     }
 
     private void checkExistenceOfTheStudentsByUid(StudentGroupValidationData data) {
         List<Student> newStudents = data.getStudentGroup().getStudents();
 
-        if(newStudents != null)
+        if (newStudents != null)
             for (Student student : newStudents)
                 checkStudentByUid(data, student);
     }
 
     private void checkStudentByUid(StudentGroupValidationData data, Student student) {
-        if(data.getPeopleRepository().getByUid(student.getUid()).isPresent())
+        if (data.getPeopleRepository().getByUid(student.getUid()).isPresent())
             throw new IncorrectPropertyException("Person with uid " + student.getUid() + " already exists!");
     }
 
     private void checkExistenceOfTheCurator(StudentGroupValidationData data) {
-        if(!data.getTeacherRepository().getByUid(data.getStudentGroup().getCurator().getUid().longValue()).isPresent())
+        if (!data.getTeacherRepository().getByUid(data.getStudentGroup().getCurator().getUid().longValue()).isPresent())
             throw new IncorrectPropertyException("Teacher " + data.getStudentGroup().getCurator().getSurname() + " " + data.getStudentGroup().getCurator().getName() + " " + data.getStudentGroup().getCurator().getPatronymic() + " with uid " + data.getStudentGroup().getCurator().getUid() + " does not exist!");
     }
 
@@ -79,7 +81,7 @@ public class StudentGroupValidator implements AbstractValidator {
         Optional<Teacher> curator = data.getTeacherRepository().getByUid(data.getStudentGroup().getCurator().getUid().longValue());
         Optional<Department> department = data.getDepartmentRepository().getByName(data.getStudentGroup().getDepartment().getName().toString());
 
-        if(!department.get().getTeachers().stream().anyMatch(teacher -> teacher.getUid().equals(curator.get().getUid())))
+        if (!department.get().getTeachers().stream().anyMatch(teacher -> teacher.getUid().equals(curator.get().getUid())))
             throw new IncorrectPropertyException("Teacher " + data.getStudentGroup().getCurator().getSurname() + " " + data.getStudentGroup().getCurator().getName() + " " + data.getStudentGroup().getCurator().getPatronymic() + " with uid " + data.getStudentGroup().getCurator().getUid() + " is not listed at the department " + data.getStudentGroup().getDepartment().getName() + "!");
     }
 
@@ -87,7 +89,7 @@ public class StudentGroupValidator implements AbstractValidator {
         Optional<StudentGroup> existingStudentGroup = data.getStudentGroupRepository().getByName((data.getStudentGroup().getName().toString()));
         Optional<Student> groupLeader = data.getStudentRepository().getByUid(data.getStudentGroup().getGroupLeader().getUid().longValue());
 
-        if(!existingStudentGroup.get().getStudents().stream().anyMatch(student -> student.getUid().equals(groupLeader.get().getUid())))
+        if (!existingStudentGroup.get().getStudents().stream().anyMatch(student -> student.getUid().equals(groupLeader.get().getUid())))
             throw new IncorrectPropertyException("Student " + data.getStudentGroup().getGroupLeader().getSurname() + " " + data.getStudentGroup().getGroupLeader().getName() + " " + data.getStudentGroup().getGroupLeader().getPatronymic() + " with uid " + data.getStudentGroup().getGroupLeader().getUid() + " is not listed in the student group " + data.getStudentGroup().getName() + "!");
     }
 

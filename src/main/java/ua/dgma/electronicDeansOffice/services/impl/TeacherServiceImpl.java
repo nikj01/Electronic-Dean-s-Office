@@ -7,9 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
-import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
-import ua.dgma.electronicDeansOffice.repositories.TeachersJournalRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
@@ -23,34 +21,29 @@ import ua.dgma.electronicDeansOffice.utill.validators.TeacherValidator;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceByIDBeforeRegistration;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
 
 @Service
 @Transactional(readOnly = true)
 public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
     private final TeacherRepository teacherRepository;
-    private final TeachersJournalRepository journalRepository;
+    private final TeachersJournalService journalService;
     private final DepartmentRepository departmentRepository;
-    private final StudentGroupRepository groupRepository;
     private final TeacherValidator teacherValidator;
     private final TeacherSpecifications specifications;
-    private final TeachersJournalService journalService;
     private String className;
 
     @Autowired
     public TeacherServiceImpl(TeacherRepository teacherRepository,
-                              TeachersJournalRepository journalRepository,
                               TeacherValidator teacherValidator,
                               DepartmentRepository departmentRepository,
-                              StudentGroupRepository groupRepository,
                               TeacherSpecifications specifications,
                               TeachersJournalService journalService) {
         super(teacherRepository, specifications);
         this.teacherRepository = teacherRepository;
-        this.journalRepository = journalRepository;
         this.teacherValidator = teacherValidator;
         this.departmentRepository = departmentRepository;
-        this.groupRepository = groupRepository;
         this.specifications = specifications;
         this.journalService = journalService;
         this.className = Teacher.class.getSimpleName();
@@ -134,7 +127,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
     }
 
     private Long getTeachersJournalId(Long teacherUid) {
-        return journalRepository.getByTeacher_Uid(teacherUid).get().getId();
+        return journalService.findOneByTeacher(teacherUid).getId();
     }
 
     @Override

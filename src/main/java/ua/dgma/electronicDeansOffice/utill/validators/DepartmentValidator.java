@@ -35,7 +35,7 @@ public class DepartmentValidator implements AbstractValidator {
         Department department = (Department) target;
         DepartmentValidationData validationData = new DepartmentValidationData(department, departmentRepository, facultyRepository, peopleRepository);
 
-        if(checkExistenceOfTheDepartment(validationData)) {
+        if (checkExistenceOfTheDepartment(validationData)) {
             checkExistenceOfTheFaculty(validationData);
         } else {
             checkExistenceOfTheFaculty(validationData);
@@ -44,25 +44,25 @@ public class DepartmentValidator implements AbstractValidator {
     }
 
     private boolean checkExistenceOfTheDepartment(DepartmentValidationData data) {
-        if(data.getDepartmentRepository().getByName(data.getDepartment().getName()).isPresent()) return true; else return false;
+        if (data.getDepartmentRepository().getByName(data.getDepartment().getName()).isPresent()) return true;
+        else return false;
     }
 
     private void checkExistenceOfTheFaculty(DepartmentValidationData data) {
-        if(!data.getFacultyRepository().getByNameContainingIgnoreCase(data.getDepartment().getFaculty().getName()).isPresent())
+        if (!data.getFacultyRepository().getByNameContainingIgnoreCase(data.getDepartment().getFaculty().getName()).isPresent())
             throw new IncorrectPropertyException("Faculty with name " + data.getDepartment().getFaculty().getName() + " does not exist!");
     }
 
     private void checkExistenceOfTheTeachers(DepartmentValidationData data) {
         List<Teacher> newTeachers = data.getDepartment().getTeachers();
 
-        if(newTeachers != null)
-            for (Teacher teacher : newTeachers) {
+        if (newTeachers != null)
+            for (Teacher teacher : newTeachers)
                 checkTeacherByUid(data, teacher);
-            }
     }
 
     private void checkTeacherByUid(DepartmentValidationData data, Teacher teacher) {
-        if(data.getPeopleRepository().getByUid(teacher.getUid()).isPresent())
-            throw new IncorrectPropertyException("Person with uid " + teacher.getUid() + " already exists!" );
+        if (data.getPeopleRepository().getByUid(teacher.getUid()).isPresent())
+            throw new IncorrectPropertyException("Person with uid " + teacher.getUid() + " already exists!");
     }
 }
