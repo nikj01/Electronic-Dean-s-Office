@@ -41,7 +41,7 @@ public class JournalPageValidator implements Validator {
         JournalPage page = (JournalPage) target;
         JournalPageValidationData validationData = new JournalPageValidationData(page, pageRepository, journalRepository, groupRepository, errors);
 
-        if(checkExistenceOfTheJournalPage(validationData)) {
+        if (checkExistenceOfTheJournalPage(validationData)) {
             checkExistenceOfTheStudentGroups(validationData);
         } else {
             checkExistenceOfTheJournal(validationData);
@@ -50,10 +50,12 @@ public class JournalPageValidator implements Validator {
     }
 
     private boolean checkExistenceOfTheJournalPage(JournalPageValidationData data) {
-        if(data.getJournalPage().getId() == null) return true; else return false;
+        if (data.getJournalPage().getId() == null) return true;
+        else return false;
     }
+
     private void checkExistenceOfTheJournal(JournalPageValidationData data) {
-        if(!findJournalById(data).isPresent())
+        if (!findJournalById(data).isPresent())
             data.getErrors().rejectValue("journal", "Journal with id " + getJournalsIdFromPage(data) + " does not exist!");
     }
 
@@ -76,7 +78,7 @@ public class JournalPageValidator implements Validator {
     }
 
     private void findStudentGroupByName(JournalPageValidationData data, String name) {
-        if(!data.getGroupRepository().getByName(name).isPresent())
+        if (!data.getGroupRepository().getByName(name).isPresent())
             data.getErrors().rejectValue("studentGroup", "Student group with name " + name + " does not exist!");
     }
 
