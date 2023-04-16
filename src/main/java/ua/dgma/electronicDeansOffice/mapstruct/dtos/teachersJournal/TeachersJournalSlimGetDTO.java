@@ -7,6 +7,5 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 public class TeachersJournalSlimGetDTO {
     private Long id;
     private PersonSlimGetDTO teacher;
-    private String comment;
     private String deleted;
 }

@@ -21,8 +21,8 @@ import ua.dgma.electronicDeansOffice.utill.validators.TeacherValidator;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceByIDBeforeRegistration;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,7 +56,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
 
     @Override
     public void register(RegisterPersonData<Teacher> data) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(className, getPersonUid(data), teacherRepository));
+        checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate(new CheckExistsByIdData<>(className, getPersonUid(data), teacherRepository));
         validateObject(new ValidationData<>(teacherValidator, data.getNewPerson(), data.getBindingResult()));
 
         Teacher newTeacher = data.getNewPerson();
@@ -72,11 +72,11 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
     }
 
     private Department getDepartment(Teacher teacher) {
-        return departmentRepository.findById(getDepartmentId(teacher)).get();
+        return departmentRepository.getByName(getDepartmentName(teacher)).get();
     }
 
-    private Long getDepartmentId(Teacher teacher) {
-        return teacher.getDepartment().getId();
+    private String getDepartmentName(Teacher teacher) {
+        return teacher.getDepartment().getName();
     }
 
     private void makeNewTeachersJournal(Teacher teacher, RegisterPersonData data) {
@@ -85,7 +85,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
 
     @Override
     public void update(UpdatePersonData<Teacher> data) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), teacherRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), teacherRepository));
         validateObject(new ValidationData<>(teacherValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
         Teacher updatedTeacher = data.getUpdatedPerson();
@@ -98,7 +98,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
 
     @Override
     public void delete(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, teacherRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, teacherRepository));
 
         removeTeacherFromStudentGroups(getTeacher(uid));
 
@@ -115,7 +115,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
 
     @Override
     public void softDelete(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, teacherRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, teacherRepository));
 
         softDeleteTeachersJournal(uid);
 

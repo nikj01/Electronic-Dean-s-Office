@@ -86,10 +86,10 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     @Transactional
     public void register(RegisterFacultyData data) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getFacultyId(data), facultyRepository));
-        validateObject(new DataForAbstractValidator(facultyValidator, data.getNewFaculty()));
+        checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(new CheckExistsByNameData<>(className, getFacultyId(data), facultyRepository));
+        validateObject(new DataForAbstractValidator(facultyValidator, getNewFaculty(data)));
 
-        Faculty newFaculty = data.getNewFaculty();
+        Faculty newFaculty = getNewFaculty(data);
 
         saveFaculty(newFaculty);
         saveNewDeaneryWorkers(newFaculty, data);
@@ -99,6 +99,9 @@ public class FacultyServiceImpl implements FacultyService {
         return data.getNewFaculty().getName();
     }
 
+    private Faculty getNewFaculty(RegisterFacultyData data) {
+        return data.getNewFaculty();
+    }
     private void saveFaculty(Faculty faculty) {
         facultyRepository.save(faculty);
     }
@@ -117,32 +120,39 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     @Transactional
     public void update(UpdateFacultyData data) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, data.getId(), facultyRepository));
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, data.getUpdatedFaculty().getName(), facultyRepository));
-        validateObject(new DataForAbstractValidator(facultyValidator, data.getUpdatedFaculty()));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, getFacultyId(data), facultyRepository));
+        checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(new CheckExistsByNameData<>(className, getFacultyName(data), facultyRepository));
+        validateObject(new DataForAbstractValidator(facultyValidator, getUpdatedFaculty(data)));
 
-        Faculty updatedFaculty = data.getUpdatedFaculty();
-        setIdInFaculty(updatedFaculty, data);
+        Faculty updatedFaculty = getUpdatedFaculty(data);
         setDepartmentsInFaculty(updatedFaculty, data);
         setDeaneryWorkersInFaculty(updatedFaculty, data);
 
         saveFaculty(updatedFaculty);
     }
 
-    private void setIdInFaculty(Faculty faculty, UpdateFacultyData data) {
-        faculty.setId(getExistingFacultyId(data));
-    }
-
-    private Long getExistingFacultyId(UpdateFacultyData data) {
-        return getExistingFaculty(getFacultyId(data)).getId();
-    }
-
-    private Faculty getExistingFaculty(Long facultyId) {
-        return facultyRepository.findById(facultyId).get();
-    }
-
     private Long getFacultyId(UpdateFacultyData data) {
         return data.getId();
+    }
+
+    private String getFacultyName(UpdateFacultyData data) {
+        return getFaculty(data).getName();
+    }
+
+    private Faculty getFaculty(UpdateFacultyData data) {
+        return data.getUpdatedFaculty();
+    }
+
+    private Faculty getUpdatedFaculty(UpdateFacultyData data) {
+        Faculty updatedFaculty = getFaculty(data);
+
+        setIdInFaculty(updatedFaculty, data);
+
+        return updatedFaculty;
+    }
+
+    private void setIdInFaculty(Faculty faculty, UpdateFacultyData data) {
+        faculty.setId(getFacultyId(data));
     }
 
     private void setDepartmentsInFaculty(Faculty faculty, UpdateFacultyData data) {
@@ -150,7 +160,11 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     private List<Department> getDepartments(UpdateFacultyData data) {
-        return getExistingFaculty(getFacultyId(data)).getDepartments();
+        return getExistingFaculty(data).getDepartments();
+    }
+
+    private Faculty getExistingFaculty(UpdateFacultyData data) {
+        return facultyRepository.findById(getFacultyId(data)).get();
     }
 
     private void setDeaneryWorkersInFaculty(Faculty faculty, UpdateFacultyData data) {
@@ -158,13 +172,13 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     private List<DeaneryWorker> getDeaneryWorkers(UpdateFacultyData data) {
-        return getExistingFaculty(getFacultyId(data)).getDeaneryWorkers();
+        return getExistingFaculty(data).getDeaneryWorkers();
     }
 
     @Override
     @Transactional
     public void delete(Long facultyId) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, facultyId, facultyRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, facultyId, facultyRepository));
 
         facultyRepository.deleteById(facultyId);
     }
@@ -172,7 +186,7 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     @Transactional
     public void softDelete(Long facultyId) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, facultyId, facultyRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, facultyId, facultyRepository));
 
         Faculty faculty = getExistingFaculty(facultyId);
 
@@ -180,6 +194,10 @@ public class FacultyServiceImpl implements FacultyService {
         softDeleteDepartments(faculty.getDepartments());
 
         saveFaculty(markFacultyAsDeleted(faculty));
+    }
+
+    private Faculty getExistingFaculty(Long facultyId) {
+        return facultyRepository.findById(facultyId).get();
     }
 
     private void softDeleteDeaneryWorkers(List<DeaneryWorker> deaneryWorkers) {

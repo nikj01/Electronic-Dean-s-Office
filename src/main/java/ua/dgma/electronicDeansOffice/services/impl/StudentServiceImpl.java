@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceByIDBeforeRegistration;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,7 +52,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Override
     public void register(RegisterPersonData<Student> data) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(className, getPersonUid(data), studentRepository));
+        checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate(new CheckExistsByIdData<>(className, getPersonUid(data), studentRepository));
         validateObject(new ValidationData<>(studentValidator, data.getNewPerson(), data.getBindingResult()));
 
         Student newStudent = data.getNewPerson();
@@ -75,7 +75,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Override
     public void update(UpdatePersonData<Student> data) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), studentRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), studentRepository));
         validateObject(new ValidationData<>(studentValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
         Student updatedStudent = data.getUpdatedPerson();
@@ -88,7 +88,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Override
     public void delete(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
 
         checkLeadersOfStudentGroups(uid);
 
@@ -110,7 +110,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Override
     public void softDelete(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, studentRepository));
 
         savePerson(markPersonAsDeleted(findByUid(uid)));
     }

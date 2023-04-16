@@ -14,18 +14,18 @@ public class CheckMethods {
         return page == null || numberOfItemsOnThePage == null;
     }
 
-    public static void checkExistsWithSuchID(CheckExistsByIdData data) {
+    public static void checkExistenceObjectWithSuchID(CheckExistsByIdData data) {
         if(!data.getRepository().existsById(data.getId())) throw new NotFoundException(new ExceptionData<String>(data.getClassName(), "id", data.getId().toString()));
     }
 
-    public static void checkExistsWithSuchName(CheckExistsByNameData data) {
+    public static void checkExistenceObjectWithSuchName(CheckExistsByNameData data) {
         if(!data.getRepository().existsByName(data.getName())) throw new NotFoundException(new ExceptionData<String>(data.getClassName(), "name", data.getName().toString()));
     }
 
-    public static void checkExistenceByIDBeforeRegistration(CheckExistsByIdData data) {
+    public static void checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate(CheckExistsByIdData data) {
         if(data.getRepository().existsById(data.getId())) throw new ObjectExistsException(new ExceptionData<String>(data.getClassName(), "id", data.getId().toString()));
     }
-    public static void checkExistenceByNameBeforeRegistration(CheckExistsByNameData data) {
+    public static void checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(CheckExistsByNameData data) {
         if(data.getRepository().existsByName(data.getName())) throw new ObjectExistsException(new ExceptionData<String>(data.getClassName(), "name", data.getName().toString()));
     }
 }

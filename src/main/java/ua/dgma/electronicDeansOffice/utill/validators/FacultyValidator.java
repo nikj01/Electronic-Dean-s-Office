@@ -6,54 +6,53 @@ import ua.dgma.electronicDeansOffice.exceptions.IncorrectPropertyException;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
 import ua.dgma.electronicDeansOffice.models.Faculty;
 import ua.dgma.electronicDeansOffice.models.Person;
-import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.repositories.FacultyRepository;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.utill.validators.data.FacultyValidationData;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FacultyValidator implements AbstractValidator {
-
-    private final FacultyRepository facultyRepository;
     private final PeopleRepository<Person> deaneryWorkerRepository;
 
     @Autowired
-    public FacultyValidator(FacultyRepository facultyRepository,
-                            PeopleRepository<Person> deaneryWorkerRepository) {
-        this.facultyRepository = facultyRepository;
+    public FacultyValidator(PeopleRepository<Person> deaneryWorkerRepository) {
         this.deaneryWorkerRepository = deaneryWorkerRepository;
     }
 
     @Override
     public void validate(Object target) {
         Faculty faculty = (Faculty) target;
-        FacultyValidationData validationData = new FacultyValidationData(faculty, facultyRepository, deaneryWorkerRepository);
 
-        if (checkExistenceOfTheFaculty(validationData)) {
-
-        } else {
-            checkExistenceOfTheDeaneryWorkers(validationData);
-        }
+        if (!checkExistenceOfTheFaculty(faculty))
+            checkExistenceOfTheDeaneryWorkers(faculty);
     }
 
-    private boolean checkExistenceOfTheFaculty(FacultyValidationData data) {
-        if (data.getFacultyRepository().getByNameContainingIgnoreCase(data.getFaculty().getName()).isPresent())
-            return true;
+    private boolean checkExistenceOfTheFaculty(Faculty faculty) {
+        if (faculty.getId() != null) return true;
         else return false;
     }
 
-    private void checkExistenceOfTheDeaneryWorkers(FacultyValidationData data) {
-        List<DeaneryWorker> newDeaneryWorkers = data.getFaculty().getDeaneryWorkers();
-
-        if (newDeaneryWorkers != null)
-            for (DeaneryWorker worker : newDeaneryWorkers)
-                checkDeaneryWorkerByUid(worker, data);
+    private void checkExistenceOfTheDeaneryWorkers(Faculty faculty) {
+        if (getDeaneryWorkers(faculty) != null)
+            for (DeaneryWorker worker : getDeaneryWorkers(faculty))
+                checkDeaneryWorkerByUid(worker);
     }
 
-    private void checkDeaneryWorkerByUid(DeaneryWorker deaneryWorker, FacultyValidationData data) {
-        if (data.getDeaneryWorkerRepository().getByUid(deaneryWorker.getUid()).isPresent())
-            throw new IncorrectPropertyException("Person with uid " + deaneryWorker.getUid() + " already exists!");
+    private List<DeaneryWorker> getDeaneryWorkers(Faculty faculty) {
+        return faculty.getDeaneryWorkers();
+    }
+
+    private void checkDeaneryWorkerByUid(DeaneryWorker deaneryWorker) {
+        if (checkWorkerById(deaneryWorker).isPresent())
+            throw new IncorrectPropertyException("Person with uid " + getWorkerId(deaneryWorker) + " already exists!");
+    }
+
+    private Optional<Person> checkWorkerById(DeaneryWorker deaneryWorker) {
+        return deaneryWorkerRepository.findById(getWorkerId(deaneryWorker));
+    }
+
+    private Long getWorkerId(DeaneryWorker deaneryWorker) {
+        return deaneryWorker.getUid();
     }
 }

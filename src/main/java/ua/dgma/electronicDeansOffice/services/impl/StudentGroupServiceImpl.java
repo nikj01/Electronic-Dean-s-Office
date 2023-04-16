@@ -10,13 +10,10 @@ import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.*;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
-import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
-import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
-import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.StudentGroupSpecifications;
@@ -34,13 +31,11 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Transactional(readOnly = true)
 public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentGroupRepository studentGroupRepository;
-//    private final TeacherRepository teacherRepository;
+    //    private final TeacherRepository teacherRepository;
 //    private final StudentRepository studentRepository;
-//    private final DepartmentRepository departmentRepository;
-
+    private final DepartmentRepository departmentRepository;
     private final PeopleService<Teacher> teacherService;
     private final PeopleService<Student> studentService;
-    private final DepartmentService departmentService;
     private final AbstractValidator studentGroupValidator;
     private final StudentGroupSpecifications specifications;
     private String className;
@@ -49,12 +44,12 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public StudentGroupServiceImpl(StudentGroupRepository studentGroupRepository,
                                    PeopleService<Teacher> teacherService,
                                    PeopleService<Student> studentService,
-                                   DepartmentService departmentService,
+                                   DepartmentRepository departmentRepository,
                                    AbstractValidator studentGroupValidator,
                                    StudentGroupSpecifications specifications) {
         this.studentGroupRepository = studentGroupRepository;
         this.teacherService = teacherService;
-        this.departmentService = departmentService;
+        this.departmentRepository = departmentRepository;
         this.studentService = studentService;
         this.studentGroupValidator = studentGroupValidator;
         this.specifications = specifications;
@@ -94,10 +89,10 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void register(RegisterStudentGroupData data) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getStudentGroupId(data), studentGroupRepository));
-        validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getNewStudentGroup()));
+        checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(new CheckExistsByNameData<>(className, getStudentGroupId(data), studentGroupRepository));
+        validateObject(new DataForAbstractValidator<>(studentGroupValidator, getNewStudentGroup(data)));
 
-        StudentGroup newStudentGroup = data.getNewStudentGroup();
+        StudentGroup newStudentGroup = getNewStudentGroup(data);
 
         setDepartmentInStudentGroup(newStudentGroup);
 
@@ -109,12 +104,16 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         return data.getNewStudentGroup().getName();
     }
 
+    private StudentGroup getNewStudentGroup(RegisterStudentGroupData data) {
+        return data.getNewStudentGroup();
+    }
+
     private void setDepartmentInStudentGroup(StudentGroup studentGroup) {
         studentGroup.setDepartment(getExistingDepartment(studentGroup));
     }
 
     private Department getExistingDepartment(StudentGroup studentGroup) {
-        return departmentService.findOne(getDepartmentName(studentGroup));
+        return departmentRepository.findById(getDepartmentName(studentGroup)).get();
     }
 
     private Long getDepartmentName(StudentGroup studentGroup) {
@@ -126,7 +125,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private void saveNewStudents(StudentGroup studentGroup, RegisterStudentGroupData data) {
-        if(getStudentsFromGroup(studentGroup) != null) {
+        if (getStudentsFromGroup(studentGroup) != null) {
             for (Student student : getStudentsFromGroup(studentGroup))
                 studentService.register(new RegisterPersonData<>(student, data.getBindingResult()));
         }
@@ -139,12 +138,12 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void update(UpdateStudentGroupData data) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, data.getId(), studentGroupRepository));
-        validateObject(new DataForAbstractValidator<>(studentGroupValidator, data.getUpdatedStudentGroup()));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, getStudentGroupId(data), studentGroupRepository));
+//        checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(new CheckExistsByNameData(className, getStudentGroupName(data), studentGroupRepository));
+        validateObject(new DataForAbstractValidator<>(studentGroupValidator, getUpdatedStudentGroup(data)));
 
-        StudentGroup updatedStudentGroup = data.getUpdatedStudentGroup();
+        StudentGroup updatedStudentGroup = getUpdatedStudentGroup(data);
 
-        setIdInStudentGroup(updatedStudentGroup, data);
         setDepartmentInStudentGroup(updatedStudentGroup);
         setStudentsInStudentGroup(updatedStudentGroup, data);
         setCuratorInStudentGroup(updatedStudentGroup);
@@ -153,16 +152,32 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         saveStudentGroup(updatedStudentGroup);
     }
 
+    private Long getStudentGroupId(UpdateStudentGroupData data) {
+        return data.getId();
+    }
+
+    private String getStudentGroupName(UpdateStudentGroupData data) {
+        return getStudentGroup(data).getName();
+    }
+
+    private StudentGroup getStudentGroup(UpdateStudentGroupData data) {
+        return data.getUpdatedStudentGroup();
+    }
+
+    private StudentGroup getUpdatedStudentGroup(UpdateStudentGroupData data) {
+        StudentGroup updatedGroup = getStudentGroup(data);
+
+        setIdInStudentGroup(updatedGroup, data);
+
+        return updatedGroup;
+    }
+
     private void setIdInStudentGroup(StudentGroup studentGroup, UpdateStudentGroupData data) {
         studentGroup.setId(getExistingStudentGroup(data).getId());
     }
 
     private StudentGroup getExistingStudentGroup(UpdateStudentGroupData data) {
         return studentGroupRepository.findById(getStudentGroupId(data)).get();
-    }
-
-    private Long getStudentGroupId(UpdateStudentGroupData data) {
-        return data.getId();
     }
 
     private void setStudentsInStudentGroup(StudentGroup studentGroup, UpdateStudentGroupData data) {
@@ -200,7 +215,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void delete(Long groupId) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, groupId, studentGroupRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, groupId, studentGroupRepository));
 
         studentGroupRepository.deleteById(groupId);
     }
@@ -208,7 +223,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     @Transactional
     public void softDelete(Long groupId) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, groupId, studentGroupRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, groupId, studentGroupRepository));
 
         StudentGroup studentGroup = getExistingStudentGroup(groupId);
 

@@ -19,7 +19,7 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,7 +96,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public void update(UpdateEventData data) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, getEventId(data), eventRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, getEventId(data), eventRepository));
 //        validate
         Event updatedEvent = data.getUpdatedEvent();
 
@@ -124,7 +124,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void delete(Long eventId) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, eventId, eventRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, eventId, eventRepository));
 
         eventRepository.deleteById(eventId);
     }

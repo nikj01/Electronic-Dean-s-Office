@@ -4,16 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ua.dgma.electronicDeansOffice.exceptions.IncorrectPropertyException;
+import ua.dgma.electronicDeansOffice.models.Department;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
-import ua.dgma.electronicDeansOffice.utill.validators.data.TeacherValidationData;
+
+import java.util.Optional;
 
 @Component
 public class TeacherValidator implements Validator {
-
     private final PeopleRepository<Person> peopleRepository;
     private final DepartmentRepository departmentRepository;
 
@@ -32,27 +32,51 @@ public class TeacherValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Teacher teacher = (Teacher) target;
-        TeacherValidationData validationData = new TeacherValidationData(teacher, peopleRepository, departmentRepository, errors);
 
-        if(checkTeacherId(validationData)) {
-            checkExistenceOfTheDepartment(validationData);
+        if (checkTeacherId(teacher)) {
+            checkExistenceOfTheDepartment(teacher, errors);
         } else {
-            checkExistenceOfThePersonById(validationData);
-            checkExistenceOfTheDepartment(validationData);
+            checkExistenceOfThePersonById(teacher, errors);
+            checkExistenceOfTheDepartment(teacher, errors);
         }
     }
 
-    private boolean checkTeacherId(TeacherValidationData data) {
-        if(data.getTeacher().getUid() == null) return true; else return false;
+    private boolean checkTeacherId(Teacher teacher) {
+        if (teacher.getUid() == null) return true;
+        else return false;
     }
 
-    private void checkExistenceOfThePersonById(TeacherValidationData data) {
-        if(data.getPeopleRepository().getByUid(data.getTeacher().getUid()).isPresent())
-            data.getErrors().rejectValue("uid", "Person with UID " + data.getTeacher().getUid() + " already exists!");
+    private void checkExistenceOfThePersonById(Teacher teacher, Errors errors) {
+        if (findPerson(teacher).isPresent())
+            errors.rejectValue("uid", "Person with UID " + getTeacherId(teacher) + " already exists!");
     }
 
-    private void checkExistenceOfTheDepartment(TeacherValidationData data) {
-        if(!data.getDepartmentRepository().getByName(data.getTeacher().getDepartment().getName()).isPresent())
-            data.getErrors().rejectValue("department", "Department with name " + data.getTeacher().getDepartment().getName() + " does not exist!");
+    private Optional<Person> findPerson(Teacher teacher) {
+        return peopleRepository.findById(getTeacherId(teacher));
+    }
+
+    private Long getTeacherId(Teacher teacher) {
+        return teacher.getUid();
+    }
+
+    private void checkExistenceOfTheDepartment(Teacher teacher, Errors errors) {
+        if (!findDepartment(teacher).isPresent())
+            errors.rejectValue("department", "Department with name " + getDepartmentName(teacher) + " and Id " + getDepartmentId(teacher) + " does not exist!");
+    }
+
+    private Optional<Department> findDepartment(Teacher teacher) {
+        return departmentRepository.findById(getDepartmentId(teacher));
+    }
+
+    private Long getDepartmentId(Teacher teacher) {
+        return getDepartment(teacher).getId();
+    }
+
+    private String getDepartmentName(Teacher teacher) {
+        return getDepartment(teacher).getName();
+    }
+
+    private Department getDepartment(Teacher teacher) {
+        return teacher.getDepartment();
     }
 }

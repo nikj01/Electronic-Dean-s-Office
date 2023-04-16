@@ -18,7 +18,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.department.RegisterDepar
 import ua.dgma.electronicDeansOffice.services.impl.data.department.UpdateDepartmentData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
-import ua.dgma.electronicDeansOffice.services.interfaces.FacultyService;
+;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
@@ -36,7 +36,7 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Transactional(readOnly = true)
 public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
-    private final FacultyService facultyService;
+    private final FacultyRepository facultyRepository;
     private final PeopleService<Teacher> teacherService;
     private final StudentGroupService groupService;
     private final AbstractValidator departmentValidator;
@@ -45,13 +45,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     public DepartmentServiceImpl(DepartmentRepository departmentRepository,
-                                 FacultyService facultyService,
+                                 FacultyRepository facultyRepository,
                                  PeopleService<Teacher> teacherService,
                                  StudentGroupService groupService,
                                  AbstractValidator departmentValidator,
                                  DepartmentSpecifications specifications) {
         this.departmentRepository = departmentRepository;
-        this.facultyService = facultyService;
+        this.facultyRepository = facultyRepository;
         this.teacherService = teacherService;
         this.groupService = groupService;
         this.departmentValidator = departmentValidator;
@@ -92,10 +92,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional
     public void register(RegisterDepartmentData data) {
-        checkExistenceByNameBeforeRegistration(new CheckExistsByNameData<>(className, getDepartmentId(data), departmentRepository));
-        validateObject(new DataForAbstractValidator(departmentValidator, data.getNewDepartment()));
+        checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(new CheckExistsByNameData<>(className, getDepartmentId(data), departmentRepository));
+        validateObject(new DataForAbstractValidator(departmentValidator, getNewDepartment(data)));
 
-        Department newDepartment = data.getNewDepartment();
+        Department newDepartment = getNewDepartment(data);
 
         setFacultyInDepartment(newDepartment);
 
@@ -107,12 +107,16 @@ public class DepartmentServiceImpl implements DepartmentService {
         return data.getNewDepartment().getName();
     }
 
+    private Department getNewDepartment(RegisterDepartmentData data) {
+        return data.getNewDepartment();
+    }
+
     private void setFacultyInDepartment(Department department) {
         department.setFaculty(getExistingFaculty(department));
     }
 
     private Faculty getExistingFaculty(Department department) {
-        return facultyService.findOne(getFacultyId(department));
+        return facultyRepository.findById(getFacultyId(department)).get();
     }
 
     private Long getFacultyId(Department department) {
@@ -136,28 +140,41 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional
     public void update(UpdateDepartmentData data) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, data.getId(), departmentRepository));
-        validateObject(new DataForAbstractValidator(departmentValidator, data.getUpdatedDepartment()));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, getDepartmentId(data), departmentRepository));
+        checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(new CheckExistsByNameData(className, getDepartmentName(data), departmentRepository));
+        validateObject(new DataForAbstractValidator(departmentValidator, getUpdatedDepartment(data)));
 
-        Department updatedDepartment = data.getUpdatedDepartment();
-        setIdInDepartment(updatedDepartment, data);
+        Department updatedDepartment = getUpdatedDepartment(data);
         setFacultyInDepartment(updatedDepartment);
         setTeachersInDepartment(updatedDepartment, data);
         setStudentGroupsInDepartment(updatedDepartment, data);
 
         saveDepartment(updatedDepartment);
-    }
 
-    private void setIdInDepartment(Department department, UpdateDepartmentData data) {
-        department.setId(getExistingDepartment(data).getId());
-    }
-
-    private Department getExistingDepartment(UpdateDepartmentData data) {
-        return departmentRepository.findById(getDepartmentId(data)).get();
     }
 
     private Long getDepartmentId(UpdateDepartmentData data) {
         return data.getId();
+    }
+
+    private String getDepartmentName(UpdateDepartmentData data) {
+        return getDepartment(data).getName();
+    }
+
+    private Department getDepartment(UpdateDepartmentData data) {
+        return data.getUpdatedDepartment();
+    }
+
+    private Department getUpdatedDepartment(UpdateDepartmentData data) {
+        Department updatedDepartment = getDepartment(data);
+
+        setIdInDepartment(updatedDepartment, data);
+
+        return updatedDepartment;
+    }
+
+    private void setIdInDepartment(Department department,UpdateDepartmentData data) {
+        department.setId(getDepartmentId(data));
     }
 
     private void setTeachersInDepartment(Department department, UpdateDepartmentData data) {
@@ -166,6 +183,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private List<Teacher> getExistingTeachers(UpdateDepartmentData data) {
         return getExistingDepartment(data).getTeachers();
+    }
+
+    private Department getExistingDepartment(UpdateDepartmentData data) {
+        return departmentRepository.findById(getDepartmentId(data)).get();
     }
 
     private void setStudentGroupsInDepartment(Department department, UpdateDepartmentData data) {
@@ -179,7 +200,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional
     public void delete(Long departmentId) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, departmentId, departmentRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, departmentId, departmentRepository));
 
         departmentRepository.deleteById(departmentId);
     }
@@ -187,7 +208,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     @Transactional
     public void softDelete(Long departmentId) {
-        checkExistsWithSuchID(new CheckExistsByIdData(className, departmentId, departmentRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, departmentId, departmentRepository));
 
         Department department = getExistingDepartment(departmentId);
 

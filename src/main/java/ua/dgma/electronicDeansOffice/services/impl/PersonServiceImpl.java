@@ -14,8 +14,8 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 
 import java.util.List;
 
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceByIDBeforeRegistration;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,14 +40,14 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
 
     @Override
     public void register(RegisterPersonData data) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(className, data.getNewPerson().getUid().longValue(), personRepository));
+        checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate(new CheckExistsByIdData<>(className, data.getNewPerson().getUid().longValue(), personRepository));
 
         savePerson(data.getNewPerson());
     }
 
     @Override
     public void update(UpdatePersonData data) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), personRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), personRepository));
 
         Person updatedPerson = data.getUpdatedPerson();
         setIdInUpdatedPerson(updatedPerson, data);
@@ -62,7 +62,7 @@ public class PersonServiceImpl extends PeopleServiceImpl<Person> {
 
     @Override
     public void softDelete(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, personRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, personRepository));
 
         savePerson(markPersonAsDeleted(findByUid(uid)));
     }
