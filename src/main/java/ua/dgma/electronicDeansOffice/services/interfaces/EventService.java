@@ -9,4 +9,5 @@ public interface EventService {
     void register(RegisterEventData data);
     void update(UpdateEventData data);
     void delete(Long eventId);
+    void removeStudentGroupsFromEvents(Long pageId);
 }

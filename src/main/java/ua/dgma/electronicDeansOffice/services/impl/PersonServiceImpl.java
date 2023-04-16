@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.models.Person;
+import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;

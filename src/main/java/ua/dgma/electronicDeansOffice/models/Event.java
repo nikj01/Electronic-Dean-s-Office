@@ -14,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,7 +44,7 @@ public class Event {
     @Cascade(value = CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Reference
-    private List<StudentGroup> studentGroups;
+    private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @NotNull(message = "The field |DATE| cannot be empty!")
     @Column(nullable = false)

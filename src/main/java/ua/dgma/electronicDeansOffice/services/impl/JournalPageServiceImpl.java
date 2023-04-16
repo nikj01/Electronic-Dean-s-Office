@@ -8,12 +8,11 @@ import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.JournalPage;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
-import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.JournalPageRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.RegisterJournalPageData;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.UpdateJournalPageData;
-import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.UpdateTeachersJournalData;
+import ua.dgma.electronicDeansOffice.services.interfaces.EventService;
 import ua.dgma.electronicDeansOffice.services.interfaces.JournalPageService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
@@ -33,6 +32,7 @@ public class JournalPageServiceImpl implements JournalPageService {
     private final JournalPageRepository pageRepository;
     private final TeachersJournalService journalService;
     private final StudentGroupService groupService;
+    private final EventService eventService;
     private final JournalPageValidator pageValidator;
     private String className;
 
@@ -40,10 +40,12 @@ public class JournalPageServiceImpl implements JournalPageService {
     public JournalPageServiceImpl(JournalPageRepository pageRepository,
                                   TeachersJournalService journalService,
                                   StudentGroupService groupService,
+                                  EventService eventService,
                                   JournalPageValidator pageValidator) {
         this.pageRepository = pageRepository;
         this.journalService = journalService;
         this.groupService = groupService;
+        this.eventService = eventService;
         this.pageValidator = pageValidator;
         this.className = JournalPage.class.getSimpleName();
     }
@@ -157,7 +159,24 @@ public class JournalPageServiceImpl implements JournalPageService {
     }
 
     private void setUpdatedStudentGroupsInExistingPage(JournalPage existingPage, JournalPage updatedPage) {
-        existingPage.setStudentGroups(getStudentGroupsFromPage(updatedPage));
+        if (getStudentGroupsFromPage(updatedPage) != null)
+            existingPage.setStudentGroups(getStudentGroupsFromPage(updatedPage));
+        else
+            removeStudentGroupsFromPage(existingPage);
+    }
+
+    private void removeStudentGroupsFromPage(JournalPage existingPage) {
+        removeStudentGroupsFromEvents(existingPage);
+
+        existingPage.setStudentGroups(new ArrayList<>());
+    }
+
+    private void removeStudentGroupsFromEvents(JournalPage page) {
+        eventService.removeStudentGroupsFromEvents(getPageId(page));
+    }
+
+    private Long getPageId(JournalPage page) {
+        return page.getId();
     }
 
     private void setArchiveFlagInExistingPage(JournalPage existingPage, JournalPage updatedPage) {

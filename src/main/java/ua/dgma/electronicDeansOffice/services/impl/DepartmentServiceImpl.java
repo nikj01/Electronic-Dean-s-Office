@@ -173,7 +173,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         return updatedDepartment;
     }
 
-    private void setIdInDepartment(Department department,UpdateDepartmentData data) {
+    private void setIdInDepartment(Department department, UpdateDepartmentData data) {
         department.setId(getDepartmentId(data));
     }
 
