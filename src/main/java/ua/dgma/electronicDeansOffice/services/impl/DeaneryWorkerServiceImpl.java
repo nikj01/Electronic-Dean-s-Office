@@ -20,8 +20,8 @@ import ua.dgma.electronicDeansOffice.utill.validators.DeaneryWorkerValidator;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchID;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistsWithSuchName;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchName;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,7 +52,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
 
     @Override
     public void register(RegisterPersonData<DeaneryWorker> data) {
-        checkExistsWithSuchName(new CheckExistsByNameData<>(className, getFacultyId(data), facultyRepository));
+        checkExistenceObjectWithSuchName(new CheckExistsByNameData<>(className, getFacultyName(data), facultyRepository));
         validateObject(new ValidationData<>(deaneryWorkerValidator, data.getNewPerson(), data.getBindingResult()));
 
         DeaneryWorker newDeaneryWorker = data.getNewPerson();
@@ -62,7 +62,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
         savePerson(newDeaneryWorker);
     }
 
-    private String getFacultyId(RegisterPersonData<DeaneryWorker> data) {
+    private String getFacultyName(RegisterPersonData<DeaneryWorker> data) {
         return data.getNewPerson().getFaculty().getName();
     }
 
@@ -71,16 +71,16 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
     }
 
     private Faculty getExistingFaculty(DeaneryWorker deaneryWorker) {
-        return facultyRepository.findById(getFacultyId(deaneryWorker)).get();
+        return facultyRepository.getByName(getFacultyName(deaneryWorker)).get();
     }
 
-    private Long getFacultyId(DeaneryWorker deaneryWorker) {
-        return deaneryWorker.getFaculty().getId();
+    private String getFacultyName(DeaneryWorker deaneryWorker) {
+        return deaneryWorker.getFaculty().getName();
     }
 
     @Override
     public void update(UpdatePersonData<DeaneryWorker> data) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), deaneryWorkerRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, data.getUid(), deaneryWorkerRepository));
         validateObject(new ValidationData<>(deaneryWorkerValidator, data.getUpdatedPerson(), data.getBindingResult()));
 
         DeaneryWorker updatedDeaneryWorker = data.getUpdatedPerson();
@@ -93,14 +93,14 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
 
     @Override
     public void delete(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, deaneryWorkerRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, deaneryWorkerRepository));
 
         deaneryWorkerRepository.deleteByUid(uid);
     }
 
     @Override
     public void softDelete(Long uid) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, uid, deaneryWorkerRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, deaneryWorkerRepository));
 
         savePerson(markPersonAsDeleted(findByUid(uid)));
     }

@@ -1,16 +1,20 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.*;
-import org.hibernate.annotations.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.Reference;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +24,6 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "studentGroups")
 @Table(name = "Events")
 public class Event {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,21 +35,21 @@ public class Event {
     @NotBlank
     private String description;
 
-    @NotEmpty(message = "The field |EVENT TYPE| cannot be empty!")
+    @NotNull(message = "The field |EVENT TYPE | cannot be empty!")
     @Column(nullable = false)
-    private EventType eventType;
+    private EventTypeEnum eventType;
 
     @ManyToMany
-    @Cascade(value = org.hibernate.annotations.CascadeType.DELETE)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Reference
-    private List<StudentGroup> studentGroups;
+    private List<StudentGroup> studentGroups = new ArrayList<>();
 
-    @NotEmpty(message = "The field |DATE| cannot be empty!")
+    @NotNull(message = "The field |DATE| cannot be empty!")
     @Column(nullable = false)
     private LocalDate date;
 
-    @NotEmpty(message = "The field |JOURNAL PAGE| cannot be empty!")
+    @NotNull(message = "The field |JOURNAL PAGE| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
@@ -56,11 +59,9 @@ public class Event {
     )
     private JournalPage page;
 
-    @OneToOne(
-            mappedBy = "event",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+    @OneToMany(
+            mappedBy = "event"
     )
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Report report;
+    @Cascade(value = CascadeType.SAVE_UPDATE)
+    private List<Report> report = new ArrayList<>();
 }

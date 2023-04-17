@@ -8,6 +8,7 @@ import ua.dgma.electronicDeansOffice.services.specifications.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
+import java.util.List;
 
 
 @Getter

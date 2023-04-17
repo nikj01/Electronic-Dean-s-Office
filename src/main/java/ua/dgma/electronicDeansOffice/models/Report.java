@@ -1,11 +1,8 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
-import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.ValueGenerationType;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -26,11 +23,9 @@ public class Report {
     private Long id;
 
     @NonNull
-    @OneToOne(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
+
     private Event event;
 
     @ElementCollection
@@ -41,7 +36,7 @@ public class Report {
             }
     )
     @MapKeyJoinColumn(name = "student_uid")
-    private Map<Student, Attendance> studentAttendance = new TreeMap<>();
+    private Map<Student, Boolean> studentAttendance = new TreeMap<>();
 
     @ElementCollection
     @CollectionTable(

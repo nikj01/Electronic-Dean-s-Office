@@ -6,24 +6,21 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.models.Student;
+import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
-import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
-import ua.dgma.electronicDeansOffice.utill.validators.data.StudentValidationData;
+
+import java.util.Optional;
 
 @Component
 public class StudentValidator implements Validator {
-
     private final PeopleRepository<Person> peopleRepository;
-    private final StudentRepository studentRepository;
     private final StudentGroupRepository studentGroupRepository;
 
     @Autowired
     public StudentValidator(PeopleRepository<Person> peopleRepository,
-                            StudentRepository studentRepository,
                             StudentGroupRepository studentGroupRepository) {
         this.peopleRepository = peopleRepository;
-        this.studentRepository = studentRepository;
         this.studentGroupRepository = studentGroupRepository;
     }
 
@@ -35,26 +32,52 @@ public class StudentValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Student student = (Student) target;
-        StudentValidationData validationData = new StudentValidationData(student, peopleRepository, studentRepository, studentGroupRepository, errors);
 
-        if(checkStudentsUid(validationData)) {
-            checkExistenceOfTheStudentGroup(validationData);
+        if (checkStudentsUid(student)) {
+            checkExistenceOfTheStudentGroup(student, errors);
         } else {
-            checkExistenceOfThePersonById(validationData);
-            checkExistenceOfTheStudentGroup(validationData);
+            checkExistenceOfThePersonById(student, errors);
+            checkExistenceOfTheStudentGroup(student, errors);
         }
     }
-    private boolean checkStudentsUid(StudentValidationData data) {
-        if(data.getStudent().getUid() == null) return true; else return false;
+
+    private boolean checkStudentsUid(Student student) {
+        if (student.getUid() == null) return true;
+        else return false;
     }
 
-    private void checkExistenceOfThePersonById(StudentValidationData data) {
-        if(data.getPeopleRepository().getByUid(data.getStudent().getUid()).isPresent())
-            data.getErrors().rejectValue("uid", "Person with UID " + data.getStudent().getUid() + " already exists!");
+    private void checkExistenceOfThePersonById(Student student, Errors errors) {
+        if (findStudent(student).isPresent())
+            errors.rejectValue("uid", "Person with UID " + getStudentId(student) + " already exists!");
     }
 
-    private void checkExistenceOfTheStudentGroup(StudentValidationData data) {
-        if(!data.getStudentGroupRepository().getByName(data.getStudent().getStudentGroup().getName()).isPresent())
-            data.getErrors().rejectValue("studentGroup", "Student group with name " + data.getStudent().getStudentGroup().getName() + " does not exist!");
+    private Optional<Person> findStudent(Student student) {
+        return peopleRepository.findById(getStudentId(student));
     }
+
+    private Long getStudentId(Student student) {
+        return student.getUid();
+    }
+
+    private void checkExistenceOfTheStudentGroup(Student student, Errors errors) {
+        if (!findGroup(student).isPresent())
+            errors.rejectValue("studentGroup", "Student group with name " + getGroupName(student) + " and Id " + getGroupId(student) + " does not exist!");
+    }
+
+    private Optional<StudentGroup> findGroup(Student student) {
+        return studentGroupRepository.getByName(getGroupName(student));
+    }
+
+    private String getGroupName(Student student) {
+        return getGroupFromStudent(student).getName();
+    }
+
+    private Long getGroupId(Student student) {
+        return getGroupFromStudent(student).getId();
+    }
+
+    private StudentGroup getGroupFromStudent(Student student) {
+        return student.getStudentGroup();
+    }
+
 }

@@ -81,6 +81,9 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
     protected Long getPersonUid(RegisterPersonData data) {
         return data.getNewPerson().getUid().longValue();
     }
+    protected P getNewPerson(RegisterPersonData data) {
+        return (P) data.getNewPerson();
+    }
 
     protected void savePerson(P person) {
         repository.save(person);

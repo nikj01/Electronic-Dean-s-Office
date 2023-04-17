@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class DepartmentPatchDTO {
-
     @NotBlank(message = "The field |NAME| cannot be empty!")
     private String name;
     @NotNull(message = "The field |FACULTY| cannot be empty!")

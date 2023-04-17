@@ -10,8 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-@Getter
-@Setter
 public class StudentGroupPatchDTO {
     @NotBlank(message = "The field |NAME| cannot be empty!")
     private String name;
