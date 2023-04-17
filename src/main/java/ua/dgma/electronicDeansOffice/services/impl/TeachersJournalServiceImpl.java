@@ -14,16 +14,13 @@ import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeachersJournalRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.RegisterTeachersJournalData;
-import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.UpdateTeachersJournalData;
 import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
 import ua.dgma.electronicDeansOffice.services.specifications.TeachersJournalSpecifications;
-import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.TeachersJournalValidator;
 
 import java.util.List;
 
-import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 
 @Service
@@ -56,8 +53,8 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     @Override
-    public List<TeachersJournal> findByComment(String journalComment) {
-        return journalRepository.getByCommentContainingIgnoreCase(journalComment).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "comment", journalComment)));
+    public TeachersJournal findOneByTeacher(Long teacherId) {
+        return journalRepository.getByTeacher_Uid(teacherId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "teacher_id", teacherId)));
     }
 
     @Override
@@ -83,13 +80,12 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     @Override
     @Transactional
     public void register(RegisterTeachersJournalData data) {
-        checkExistenceByIDBeforeRegistration(new CheckExistsByIdData<>(teacherClassName(), data.getNewTeacher().getUid(), journalRepository));
+        checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate(new CheckExistsByIdData<>(teacherClassName(), getTeacherId(data), journalRepository));
 
-        Teacher newTeacher = data.getNewTeacher();
+        Teacher newTeacher = getNewTeacher(data);
         TeachersJournal newJournal = new TeachersJournal();
 
         setTeacherInNewJournal(newJournal, newTeacher);
-        setCommentOnNewJournal(newJournal, newTeacher);
 
         saveTeachersJournal(newJournal);
     }
@@ -98,8 +94,12 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
         return Teacher.class.getSimpleName();
     }
 
-    private void setCommentOnNewJournal(TeachersJournal journal, Teacher teacher) {
-        journal.setComment("Personal journal of the teacher " + teacher.getSurname() + " " + teacher.getName() + " " + teacher.getPatronymic());
+    private Long getTeacherId(RegisterTeachersJournalData data) {
+        return getNewTeacher(data).getUid();
+    }
+
+    private Teacher getNewTeacher(RegisterTeachersJournalData data) {
+        return data.getNewTeacher();
     }
 
     private void setTeacherInNewJournal(TeachersJournal journal, Teacher teacher) {
@@ -120,26 +120,8 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
 
     @Override
     @Transactional
-    public void update(UpdateTeachersJournalData data) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, data.getId(), journalRepository));
-        validateObject(new ValidationData<>(journalValidator, data.getUpdatedJournal(), data.getBindingResult()));
-
-        TeachersJournal updatedJournal = data.getUpdatedJournal();
-        TeachersJournal existingJournal = findOne(data.getId());
-
-        setNewCommentInExistingJournal(existingJournal, updatedJournal.getComment());
-
-        saveTeachersJournal(existingJournal);
-    }
-
-    private void setNewCommentInExistingJournal(TeachersJournal journal, String newComment) {
-        journal.setComment(newComment);
-    }
-
-    @Override
-    @Transactional
     public void delete(Long journalId) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, journalId, journalRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, journalId, journalRepository));
 
         journalRepository.deleteById(journalId);
     }
@@ -147,7 +129,7 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     @Override
     @Transactional
     public void softDelete(Long journalId) {
-        checkExistsWithSuchID(new CheckExistsByIdData<>(className, journalId, journalRepository));
+        checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, journalId, journalRepository));
 
         saveTeachersJournal(markTeachersJournalAsDeleted(findOne(journalId)));
     }

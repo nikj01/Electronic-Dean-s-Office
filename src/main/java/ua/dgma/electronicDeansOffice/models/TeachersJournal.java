@@ -32,10 +32,6 @@ public class TeachersJournal {
     @JoinColumn
     private Teacher teacher;
 
-    @NotBlank(message = "The field |COMMENT| cannot be empty!")
-    @Column(nullable = false)
-    private String comment;
-
     @OneToMany(
             mappedBy = "journal",
             fetch = FetchType.LAZY,

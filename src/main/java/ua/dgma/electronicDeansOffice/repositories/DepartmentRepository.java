@@ -15,5 +15,4 @@ public interface DepartmentRepository extends JpaRepository<Department, Long>, J
     Optional<List<Department>> getByNameContainingIgnoreCase(String name);
     void deleteByName(String name);
     boolean existsByName(String name);
-
 }

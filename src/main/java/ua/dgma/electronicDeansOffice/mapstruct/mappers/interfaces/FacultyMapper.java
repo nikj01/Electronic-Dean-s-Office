@@ -8,11 +8,13 @@ import ua.dgma.electronicDeansOffice.models.Faculty;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface FacultyMapper {
-    @Named(value = "postFaculty")
+    @Named("postFaculty")
     Faculty toFaculty(FacultyPostDTO facultyPost);
-    @Named(value = "patchFaculty")
+    @Named("patchFaculty")
     Faculty toFaculty(FacultyPatchDTO facultyPatch);
+    @Named("faculty")
     FacultyGetDTO toFacultyGetDTO(Faculty faculty);
+    @Named("slimFaculty")
     FacultySlimGetDTO toFacultySlimGetDTO(Faculty faculty);
 
 

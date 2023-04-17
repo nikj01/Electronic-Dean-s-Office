@@ -7,21 +7,15 @@ import org.springframework.validation.Validator;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
-import ua.dgma.electronicDeansOffice.repositories.TeachersJournalRepository;
-import ua.dgma.electronicDeansOffice.utill.validators.data.TeachersJournalValidationData;
 
 import java.util.Optional;
 
 @Component
 public class TeachersJournalValidator implements Validator {
-    private final TeachersJournalRepository journalRepository;
     private final TeacherRepository teacherRepository;
 
-
     @Autowired
-    public TeachersJournalValidator(TeachersJournalRepository journalRepository,
-                                    TeacherRepository teacherRepository) {
-        this.journalRepository = journalRepository;
+    public TeachersJournalValidator(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
     }
 
@@ -33,26 +27,30 @@ public class TeachersJournalValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         TeachersJournal journal = (TeachersJournal) target;
-        TeachersJournalValidationData validationData = new TeachersJournalValidationData(journal, journalRepository, teacherRepository, errors);
 
-        if(!checkExistenceOfTheJournal(validationData))
-            checkExistenceOfTheTeacher(validationData);
+        if (!checkExistenceOfTheJournal(journal))
+            checkExistenceOfTheTeacher(journal, errors);
     }
 
-    private boolean checkExistenceOfTheJournal(TeachersJournalValidationData data) {
-        if(data.getTeachersJournal().getId() == null) return true; else return false;
+    private boolean checkExistenceOfTheJournal(TeachersJournal journal) {
+        if (journal.getId() == null) return true;
+        else return false;
     }
 
-    private void checkExistenceOfTheTeacher(TeachersJournalValidationData data) {
-        if(!findTeacher(data).isPresent())
-            data.getErrors().rejectValue("teacher", "Teacher with uid " + getTeacherFromData(data).getUid() + " does not exist!");
+    private void checkExistenceOfTheTeacher(TeachersJournal journal, Errors errors) {
+        if (!findTeacher(journal).isPresent())
+            errors.rejectValue("teacher", "Teacher with uid " + getTeacherId(journal) + " does not exist!");
     }
 
-    private Teacher getTeacherFromData(TeachersJournalValidationData data) {
-        return data.getTeachersJournal().getTeacher();
+    private Optional<Teacher> findTeacher(TeachersJournal journal) {
+        return teacherRepository.findById(getTeacherId(journal));
     }
 
-    private Optional<Teacher> findTeacher(TeachersJournalValidationData data) {
-        return data.getTeacherRepository().getByUid(getTeacherFromData(data).getUid());
+    private Long getTeacherId(TeachersJournal journal) {
+        return getTeacherFromJournal(journal).getUid();
+    }
+
+    private Teacher getTeacherFromJournal(TeachersJournal journal) {
+        return journal.getTeacher();
     }
 }

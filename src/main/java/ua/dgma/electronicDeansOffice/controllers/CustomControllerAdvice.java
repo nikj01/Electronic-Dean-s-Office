@@ -7,8 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import ua.dgma.electronicDeansOffice.exceptions.*;
 
+import javax.validation.ConstraintViolationException;
+import java.sql.SQLException;
 import java.util.Date;
 
 @ControllerAdvice
@@ -68,4 +71,12 @@ public class CustomControllerAdvice {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+//    @ExceptionHandler(SqlExceptionHelper.class)
+//    private ResponseEntity<ErrorResponse> handleException(SQLException e) {
+//        ErrorResponse response = new ErrorResponse(new Date(), 400, e.getClass().getSimpleName(), e.getSQLState());
+//
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
+
 }

@@ -7,17 +7,16 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherPatchDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherSlimGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentGroupListMapper;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 
-@Mapper(componentModel = "spring", uses = {DepartmentMapper.class, StudentGroupListMapper.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface TeacherMapper {
-    @Named(value = "postTeacher")
-    Teacher toTeacher(TeacherPostDTO teacherPost);
-    @Named(value = "patchTeacher")
-    Teacher toTeacher(TeacherPatchDTO teacherPatch);
-    @Named(value = "teacher")
+    @Named("postTeacher")
+    Teacher toTeacher(TeacherPostDTO teacherPostDTO);
+    @Named("patchTeacher")
+    Teacher toTeacher(TeacherPatchDTO teacherPatchDTO);
+    @Named("teacher")
     TeacherGetDTO toTeacherGetDTO(Teacher teacher);
-    @Named(value = "slimTeacher")
+    @Named("slimTeacher")
     TeacherSlimGetDTO toTeacherSlimGetDTO(Teacher teacher);
 }

@@ -10,7 +10,6 @@ import java.util.List;
 public class TeachersJournalGetDTO {
     private Long id;
     private PersonSlimGetDTO teacher;
-    private String comment;
     private String deleted;
     private List<JournalPageSlimGetDTO> pages;
 }

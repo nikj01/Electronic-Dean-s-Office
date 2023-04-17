@@ -1,5 +1,6 @@
 package ua.dgma.electronicDeansOffice.services.interfaces;
 
+import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.teachersJournal.RegisterTeachersJournalData;
@@ -9,10 +10,9 @@ import java.util.List;
 
 public interface TeachersJournalService {
     TeachersJournal findOne(Long journalId);
-    List<TeachersJournal> findByComment(String journalComment);
+    TeachersJournal findOneByTeacher(Long teacherId);
     List<TeachersJournal> findAll(FindAllData data);
     void register(RegisterTeachersJournalData data);
-    void update(UpdateTeachersJournalData data);
     void delete(Long journalId);
     void softDelete(Long journalId);
 }

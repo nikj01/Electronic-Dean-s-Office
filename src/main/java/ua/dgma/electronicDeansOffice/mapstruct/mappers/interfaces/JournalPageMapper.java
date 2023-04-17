@@ -7,17 +7,17 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPageGetDt
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPagePatchDto;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPagePostDto;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPageSlimGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentGroupListMapper;
+import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.EventListMapper;
 import ua.dgma.electronicDeansOffice.models.JournalPage;
 
-@Mapper(componentModel = "spring", uses = {StudentGroupMapper.class, StudentGroupListMapper.class, TeachersJournalMapper.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "spring", uses = EventListMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface JournalPageMapper {
-    @Named(value = "postPage")
+    @Named("postPage")
     JournalPage toJournalPage(JournalPagePostDto journalPage);
-    @Named(value = "patchPage")
+    @Named("patchPage")
     JournalPage toJournalPage(JournalPagePatchDto journalPage);
-    @Named(value = "page")
+    @Named("page")
     JournalPageGetDto toPageGetDTO(JournalPage page);
-    @Named(value = "slimPage")
+    @Named("slimPage")
     JournalPageSlimGetDTO toPageSlimGetDTO(JournalPage page);
 }
