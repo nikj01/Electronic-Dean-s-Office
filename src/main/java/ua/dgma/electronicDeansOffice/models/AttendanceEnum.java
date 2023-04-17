@@ -1,5 +1,5 @@
 package ua.dgma.electronicDeansOffice.models;
 
-public enum Attendance {
+public enum AttendanceEnum {
     PRESENT, NOT_PRESENT
 }

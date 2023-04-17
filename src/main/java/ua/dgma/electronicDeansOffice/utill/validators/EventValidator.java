@@ -36,9 +36,10 @@ public class EventValidator implements Validator {
 
         if (checkExistenceOfTheEvent(event)) {
             checkExistenceOfTheStudentGroups(event, errors);
+            checkExistenceOfTheJournalPage(event, errors);
+
         } else {
             checkExistenceOfTheStudentGroups(event, errors);
-            checkExistenceOfTheJournalPage(event, errors);
         }
     }
 

@@ -1,11 +1,8 @@
 package ua.dgma.electronicDeansOffice.models;
 
 import lombok.*;
-import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.ValueGenerationType;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -41,7 +38,7 @@ public class Report {
             }
     )
     @MapKeyJoinColumn(name = "student_uid")
-    private Map<Student, Attendance> studentAttendance = new TreeMap<>();
+    private Map<Student, AttendanceEnum> studentAttendance = new TreeMap<>();
 
     @ElementCollection
     @CollectionTable(

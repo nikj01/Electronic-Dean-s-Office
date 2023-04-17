@@ -96,9 +96,9 @@ public class StudentGroupValidator implements AbstractValidator {
         if (!findTeacher(studentGroup).isPresent())
             throw new IncorrectPropertyException(
                     "Teacher " + getTeacherSurname(studentGroup) +
-                            " " + getTeacherName(studentGroup) +
-                            " " + getTeacherPatronymic(studentGroup) +
-                            " with uid " + getTeacherId(studentGroup) + " does not exist!"
+                    " " + getTeacherName(studentGroup) +
+                    " " + getTeacherPatronymic(studentGroup) +
+                    " with uid " + getTeacherId(studentGroup) + " does not exist!"
             );
     }
 
@@ -129,11 +129,11 @@ public class StudentGroupValidator implements AbstractValidator {
     private void checkTeacherInDepartment(StudentGroup studentGroup) {
         if (teacherFromDepartment(findTeacher(studentGroup), findDepartment(studentGroup)))
             throw new IncorrectPropertyException(
-                            "Teacher " + getTeacherSurname(studentGroup) +
-                            " " + getTeacherName(studentGroup) +
-                            " " + getTeacherPatronymic(studentGroup) +
-                            " with uid " + getTeacherId(studentGroup) +
-                            " is not listed at the department " + getDepartmentName(studentGroup) + "!"
+                    "Teacher " + getTeacherSurname(studentGroup) +
+                    " " + getTeacherName(studentGroup) +
+                    " " + getTeacherPatronymic(studentGroup) +
+                    " with uid " + getTeacherId(studentGroup) +
+                    " is not listed at the department " + getDepartmentName(studentGroup) + "!"
             );
     }
 

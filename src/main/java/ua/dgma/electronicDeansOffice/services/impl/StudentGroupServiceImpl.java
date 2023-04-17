@@ -139,7 +139,6 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Transactional
     public void update(UpdateStudentGroupData data) {
         checkExistenceObjectWithSuchID(new CheckExistsByIdData(className, getStudentGroupId(data), studentGroupRepository));
-//        checkExistenceObjectWithSuchNameBeforeRegistrationOrUpdate(new CheckExistsByNameData(className, getStudentGroupName(data), studentGroupRepository));
         validateObject(new DataForAbstractValidator<>(studentGroupValidator, getUpdatedStudentGroup(data)));
 
         StudentGroup updatedStudentGroup = getUpdatedStudentGroup(data);

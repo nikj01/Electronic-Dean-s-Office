@@ -65,7 +65,7 @@ public class StudentValidator implements Validator {
     }
 
     private Optional<StudentGroup> findGroup(Student student) {
-        return studentGroupRepository.findById(getGroupId(student));
+        return studentGroupRepository.getByName(getGroupName(student));
     }
 
     private String getGroupName(Student student) {

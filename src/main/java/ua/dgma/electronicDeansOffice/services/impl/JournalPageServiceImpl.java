@@ -120,7 +120,7 @@ public class JournalPageServiceImpl implements JournalPageService {
         checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, getPageId(data), pageRepository));
         validateObject(new ValidationData<>(pageValidator, getUpdatedPage(data), getBindingResult(data)));
 
-        JournalPage existingJournalPage = findOne(data.getId());
+        JournalPage existingJournalPage = findOne(getPageId(data));
         JournalPage updatedJournalPage = getUpdatedPage(data);
 
         setNewNameInExistingPage(existingJournalPage, updatedJournalPage);
@@ -159,10 +159,16 @@ public class JournalPageServiceImpl implements JournalPageService {
     }
 
     private void setUpdatedStudentGroupsInExistingPage(JournalPage existingPage, JournalPage updatedPage) {
-        if (getStudentGroupsFromPage(updatedPage) != null)
+        if (getStudentGroupsFromPage(updatedPage) != null) {
             existingPage.setStudentGroups(getStudentGroupsFromPage(updatedPage));
+            setUpdatedStudentGroupsInEvents(existingPage, updatedPage);
+        }
         else
             removeStudentGroupsFromPage(existingPage);
+    }
+
+    private void setUpdatedStudentGroupsInEvents(JournalPage existingPage, JournalPage updatedPage) {
+        existingPage.getEvents().stream().forEach(event -> event.setStudentGroups(getStudentGroupsFromPage(updatedPage)));
     }
 
     private void removeStudentGroupsFromPage(JournalPage existingPage) {

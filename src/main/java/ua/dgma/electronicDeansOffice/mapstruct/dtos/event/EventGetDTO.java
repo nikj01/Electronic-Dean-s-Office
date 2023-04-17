@@ -1,18 +1,20 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.event;
 
-import ua.dgma.electronicDeansOffice.models.EventType;
-import ua.dgma.electronicDeansOffice.models.JournalPage;
-import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import lombok.Data;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPageSlimGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
+import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Data
 public class EventGetDTO {
     private Long id;
     private String eventTheme;
     private String description;
-    private EventType eventType;
-    private List<StudentGroup> studentGroups;
+    private EventTypeEnum eventType;
+    private List<StudentGroupSlimGetDTO> studentGroups;
     private LocalDate date;
-    private JournalPage page;
+    private JournalPageSlimGetDTO page;
 }

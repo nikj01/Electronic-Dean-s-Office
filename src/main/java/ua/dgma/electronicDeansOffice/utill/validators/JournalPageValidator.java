@@ -35,9 +35,9 @@ public class JournalPageValidator implements Validator {
         JournalPage page = (JournalPage) target;
 
         if (checkExistenceOfTheJournalPage(page)) {
+            checkExistenceOfTheJournal(page, errors);
             checkExistenceOfTheStudentGroups(page, errors);
         } else {
-            checkExistenceOfTheJournal(page, errors);
             checkExistenceOfTheStudentGroups(page, errors);
         }
     }

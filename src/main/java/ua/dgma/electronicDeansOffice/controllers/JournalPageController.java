@@ -41,7 +41,7 @@ public class JournalPageController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registerNewJournalPage(@RequestBody @Valid JournalPagePostDto journalPagePostDto,
-                                                BindingResult bindingResult) {
+                                                           BindingResult bindingResult) {
         JournalPage newJournalPage = pageMapper.toJournalPage(journalPagePostDto);
 
         pageService.register(new RegisterJournalPageData(newJournalPage, bindingResult));

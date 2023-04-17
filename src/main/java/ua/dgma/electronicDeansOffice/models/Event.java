@@ -24,7 +24,6 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "studentGroups")
 @Table(name = "Events")
 public class Event {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,9 +35,9 @@ public class Event {
     @NotBlank
     private String description;
 
-    @NotNull(message = "The field |EVENT TYPE| cannot be empty!")
+    @NotNull(message = "The field |EVENT TYPE | cannot be empty!")
     @Column(nullable = false)
-    private EventType eventType;
+    private EventTypeEnum eventType;
 
     @ManyToMany
     @Cascade(value = CascadeType.SAVE_UPDATE)

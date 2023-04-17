@@ -1,13 +1,13 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Event;
+import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 import ua.dgma.electronicDeansOffice.models.JournalPage;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.repositories.EventRepository;
@@ -15,11 +15,12 @@ import ua.dgma.electronicDeansOffice.repositories.JournalPageRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.RegisterEventData;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.UpdateEventData;
 import ua.dgma.electronicDeansOffice.services.interfaces.EventService;
-import ua.dgma.electronicDeansOffice.services.interfaces.JournalPageService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
+import ua.dgma.electronicDeansOffice.utill.validators.EventValidator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +33,14 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final StudentGroupService groupService;
     private final JournalPageRepository pageRepository;
-    private final Validator eventValidator;
+    private final EventValidator eventValidator;
     private String className;
 
     @Autowired
     public EventServiceImpl(EventRepository eventRepository,
                             StudentGroupService groupService,
                             JournalPageRepository pageRepository,
-                            Validator eventValidator) {
+                            EventValidator eventValidator) {
         this.eventRepository = eventRepository;
         this.groupService = groupService;
         this.pageRepository = pageRepository;
@@ -115,11 +116,16 @@ public class EventServiceImpl implements EventService {
         checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, getEventId(data), eventRepository));
         validateObject(new ValidationData<>(eventValidator, getUpdatedEvent(data), getBindingResult(data)));
 
+        Event existingEvent = findOne(getEventId(data));
         Event updatedEvent = getUpdatedEvent(data);
 
-        setStudentGroupsInEvent(updatedEvent);
+        setUpdatedStudentGroupsInEvent(updatedEvent, existingEvent);
+        setUpdatedThemeInEvent(updatedEvent, existingEvent);
+        setUpdatedEventTypeInEvent(updatedEvent, existingEvent);
+        setUpdatedDescriptionInEvent(updatedEvent, existingEvent);
+        setUpdatedDateInEvent(updatedEvent, existingEvent);
 
-        saveEvent(updatedEvent);
+        saveEvent(existingEvent);
     }
 
     private Long getEventId(UpdateEventData data) {
@@ -131,19 +137,55 @@ public class EventServiceImpl implements EventService {
     }
 
     private Event getUpdatedEvent(UpdateEventData data) {
-        Event updatedEvent = getEvevnt(data);
+        Event updatedEvent = getEvent(data);
 
         setIdInEvent(updatedEvent, data);
 
         return updatedEvent;
     }
 
-    private Event getEvevnt(UpdateEventData data) {
+    private Event getEvent(UpdateEventData data) {
         return data.getUpdatedEvent();
     }
 
     private void setIdInEvent(Event event, UpdateEventData data) {
         event.setId(getEventId(data));
+    }
+
+    private void setUpdatedStudentGroupsInEvent(Event updatedEvent, Event existingEvent) {
+        existingEvent.setStudentGroups(getExistingStudentGroups(updatedEvent));
+    }
+
+    private void setUpdatedThemeInEvent(Event updatedEvent, Event existingEvent) {
+        existingEvent.setEventTheme(getUpdatedEventTheme(updatedEvent));
+    }
+
+    private String getUpdatedEventTheme(Event updatedEvent) {
+        return updatedEvent.getEventTheme();
+    }
+
+    private void setUpdatedEventTypeInEvent(Event updatedEvent, Event existingEvent) {
+        existingEvent.setEventType(getUpdatedEventType(updatedEvent));
+    }
+
+    private EventTypeEnum getUpdatedEventType(Event updatedEvent) {
+        return updatedEvent.getEventType();
+    }
+
+    private void setUpdatedDescriptionInEvent(Event updatedEvent, Event existingEvent) {
+        existingEvent.setDescription(getUpdatedDescription(updatedEvent));
+    }
+
+    private String getUpdatedDescription(Event updatedEvent) {
+        return updatedEvent.getDescription();
+    }
+
+    private void setUpdatedDateInEvent(Event updatedEvent, Event existingEvent) {
+        existingEvent.setDate(getUpdatedDate(updatedEvent));
+    }
+
+    private LocalDate getUpdatedDate(Event updatedEvent) {
+        return updatedEvent.getDate();
     }
 
     @Override

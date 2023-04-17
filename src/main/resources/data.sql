@@ -205,6 +205,40 @@ INSERT INTO Journals_pages (id, archive, page_name, journal_id) VALUES
 (DEFAULT, false, 'PM', 3),
 (DEFAULT, false, 'AKM', 3);
 
+INSERT INTO journals_pages_student_groups (journal_page_id, student_groups_id) VALUES
+(1, 1),
+(1, 2),
+(1, 3);
+
+INSERT INTO events (id, date, description, event_theme, event_type, page_id) VALUES
+(DEFAULT, '2023-04-17', '17', '1', 1, 1),
+(DEFAULT, '2023-04-18', '18', '1', 1, 1),
+(DEFAULT, '2023-04-19', '19', '1', 1, 1),
+(DEFAULT, '2023-04-20', '20', '1', 1, 1),
+(DEFAULT, '2023-04-21', '21', '1', 1, 1),
+(DEFAULT, '2023-04-22', '22', '1', 1, 1);
+
+INSERT INTO events_student_groups (events_id, student_groups_id) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 1),
+(2, 2),
+(2, 3),
+(3, 1),
+(3, 2),
+(3, 3),
+(4, 1),
+(4, 2),
+(4, 3),
+(5, 1),
+(5, 2),
+(5, 3),
+(6, 1),
+(6, 2),
+(6, 3);
+
+
 -- INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
 -- (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
 -- (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
