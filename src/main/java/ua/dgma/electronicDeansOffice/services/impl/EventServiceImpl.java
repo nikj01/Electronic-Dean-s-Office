@@ -1,9 +1,9 @@
 package ua.dgma.electronicDeansOffice.services.impl;
 
-import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Event;
@@ -20,7 +20,7 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.EventValidator;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -184,7 +184,7 @@ public class EventServiceImpl implements EventService {
         existingEvent.setDate(getUpdatedDate(updatedEvent));
     }
 
-    private LocalDate getUpdatedDate(Event updatedEvent) {
+    private LocalDateTime getUpdatedDate(Event updatedEvent) {
         return updatedEvent.getDate();
     }
 

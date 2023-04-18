@@ -238,14 +238,11 @@ INSERT INTO events_student_groups (events_id, student_groups_id) VALUES
 (6, 2),
 (6, 3);
 
-
--- INSERT INTO Events (id, date, description, event_theme, event_type, page_id) VALUES
--- (DEFAULT, '2023-02-28', 'descr1', 'Theme 1', 0, 1),
--- (DEFAULT, '2023-02-28', 'descr2', 'Theme 2', 2, 1);
--- --
--- -- INSERT INTO events_student_groups (event_id, student_groups_name) VALUES
--- -- (1, 'KI 19-1');
--- --
--- -- INSERT INTO reports (id, event_id) VALUES
--- -- (DEFAULT, 1);
+-- INSERT INTO reports (id, event_id) VALUES
+-- (DEFAULT, 1);
 --
+-- INSERT INTO student_attendance_map (report_id, student_attendance, student_uid) VALUES
+-- (1, true, 12723903);
+--
+-- INSERT INTO student_marks_map (report_id, student_mark, student_uid) VALUES
+-- (1, 100, 12723903);

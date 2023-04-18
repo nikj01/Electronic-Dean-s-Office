@@ -1,17 +1,18 @@
 package ua.dgma.electronicDeansOffice.models;
 
-import lombok.*;
-import org.hibernate.annotations.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.List;
-
 
 @Entity
 @Getter
@@ -22,8 +23,7 @@ import java.util.List;
         @Index(columnList = "surname DESC", name="peopleSurnameIndex")
 })
 @Inheritance(strategy = InheritanceType.JOINED)
-//@Where(clause = "DELETED = false")
-public class Person {
+public class Person implements Comparable<Person> {
 
     @Id
     @NotNull(message = "The field |UID| cannot be empty!")
@@ -65,4 +65,9 @@ public class Person {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    @Override
+    public int compareTo(Person o) {
+        return uid.compareTo(o.getUid());
+    }
 }

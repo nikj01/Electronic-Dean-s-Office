@@ -5,7 +5,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPageSlimG
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
 import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -15,6 +15,6 @@ public class EventGetDTO {
     private String description;
     private EventTypeEnum eventType;
     private List<StudentGroupSlimGetDTO> studentGroups;
-    private LocalDate date;
+    private LocalDateTime date;
     private JournalPageSlimGetDTO page;
 }

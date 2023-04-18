@@ -7,6 +7,7 @@ import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,5 +20,5 @@ public class EventPatchDTO {
     private EventTypeEnum eventType;
     private List<StudentGroupSlimGetDTO> studentGroups;
     @NotNull(message = "The field |DATE| cannot be empty!")
-    private LocalDate date;
+    private LocalDateTime date;
 }

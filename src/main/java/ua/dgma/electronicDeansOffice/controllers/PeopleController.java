@@ -13,6 +13,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
+import ua.dgma.electronicDeansOffice.services.interfaces.ReportService;
 
 import javax.validation.Valid;
 import java.util.List;

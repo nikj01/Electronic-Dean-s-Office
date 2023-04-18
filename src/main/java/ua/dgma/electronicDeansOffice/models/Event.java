@@ -8,12 +8,12 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.annotation.Reference;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,22 +32,22 @@ public class Event {
     @Column(nullable = false)
     private String eventTheme;
 
-    @NotBlank
+    @NotBlank(message = "The field |DESCRIPTION| cannot be empty!")
     private String description;
 
-    @NotNull(message = "The field |EVENT TYPE | cannot be empty!")
+    @NotNull(message = "The field |EVENT TYPE| cannot be empty!")
     @Column(nullable = false)
     private EventTypeEnum eventType;
 
     @ManyToMany
     @Cascade(value = CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Reference
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @NotNull(message = "The field |DATE| cannot be empty!")
     @Column(nullable = false)
-    private LocalDate date;
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    private LocalDateTime date;
 
     @NotNull(message = "The field |JOURNAL PAGE| cannot be empty!")
     @ManyToOne
@@ -58,10 +58,4 @@ public class Event {
             nullable = false
     )
     private JournalPage page;
-
-    @OneToMany(
-            mappedBy = "event"
-    )
-    @Cascade(value = CascadeType.SAVE_UPDATE)
-    private List<Report> report = new ArrayList<>();
 }
