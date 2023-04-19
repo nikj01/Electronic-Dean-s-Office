@@ -155,30 +155,30 @@ public class ReportServiceImpl implements ReportService {
         report.setStudentAttendance(getStudentAttendance(data));
     }
 
-    private Map<Student, Boolean> getStudentAttendance(RegisterReportData data) {
+    private Map<Long, Boolean> getStudentAttendance(RegisterReportData data) {
 //        return data.getStudentAttendance().keySet();
 
-        Map<Student, Boolean> newMap = new TreeMap<>();
+//        Map<Long, Boolean> newMap = new TreeMap<>();
 
-        for (Long id : data.getStudentAttendance().keySet())
-            newMap.put(studentRepository.findById(id).get(), data.getStudentAttendance().get(id));
+//        for (Long id : data.getStudentAttendance().keySet())
+//            newMap.put(studentRepository.findById(id).get(), data.getStudentAttendance().get(id));
 
-        return newMap;
+        return data.getStudentAttendance();
     }
 
     private void setStudentMarks(Report report, RegisterReportData data) {
         report.setStudentMarks(getStudentMarks(data));
     }
 
-    private Map<Student, Integer> getStudentMarks(RegisterReportData data) {
+    private Map<Long, Integer> getStudentMarks(RegisterReportData data) {
 //        return data.getStudentMarks();
 
-        Map<Student, Integer> newMap = new TreeMap<>();
+//        Map<Student, Integer> newMap = new TreeMap<>();
+//
+//        for (Long id : data.getStudentMarks().keySet())
+//            newMap.put(studentRepository.findById(id).get(), data.getStudentMarks().get(id));
 
-        for (Long id : data.getStudentMarks().keySet())
-            newMap.put(studentRepository.findById(id).get(), data.getStudentMarks().get(id));
-
-        return newMap;
+        return data.getStudentMarks();
     }
 
     private void saveReport(Report report) {

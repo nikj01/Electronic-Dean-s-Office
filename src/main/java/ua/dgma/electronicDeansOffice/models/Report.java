@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +14,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -44,23 +45,21 @@ public class Report {
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime updated;
 
-
     @ElementCollection
     @CollectionTable(
-            name = "student_attendance_map",
-            joinColumns = {
-                    @JoinColumn(name = "report_id", referencedColumnName = "id")
-            })
+            name = "student_attendance",
+            joinColumns = @JoinColumn(name = "reportId"))
     @MapKeyJoinColumn(name = "student_uid")
-    private Map<Student, Boolean> studentAttendance = new HashMap<>();
+    @Column(name = "attendance")
+    @Fetch(FetchMode.SUBSELECT)
+    private Map<Long, Boolean> studentAttendance = new TreeMap<>();
 
     @ElementCollection
     @CollectionTable(
             name = "student_marks_map",
-            joinColumns = {
-                    @JoinColumn(name = "report_id", referencedColumnName = "id")
-            })
+            joinColumns = @JoinColumn(name = "report_id"))
     @MapKeyJoinColumn(name = "student_uid")
-    private Map<Student, Integer> studentMarks = new HashMap<>();
-
+    @Column(name = "mark")
+    @Fetch(FetchMode.SUBSELECT)
+    private Map<Long, Integer> studentMarks = new TreeMap<>();
 }

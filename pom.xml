@@ -123,24 +123,11 @@
 			<version>3.22.0</version>
 			<scope>test</scope>
 		</dependency>
-<!--		&lt;!&ndash; https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>com.querydsl</groupId>-->
-<!--			<artifactId>querydsl-jpa</artifactId>-->
-<!--			<version>5.0.0</version>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; https://mvnrepository.com/artifact/com.querydsl/querydsl-apt &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>com.querydsl</groupId>-->
-<!--			<artifactId>querydsl-apt</artifactId>-->
-<!--			<version>5.0.0</version>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; https://mvnrepository.com/artifact/com.querydsl/querydsl-sql &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>com.querydsl</groupId>-->
-<!--			<artifactId>querydsl-sql</artifactId>-->
-<!--			<version>5.0.0</version>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>

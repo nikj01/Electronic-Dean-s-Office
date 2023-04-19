@@ -43,21 +43,21 @@ public class ReportValidator implements Validator {
     }
 
     private void checkExistenceOfTheStudents(Report report, Errors errors) {
-        for (Student student : getStudentsFromReport(report))
-            checkExistenceOfTheStudent(student, errors);
+        for (Long studentId : getStudentsFromReport(report))
+            checkExistenceOfTheStudent(studentId, errors);
     }
 
-    private Set<Student> getStudentsFromReport(Report report) {
+    private Set<Long> getStudentsFromReport(Report report) {
         return report.getStudentAttendance().keySet();
     }
 
-    private void checkExistenceOfTheStudent(Student student, Errors errors) {
-        if (!findStudent(student).isPresent())
-            errors.rejectValue("student", "Student with surname " + getStudentSurname(student) + " and Id " + getStudentId(student) + " does not exist!");
+    private void checkExistenceOfTheStudent(Long studentId, Errors errors) {
+        if (!findStudent(studentId).isPresent())
+            errors.rejectValue("student", "Student with surname Id " + studentId + " does not exist!");
     }
 
-    private Optional<Student> findStudent(Student student) {
-        return studentRepository.findById(getStudentId(student));
+    private Optional<Student> findStudent(Long studentId) {
+        return studentRepository.findById(studentId);
     }
 
     private Long getStudentId(Student student) {
