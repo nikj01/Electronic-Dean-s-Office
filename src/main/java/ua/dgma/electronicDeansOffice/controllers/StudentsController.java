@@ -13,6 +13,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
+import ua.dgma.electronicDeansOffice.services.interfaces.StudentService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/students")
 public class StudentsController {
-    private final PeopleService<Student> studentService;
+//    private final PeopleService<Student> studentService;
+    private final StudentService studentService;
     private final StudentMapper studentMapper;
     private final StudentListMapper studentListMapper;
 
@@ -55,6 +57,12 @@ public class StudentsController {
     @ResponseStatus(HttpStatus.FOUND)
     public List<StudentSlimGetDTO> findSlimStudentBySurname(@RequestParam("surname") String surname) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findBySurname(surname));
+    }
+
+    @GetMapping("/attendance")
+    @ResponseStatus(HttpStatus.OK)
+    public Double showStudentsAvgAttendance(@RequestParam("uid") Long uid) {
+        return studentService.getAvgAttendanceForStudent(uid);
     }
 
     @GetMapping()

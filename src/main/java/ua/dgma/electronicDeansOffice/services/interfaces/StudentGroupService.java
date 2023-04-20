@@ -16,4 +16,5 @@ public interface StudentGroupService {
     void delete(Long groupId);
     void softDelete(Long groupId);
     void softDeleteStudentGroups(List<StudentGroup> studentGroups);
+    Double getAvgAttendanceForGroup(Long groupId);
 }

@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,11 +79,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private List<Department> findAllWithSpec(Specification spec) {
-        return departmentRepository.findAll(spec);
+        return departmentRepository.findAll(spec, Sort.by("name"));
     }
 
     private List<Department> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
-        return departmentRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+        return departmentRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("name"))).getContent();
     }
 
     private Specification getSpec(FindAllData data) {

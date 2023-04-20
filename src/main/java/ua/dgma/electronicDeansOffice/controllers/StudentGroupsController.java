@@ -47,6 +47,12 @@ public class StudentGroupsController {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findByName(name));
     }
 
+    @GetMapping("/attendance")
+    @ResponseStatus(HttpStatus.OK)
+    public Double showGroupsAvgAttendance(@RequestParam("id") Long groupId) {
+        return studentGroupService.getAvgAttendanceForGroup(groupId);
+    }
+
     @GetMapping()
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroups(@RequestParam(value = "page", required = false) Integer page,
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,

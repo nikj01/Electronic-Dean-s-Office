@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.*;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
+import ua.dgma.electronicDeansOffice.repositories.ReportRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
@@ -22,7 +24,9 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
@@ -31,9 +35,8 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Transactional(readOnly = true)
 public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentGroupRepository studentGroupRepository;
-    //    private final TeacherRepository teacherRepository;
-//    private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
+    private final ReportRepository reportRepository;
     private final PeopleService<Teacher> teacherService;
     private final PeopleService<Student> studentService;
     private final AbstractValidator studentGroupValidator;
@@ -45,12 +48,14 @@ public class StudentGroupServiceImpl implements StudentGroupService {
                                    PeopleService<Teacher> teacherService,
                                    PeopleService<Student> studentService,
                                    DepartmentRepository departmentRepository,
+                                   ReportRepository reportRepository,
                                    AbstractValidator studentGroupValidator,
                                    StudentGroupSpecifications specifications) {
         this.studentGroupRepository = studentGroupRepository;
         this.teacherService = teacherService;
         this.departmentRepository = departmentRepository;
         this.studentService = studentService;
+        this.reportRepository = reportRepository;
         this.studentGroupValidator = studentGroupValidator;
         this.specifications = specifications;
         this.className = StudentGroup.class.getSimpleName();
@@ -75,11 +80,11 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private List<StudentGroup> findAllWithSpec(Specification spec) {
-        return studentGroupRepository.findAll(spec);
+        return studentGroupRepository.findAll(spec, Sort.by("name"));
     }
 
     private List<StudentGroup> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
-        return studentGroupRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+        return studentGroupRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("name"))).getContent();
     }
 
     private Specification getSpec(FindAllData data) {
@@ -249,5 +254,45 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public void softDeleteStudentGroups(List<StudentGroup> studentGroups) {
         for (StudentGroup group : studentGroups)
             softDelete(group.getId());
+    }
+
+    @Override
+    public Double getAvgAttendanceForGroup(Long groupId) {
+        List<Report> reports = getReportsByGroup(groupId);
+        Set<Long> students = getStudentsFromReports(reports);
+        double totalAttendance = 0;
+        double present = 0;
+
+        if (reports != null)
+            for (Long studentId : students) {
+                for (Report report : reports) {
+                    Boolean attend = getAttendance(report, studentId);
+                    if (attend != null && attend)
+                        present++;
+                }
+            }
+        else return null;
+
+        totalAttendance += present / reports.size();
+
+        double avgAttendance = (totalAttendance / students.size()) * 100;
+        return avgAttendance;
+    }
+
+    private List<Report> getReportsByGroup(Long groupId) {
+        return reportRepository.getReportsByStudentGroup_Id(groupId).get();
+    }
+
+    private Set<Long> getStudentsFromReports(List<Report> reports) {
+        Set<Long> studentIds = new HashSet<>();
+
+        for (Report report : reports)
+            studentIds.addAll(report.getStudentAttendance().keySet());
+
+        return studentIds;
+    }
+
+    private Boolean getAttendance(Report report, Long studentId) {
+        return report.getStudentAttendance().get(studentId);
     }
 }

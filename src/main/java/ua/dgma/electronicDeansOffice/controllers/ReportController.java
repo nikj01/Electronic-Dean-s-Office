@@ -10,27 +10,38 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.report.ReportSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.ReportListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.ReportMapper;
 import ua.dgma.electronicDeansOffice.models.Report;
+import ua.dgma.electronicDeansOffice.models.Student;
 import ua.dgma.electronicDeansOffice.services.impl.data.report.RegisterReportData;
 import ua.dgma.electronicDeansOffice.services.impl.data.report.UpdateReportData;
+import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.ReportService;
+import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/reports")
 public class ReportController {
     private final ReportService reportService;
+    private final PeopleService<Student> peopleService;
+    private final StudentGroupService groupService;
     private final ReportMapper reportMapper;
     private final ReportListMapper reportListMapper;
+    private Date date;
 
     @Autowired
     public ReportController(ReportService reportService,
-                            ReportMapper reportMapper,
+                            PeopleService<Student> peopleService,
+                            StudentGroupService groupService, ReportMapper reportMapper,
                             ReportListMapper reportListMapper) {
         this.reportService = reportService;
+        this.peopleService = peopleService;
+        this.groupService = groupService;
         this.reportMapper = reportMapper;
         this.reportListMapper = reportListMapper;
+        this.date = new Date();
     }
 
     @GetMapping("/findById")
@@ -41,7 +52,7 @@ public class ReportController {
 
     @GetMapping("/findByName")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<ReportSlimGetDTO> findReportsByEvent(@RequestParam("name") String reportName) {
+    public List<ReportSlimGetDTO> findReportsByName(@RequestParam("name") String reportName) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByName(reportName));
     }
 

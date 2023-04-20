@@ -14,7 +14,8 @@ import ua.dgma.electronicDeansOffice.services.interfaces.ReportService;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
 
@@ -52,12 +53,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report findOne(Long reportId) {
-        Report report = reportRepository.findById(reportId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", reportId)));
-//        return reportRepository.findById(reportId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", reportId)));
-        System.out.println(report.getStudentAttendance());
-        System.out.println(report.getStudentMarks());
-
-         return report;
+        return reportRepository.findById(reportId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", reportId)));
     }
     @Override
     public List<Report> findByName(String reportName) {
@@ -80,6 +76,7 @@ public class ReportServiceImpl implements ReportService {
         setCreated(newReport);
         setStudentAttendance(newReport, data);
         setStudentMarks(newReport, data);
+        setStudentGroup(newReport, data);
         setEventData(newReport, data);
 
         saveReport(newReport);
@@ -91,21 +88,17 @@ public class ReportServiceImpl implements ReportService {
         checkStudents(data);
     }
 
+    private void checkStudents(RegisterReportData data) {
+        for (Long studentId : data.getStudentAttendance().keySet())
+            checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(studentClassName, studentId, studentRepository));
+    }
+
     private Long getEventId(RegisterReportData data) {
         return data.getEvent().getId();
     }
 
     private Long getStudentGroupId(RegisterReportData data) {
         return data.getStudentGroup().getId();
-    }
-
-    private Long getStudentId(Student student) {
-        return student.getUid();
-    }
-
-    private void checkStudents(RegisterReportData data) {
-        for (Long studentId : data.getStudentAttendance().keySet())
-            checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(studentClassName, studentId, studentRepository));
     }
 
     private void setNewReportName(Report report, RegisterReportData data) {
@@ -156,13 +149,6 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private Map<Long, Boolean> getStudentAttendance(RegisterReportData data) {
-//        return data.getStudentAttendance().keySet();
-
-//        Map<Long, Boolean> newMap = new TreeMap<>();
-
-//        for (Long id : data.getStudentAttendance().keySet())
-//            newMap.put(studentRepository.findById(id).get(), data.getStudentAttendance().get(id));
-
         return data.getStudentAttendance();
     }
 
@@ -171,14 +157,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private Map<Long, Integer> getStudentMarks(RegisterReportData data) {
-//        return data.getStudentMarks();
-
-//        Map<Student, Integer> newMap = new TreeMap<>();
-//
-//        for (Long id : data.getStudentMarks().keySet())
-//            newMap.put(studentRepository.findById(id).get(), data.getStudentMarks().get(id));
-
         return data.getStudentMarks();
+    }
+
+    private void setStudentGroup(Report report, RegisterReportData data) {
+        report.setStudentGroup(getExistingGroup(data));
     }
 
     private void saveReport(Report report) {
@@ -197,6 +180,7 @@ public class ReportServiceImpl implements ReportService {
 
         existingReport.setStudentAttendance(updatedReport.getStudentAttendance());
         existingReport.setStudentMarks(updatedReport.getStudentMarks());
+        existingReport.setUpdated(LocalDateTime.now());
 
         saveReport(existingReport);
     }
@@ -206,4 +190,6 @@ public class ReportServiceImpl implements ReportService {
     public void delete(Long reportId) {
         reportRepository.deleteById(reportId);
     }
+
 }
+

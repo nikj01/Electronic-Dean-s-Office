@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
@@ -70,11 +70,15 @@ public class StudentGroup {
 
     @ManyToMany(
             mappedBy = "studentGroups",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
-    )
+            fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private List<Event> events;
+
+    @OneToMany(
+            mappedBy = "studentGroup",
+            fetch = FetchType.LAZY)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
+    private List<Report> reports;
 
     @Column(nullable = false)
     private boolean deleted;

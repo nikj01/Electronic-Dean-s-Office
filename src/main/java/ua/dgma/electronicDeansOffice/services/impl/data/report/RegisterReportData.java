@@ -16,8 +16,7 @@ public class RegisterReportData {
     private Event event;
     @NonNull
     private StudentGroup studentGroup;
-//    @NonNull
+    @NonNull
     private Map<Long, Boolean> studentAttendance = new TreeMap<>();
-//    @NonNull
     private Map<Long, Integer> studentMarks = new TreeMap<>();
 }
