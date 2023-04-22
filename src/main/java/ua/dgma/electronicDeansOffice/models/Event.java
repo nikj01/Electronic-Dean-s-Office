@@ -28,6 +28,10 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "The field |SEMESTER| cannot be empty!")
+    @Column(nullable = false)
+    private Integer semester;
+
     @NotBlank(message = "The field |EVENT THEME| cannot be empty!")
     @Column(nullable = false)
     private String eventTheme;

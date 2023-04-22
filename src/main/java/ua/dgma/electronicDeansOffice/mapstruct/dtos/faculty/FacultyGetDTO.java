@@ -1,6 +1,6 @@
 package ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty;
 
-import lombok.*;
+import lombok.Data;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 

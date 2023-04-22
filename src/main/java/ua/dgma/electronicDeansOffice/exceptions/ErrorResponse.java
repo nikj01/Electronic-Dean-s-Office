@@ -1,9 +1,7 @@
 package ua.dgma.electronicDeansOffice.exceptions;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.nio.file.Path;
 import java.util.Date;
 
 @Getter

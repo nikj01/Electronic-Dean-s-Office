@@ -19,7 +19,6 @@ import ua.dgma.electronicDeansOffice.services.impl.data.department.RegisterDepar
 import ua.dgma.electronicDeansOffice.services.impl.data.department.UpdateDepartmentData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
-;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
@@ -32,6 +31,8 @@ import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
+
+;
 
 @Service
 @Transactional(readOnly = true)

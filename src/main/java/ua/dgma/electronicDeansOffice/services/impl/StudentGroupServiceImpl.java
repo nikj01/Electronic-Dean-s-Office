@@ -24,9 +24,7 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
@@ -160,10 +158,6 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         return data.getId();
     }
 
-    private String getStudentGroupName(UpdateStudentGroupData data) {
-        return getStudentGroup(data).getName();
-    }
-
     private StudentGroup getStudentGroup(UpdateStudentGroupData data) {
         return data.getUpdatedStudentGroup();
     }
@@ -257,13 +251,14 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     @Override
-    public Double getAvgAttendanceForGroup(Long groupId) {
+    public Map<Long, Double> getAvgAttendanceForGroup(Long groupId) {
+        Map<Long, Double> groupAttendance = new HashMap<>();
         List<Report> reports = getReportsByGroup(groupId);
         Set<Long> students = getStudentsFromReports(reports);
         double totalAttendance = 0;
         double present = 0;
 
-        if (reports != null)
+        if (reports.size() != 0) {
             for (Long studentId : students) {
                 for (Report report : reports) {
                     Boolean attend = getAttendance(report, studentId);
@@ -271,12 +266,14 @@ public class StudentGroupServiceImpl implements StudentGroupService {
                         present++;
                 }
             }
-        else return null;
 
-        totalAttendance += present / reports.size();
+            totalAttendance += present / reports.size();
+            double avgAttendance = (totalAttendance / students.size()) * 100;
+            groupAttendance.put(groupId, avgAttendance);
+        }
+        else groupAttendance.put(groupId, 0.0);
 
-        double avgAttendance = (totalAttendance / students.size()) * 100;
-        return avgAttendance;
+        return groupAttendance;
     }
 
     private List<Report> getReportsByGroup(Long groupId) {
@@ -294,5 +291,25 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
     private Boolean getAttendance(Report report, Long studentId) {
         return report.getStudentAttendance().get(studentId);
+    }
+
+    @Override
+    public Map<Long, Double> getAvgAttendanceForGroupsOnFaculty(FindAllData data) {
+        Map<Long, Double> facultyAttendance = new HashMap<>();
+
+        for (Long groupId : getStudentGroupsId(data))
+            facultyAttendance.putAll(getAvgAttendanceForGroup(groupId));
+
+        return facultyAttendance;
+    }
+
+    private Set<Long> getStudentGroupsId(FindAllData data) {
+        Set<Long> ids = new HashSet<>();
+
+        for (StudentGroup group : findAll(data)) {
+            ids.add(group.getId());
+        }
+
+        return ids;
     }
 }

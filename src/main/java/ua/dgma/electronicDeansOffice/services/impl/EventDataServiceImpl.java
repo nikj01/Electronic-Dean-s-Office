@@ -35,6 +35,7 @@ public class EventDataServiceImpl implements EventDataService {
         EventData newEventData = new EventData();
 
         newEventData.setEventId(event.getId());
+        newEventData.setSemester(event.getSemester());
         newEventData.setPageName(event.getPage().getPageName());
         newEventData.setEventTheme(event.getEventTheme());
         newEventData.setEventDescription(event.getDescription());

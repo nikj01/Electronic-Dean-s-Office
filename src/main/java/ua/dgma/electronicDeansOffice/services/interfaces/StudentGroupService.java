@@ -6,6 +6,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStu
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StudentGroupService {
     StudentGroup findOne(Long groupId);
@@ -16,5 +17,6 @@ public interface StudentGroupService {
     void delete(Long groupId);
     void softDelete(Long groupId);
     void softDeleteStudentGroups(List<StudentGroup> studentGroups);
-    Double getAvgAttendanceForGroup(Long groupId);
+    Map<Long, Double> getAvgAttendanceForGroup(Long groupId);
+    Map<Long, Double> getAvgAttendanceForGroupsOnFaculty(FindAllData data);
 }

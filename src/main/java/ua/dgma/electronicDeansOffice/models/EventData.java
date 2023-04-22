@@ -23,6 +23,10 @@ public class EventData implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "The field |SEMESTER| cannot be empty!")
+    @Column(nullable = false)
+    private Integer semester;
+
     @NotNull(message = "The field |EVENT ID| cannot be empty!")
     @Column(nullable = false)
     private Long eventId;

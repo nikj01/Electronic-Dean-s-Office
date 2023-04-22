@@ -297,13 +297,13 @@ INSERT INTO journals_pages_student_groups (journal_page_id, student_groups_id) V
 (1, 2),
 (1, 3);
 
-INSERT INTO events (id, date, description, event_theme, event_type, page_id) VALUES
-(DEFAULT, '2023-04-17', '17', '1', 1, 1),
-(DEFAULT, '2023-04-18', '18', '1', 1, 1),
-(DEFAULT, '2023-04-19', '19', '1', 1, 1),
-(DEFAULT, '2023-04-20', '20', '1', 1, 1),
-(DEFAULT, '2023-04-21', '21', '1', 1, 1),
-(DEFAULT, '2023-04-22', '22', '1', 1, 1);
+INSERT INTO events (id, semester, date, description, event_theme, event_type, page_id) VALUES
+(DEFAULT, 8, '2023-04-17', '17', '1', 1, 1),
+(DEFAULT, 8, '2023-04-18', '18', '1', 1, 1),
+(DEFAULT, 8, '2023-04-19', '19', '1', 1, 1),
+(DEFAULT, 8, '2023-04-20', '20', '1', 1, 1),
+(DEFAULT, 8, '2023-04-21', '21', '1', 1, 1),
+(DEFAULT, 8, '2023-04-22', '22', '1', 1, 1);
 
 INSERT INTO events_student_groups (events_id, student_groups_id) VALUES
 (1, 1),

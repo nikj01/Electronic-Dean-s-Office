@@ -3,7 +3,6 @@ package ua.dgma.electronicDeansOffice.mapstruct.dtos.report;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.eventData.EventDataGetDTO;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
 
 import java.time.LocalDateTime;

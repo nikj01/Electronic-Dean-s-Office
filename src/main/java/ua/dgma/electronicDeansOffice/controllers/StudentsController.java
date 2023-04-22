@@ -1,10 +1,14 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.*;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentPatchDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentPostDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentMapper;
 import ua.dgma.electronicDeansOffice.models.Student;
@@ -12,16 +16,17 @@ import ua.dgma.electronicDeansOffice.services.impl.StudentServiceImpl;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
-import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
+import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentAttendance;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/students")
 public class StudentsController {
-//    private final PeopleService<Student> studentService;
     private final StudentService studentService;
     private final StudentMapper studentMapper;
     private final StudentListMapper studentListMapper;
@@ -61,16 +66,30 @@ public class StudentsController {
 
     @GetMapping("/attendance")
     @ResponseStatus(HttpStatus.OK)
-    public Double showStudentsAvgAttendance(@RequestParam("uid") Long uid) {
-        return studentService.getAvgAttendanceForStudent(uid);
+    public Map<Long, Double> showStudentAvgAttendance(@RequestParam("uid") Long uid,
+                                                      @RequestParam(value = "semester", required = false) Integer semester) {
+        return studentService.getAvgAttendanceForStudent(new DataForStudentAttendance(uid, semester));
     }
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                        @RequestParam(value = "faculty", required = false) Long facultyId) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findAllPeople(new FindAllData(page, peoplePerPage, deleted, facultyId)));
+    }
+
+    @GetMapping("/facultyAttendance")
+    @ResponseStatus(HttpStatus.FOUND)
+    public Map<Long, Double> showStudentsAvgAttendanceOnFaculty(@RequestParam(value = "page", required = false) Integer page,
+                                                                @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
+                                                                @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
+                                                                @RequestParam(value = "faculty", required = false) Long facultyId,
+                                                                @RequestParam(value = "semester", required = false) Integer semester,
+                                                                @RequestParam(value = "search", required = false) String search) {
+        LocalDateTime searchFrom = LocalDateTime.parse(search);
+        return studentService.getAvgAttendanceForStudentsOnFaculty(new FindAllData(page, peoplePerPage, deleted, facultyId, semester, searchFrom));
     }
 
     @PostMapping("/register")

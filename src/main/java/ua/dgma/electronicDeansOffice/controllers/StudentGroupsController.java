@@ -18,6 +18,7 @@ import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/studentGroups")
@@ -49,16 +50,26 @@ public class StudentGroupsController {
 
     @GetMapping("/attendance")
     @ResponseStatus(HttpStatus.OK)
-    public Double showGroupsAvgAttendance(@RequestParam("id") Long groupId) {
+    public Map<Long, Double> showGroupAvgAttendance(@RequestParam("id") Long groupId) {
         return studentGroupService.getAvgAttendanceForGroup(groupId);
     }
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroups(@RequestParam(value = "page", required = false) Integer page,
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                                  @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                                  @RequestParam(value = "faculty", required = false) Long facultyId) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAll(new FindAllData(page, groupsPerPage, deleted, facultyId)));
+    }
+
+    @GetMapping("/facultyAttendace")
+    @ResponseStatus(HttpStatus.FOUND)
+    public Map<Long, Double> showGroupsAvgAttendanceOnFaculty(@RequestParam(value = "page", required = false) Integer page,
+                                                              @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
+                                                              @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
+                                                              @RequestParam(value = "faculty", required = false) Long facultyId) {
+        return studentGroupService.getAvgAttendanceForGroupsOnFaculty(new FindAllData(page, groupsPerPage, deleted, facultyId));
     }
 
     @PostMapping("/register")

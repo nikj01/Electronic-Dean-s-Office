@@ -13,6 +13,7 @@ import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentAttendance;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentService;
 import ua.dgma.electronicDeansOffice.services.specifications.StudentSpecifications;
 import ua.dgma.electronicDeansOffice.utill.ValidationData;
@@ -20,12 +21,11 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.StudentValidator;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 
 @Service
 @Transactional(readOnly = true)
@@ -128,29 +128,86 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> implements St
             softDelete(student.getUid());
     }
 
-    private LocalDateTime date = LocalDateTime.now();
-
     @Override
-    public Double getAvgAttendanceForStudent(Long studentUId) {
-        Student student = findByUid(studentUId);
-        StudentGroup group = findGroupByStudent(student);
-        List<Report> reports = findReportsByGroup(group.getId());
-
+    public Map<Long, Double> getAvgAttendanceForStudent(DataForStudentAttendance data) {
+        Map<Long, Double> studentAttendance = new HashMap<>();
+        Student student = findByUid(getStudentId(data));
+        List<Report> reports = findReportsByGroup(data);
         double countedReports = 0;
 
-        for (Report report : reports)
-            if (report.getStudentAttendance().get(student.getUid().longValue()))
-                countedReports++;
 
-        double avgAttendance = (countedReports / reports.size()) * 100;
-        return avgAttendance;
+        if (reports.size() != 0) {
+            for (Report report : reports)
+                if (report.getStudentAttendance().get(student.getUid()))
+                    countedReports++;
+
+            double avgAttendance = (countedReports / reports.size()) * 100;
+            studentAttendance.put(getStudentId(data), avgAttendance);
+        }
+        else studentAttendance.put(getStudentId(data), 0.0);
+
+        return studentAttendance;
     }
 
-    private StudentGroup findGroupByStudent(Student student) {
-        return studentGroupRepository.getByStudentsContaining(student).get();
+    private List<Report> findReportsByGroup(DataForStudentAttendance data) {
+        if (getSearchFrom(data) == null)
+            if (getSemester(data) != null)
+                return reportRepository.getByStudentGroup_IdAndEventData_Semester(getGroupId(data), getSemester(data)).get();
+            else
+                return reportRepository.getByStudentGroup_Id(getGroupId(data)).get();
+        else
+            return reportRepository.getByStudentGroup_IdAndCreatedBetween(getGroupId(data), getSearchFrom(data), LocalDateTime.now()).get();
     }
 
-    private List<Report> findReportsByGroup(Long groupId) {
-        return reportRepository.getByStudentGroup_IdAndCreatedBetween(groupId, date, LocalDateTime.now()).get();
+    private LocalDateTime getSearchFrom(DataForStudentAttendance data) {
+        return data.getSearchFrom();
+    }
+
+    private Long getStudentId(DataForStudentAttendance data) {
+        return data.getStudentId();
+    }
+
+    private Integer getSemester(DataForStudentAttendance data) {
+        return data.getSemester();
+    }
+
+    private Long getGroupId(DataForStudentAttendance data) {
+        return findGroupByStudent(data).getId();
+    }
+
+    private StudentGroup findGroupByStudent(DataForStudentAttendance data) {
+        return studentGroupRepository.getByStudentsContaining(getStudent(data)).get();
+    }
+
+    private Student getStudent(DataForStudentAttendance data) {
+        return findByUid(getStudentId(data));
+    }
+
+    @Override
+    public Map<Long, Double> getAvgAttendanceForStudentsOnFaculty(FindAllData data) {
+        Map<Long, Double> facultyAttendance = new HashMap<>();
+
+        for (Long studentId : getStudentsUid(data))
+            facultyAttendance.putAll(getAvgAttendanceForStudent(new DataForStudentAttendance(studentId, getSemester(data), getSearchFrom(data))));
+
+        return facultyAttendance;
+    }
+
+    private Set<Long> getStudentsUid(FindAllData data) {
+        Set<Long> uids = new HashSet<>();
+
+        for (Student student : findAllPeople(data)) {
+            uids.add(student.getUid());
+        }
+
+        return uids;
+    }
+
+    private Integer getSemester(FindAllData data) {
+        return data.getSemester();
+    }
+
+    private LocalDateTime getSearchFrom(FindAllData data) {
+        return data.getSearchFrom();
     }
 }

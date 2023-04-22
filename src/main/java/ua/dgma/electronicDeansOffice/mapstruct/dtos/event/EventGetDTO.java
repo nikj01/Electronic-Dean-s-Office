@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class EventGetDTO {
     private Long id;
+    private Integer semester;
     private String eventTheme;
     private String description;
     private EventTypeEnum eventType;

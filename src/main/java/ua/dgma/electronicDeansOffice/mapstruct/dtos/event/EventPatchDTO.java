@@ -6,12 +6,13 @@ import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 public class EventPatchDTO {
+    @NotNull(message = "The field |SEMESTER| cannot be empty!")
+    private Integer semester;
     @NotBlank(message = "The field |EVENT THEME| cannot be empty!")
     private String eventTheme;
     @NotBlank(message = "The field |DESCRIPTION| cannot be empty!")
