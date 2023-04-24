@@ -14,6 +14,7 @@ import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
+import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzer;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 
 import javax.validation.Valid;
@@ -24,14 +25,17 @@ import java.util.Map;
 @RequestMapping("/studentGroups")
 public class StudentGroupsController {
     private final StudentGroupService studentGroupService;
+    private final ReportsAnalyzer reportsAnalyzer;
     private final StudentGroupMapper studentGroupMapper;
     private final StudentGroupListMapper studentGroupListMapper;
 
     @Autowired
     public StudentGroupsController(StudentGroupService studentGroupService,
+                                   ReportsAnalyzer reportsAnalyzer,
                                    StudentGroupMapper studentGroupMapper,
                                    StudentGroupListMapper studentGroupListMapper) {
         this.studentGroupService = studentGroupService;
+        this.reportsAnalyzer = reportsAnalyzer;
         this.studentGroupMapper = studentGroupMapper;
         this.studentGroupListMapper = studentGroupListMapper;
     }
@@ -51,7 +55,7 @@ public class StudentGroupsController {
     @GetMapping("/attendance")
     @ResponseStatus(HttpStatus.OK)
     public Map<Long, Double> showGroupAvgAttendance(@RequestParam("id") Long groupId) {
-        return studentGroupService.getAvgAttendanceForGroup(groupId);
+        return reportsAnalyzer.getAvgAttendanceForGroup(groupId);
     }
 
     @GetMapping()
@@ -69,7 +73,7 @@ public class StudentGroupsController {
                                                               @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                               @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                               @RequestParam(value = "faculty", required = false) Long facultyId) {
-        return studentGroupService.getAvgAttendanceForGroupsOnFaculty(new FindAllData(page, groupsPerPage, deleted, facultyId));
+        return reportsAnalyzer.getAvgAttendanceForGroupsOnFaculty(new FindAllData(page, groupsPerPage, deleted, facultyId));
     }
 
     @PostMapping("/register")

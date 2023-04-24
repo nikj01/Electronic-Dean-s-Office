@@ -10,7 +10,6 @@ import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.*;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
-import ua.dgma.electronicDeansOffice.repositories.ReportRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
@@ -34,7 +33,6 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentGroupRepository studentGroupRepository;
     private final DepartmentRepository departmentRepository;
-    private final ReportRepository reportRepository;
     private final PeopleService<Teacher> teacherService;
     private final PeopleService<Student> studentService;
     private final AbstractValidator studentGroupValidator;
@@ -46,14 +44,12 @@ public class StudentGroupServiceImpl implements StudentGroupService {
                                    PeopleService<Teacher> teacherService,
                                    PeopleService<Student> studentService,
                                    DepartmentRepository departmentRepository,
-                                   ReportRepository reportRepository,
                                    AbstractValidator studentGroupValidator,
                                    StudentGroupSpecifications specifications) {
         this.studentGroupRepository = studentGroupRepository;
         this.teacherService = teacherService;
         this.departmentRepository = departmentRepository;
         this.studentService = studentService;
-        this.reportRepository = reportRepository;
         this.studentGroupValidator = studentGroupValidator;
         this.specifications = specifications;
         this.className = StudentGroup.class.getSimpleName();
@@ -62,6 +58,10 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     @Override
     public StudentGroup findOne(Long groupId) {
         return studentGroupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", groupId)));
+    }
+    @Override
+    public StudentGroup findByStudent(Student student) {
+        return studentGroupRepository.getByStudentsContaining(student).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "student_id", student.getUid())));
     }
 
     @Override
@@ -248,68 +248,5 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public void softDeleteStudentGroups(List<StudentGroup> studentGroups) {
         for (StudentGroup group : studentGroups)
             softDelete(group.getId());
-    }
-
-    @Override
-    public Map<Long, Double> getAvgAttendanceForGroup(Long groupId) {
-        Map<Long, Double> groupAttendance = new HashMap<>();
-        List<Report> reports = getReportsByGroup(groupId);
-        Set<Long> students = getStudentsFromReports(reports);
-        double totalAttendance = 0;
-        double present = 0;
-
-        if (reports.size() != 0) {
-            for (Long studentId : students) {
-                for (Report report : reports) {
-                    Boolean attend = getAttendance(report, studentId);
-                    if (attend != null && attend)
-                        present++;
-                }
-            }
-
-            totalAttendance += present / reports.size();
-            double avgAttendance = (totalAttendance / students.size()) * 100;
-            groupAttendance.put(groupId, avgAttendance);
-        }
-        else groupAttendance.put(groupId, 0.0);
-
-        return groupAttendance;
-    }
-
-    private List<Report> getReportsByGroup(Long groupId) {
-        return reportRepository.getReportsByStudentGroup_Id(groupId).get();
-    }
-
-    private Set<Long> getStudentsFromReports(List<Report> reports) {
-        Set<Long> studentIds = new HashSet<>();
-
-        for (Report report : reports)
-            studentIds.addAll(report.getStudentAttendance().keySet());
-
-        return studentIds;
-    }
-
-    private Boolean getAttendance(Report report, Long studentId) {
-        return report.getStudentAttendance().get(studentId);
-    }
-
-    @Override
-    public Map<Long, Double> getAvgAttendanceForGroupsOnFaculty(FindAllData data) {
-        Map<Long, Double> facultyAttendance = new HashMap<>();
-
-        for (Long groupId : getStudentGroupsId(data))
-            facultyAttendance.putAll(getAvgAttendanceForGroup(groupId));
-
-        return facultyAttendance;
-    }
-
-    private Set<Long> getStudentGroupsId(FindAllData data) {
-        Set<Long> ids = new HashSet<>();
-
-        for (StudentGroup group : findAll(data)) {
-            ids.add(group.getId());
-        }
-
-        return ids;
     }
 }

@@ -5,7 +5,7 @@ public enum EventTypeEnum {
     SEMINAR,
     PRACTICE_SESSION,
     CONTROL_POINT,
-    COURSE_PROJECT,
+    COURSEWORK,
     EXAM,
     TEST,
     OTHER;

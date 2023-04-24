@@ -1,7 +1,7 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -12,30 +12,35 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentMapper;
 import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.services.impl.StudentServiceImpl;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
-import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentAttendance;
-import ua.dgma.electronicDeansOffice.services.interfaces.StudentService;
+import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentStatistics;
+import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
+import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzer;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static ua.dgma.electronicDeansOffice.utill.ConvertData.convertData;
+
 @RestController
 @RequestMapping("/students")
 public class StudentsController {
-    private final StudentService studentService;
+    private final PeopleService<Student> studentService;
+    private final ReportsAnalyzer reportsAnalyzer;
     private final StudentMapper studentMapper;
     private final StudentListMapper studentListMapper;
 
     @Autowired
-    public StudentsController(StudentServiceImpl studentService,
+    public StudentsController(PeopleService<Student> studentService,
+                              ReportsAnalyzer reportsAnalyzer,
                               StudentMapper studentMapper,
                               StudentListMapper studentListMapper) {
         this.studentService = studentService;
+        this.reportsAnalyzer = reportsAnalyzer;
         this.studentMapper = studentMapper;
         this.studentListMapper = studentListMapper;
     }
@@ -67,8 +72,19 @@ public class StudentsController {
     @GetMapping("/attendance")
     @ResponseStatus(HttpStatus.OK)
     public Map<Long, Double> showStudentAvgAttendance(@RequestParam("uid") Long uid,
-                                                      @RequestParam(value = "semester", required = false) Integer semester) {
-        return studentService.getAvgAttendanceForStudent(new DataForStudentAttendance(uid, semester));
+                                                      @RequestParam(value = "semester", required = false) Integer semester,
+                                                      @RequestParam(value = "from", required = false) String searchFrom,
+                                                      @RequestParam(value = "to", required = false) String searchTo) {
+        return reportsAnalyzer.getAvgAttendanceForStudent(new DataForStudentStatistics(uid, semester, convertData(searchFrom), convertData(searchTo)));
+    }
+
+    @GetMapping("/avgGrade")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<Long, Double> showStudentAvgGrade(@RequestParam("uid") Long uid,
+                                                 @RequestParam(value = "semester", required = false) Integer semester,
+                                                 @RequestParam(value = "from", required = false) String searchFrom,
+                                                 @RequestParam(value = "to", required = false) String searchTo) {
+        return reportsAnalyzer.getAvgGradeForStudent(new DataForStudentStatistics(uid, semester, convertData(searchFrom), convertData(searchTo)));
     }
 
     @GetMapping()
@@ -87,9 +103,10 @@ public class StudentsController {
                                                                 @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                                 @RequestParam(value = "faculty", required = false) Long facultyId,
                                                                 @RequestParam(value = "semester", required = false) Integer semester,
-                                                                @RequestParam(value = "search", required = false) String search) {
-        LocalDateTime searchFrom = LocalDateTime.parse(search);
-        return studentService.getAvgAttendanceForStudentsOnFaculty(new FindAllData(page, peoplePerPage, deleted, facultyId, semester, searchFrom));
+                                                                @RequestParam(value = "from", required = false) String searchFrom,
+                                                                @RequestParam(value = "to", required = false) String searchTo) {
+
+        return reportsAnalyzer.getAvgAttendanceForStudentsOnFaculty(new FindAllData(page, peoplePerPage, deleted, facultyId, semester, convertData(searchFrom), convertData(searchTo)));
     }
 
     @PostMapping("/register")
