@@ -41,6 +41,7 @@ public class EventDataServiceImpl implements EventDataService {
         newEventData.setEventDescription(event.getDescription());
         newEventData.setEventType(event.getEventType());
         newEventData.setEventDate(event.getDate());
+        newEventData.setTeacher(event.getPage().getJournal().getTeacher());
 
         dataRepository.save(newEventData);
         return newEventData;

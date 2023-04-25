@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 @Data
 @NoArgsConstructor
 public class FindAllData {
@@ -49,5 +48,15 @@ public class FindAllData {
         this.page = page;
         this.objectsPerPage = objectsPerPage;
         this.deleted = deleted;
+    }
+
+    public FindAllData(Long facultyId,
+                       Integer semester,
+                       LocalDateTime searchFrom,
+                       LocalDateTime searchTo) {
+        this.facultyId = facultyId;
+        this.semester = semester;
+        this.searchFrom = searchFrom;
+        this.searchTo = searchTo;
     }
 }

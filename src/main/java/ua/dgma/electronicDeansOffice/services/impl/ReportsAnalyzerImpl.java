@@ -9,6 +9,7 @@ import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.repositories.ReportRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentStatistics;
+import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.DataForGroupStatistics;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzer;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
@@ -102,7 +103,8 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
         Set<Long> uids = new HashSet<>();
 
         for (Student student : findAllPeople(data)) {
-            uids.add(student.getUid());
+            if (student.isDeleted() != true)
+                uids.add(student.getUid());
         }
 
         return uids;
@@ -125,9 +127,9 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
     }
 
     @Override
-    public Map<Long, Double> getAvgAttendanceForGroup(Long groupId) {
+    public Map<Long, Double> getAvgAttendanceForGroup(DataForGroupStatistics data) {
         Map<Long, Double> groupAttendance = new HashMap<>();
-        List<Report> reports = getReportsByGroup(groupId);
+        List<Report> reports = findReportsByGroup(data);
         Set<Long> students = getStudentsFromReports(reports);
         double totalAttendance = 0;
         double present = 0;
@@ -143,14 +145,40 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
 
             totalAttendance += present / reports.size();
             double avgAttendance = (totalAttendance / students.size()) * 100;
-            groupAttendance.put(groupId, avgAttendance);
-        } else groupAttendance.put(groupId, 0.0);
+            groupAttendance.put(getGroupId(data), avgAttendance);
+        } else groupAttendance.put(getGroupId(data), 0.0);
 
         return groupAttendance;
     }
 
-    private List<Report> getReportsByGroup(Long groupId) {
-        return reportRepository.getReportsByStudentGroup_Id(groupId).get();
+    private List<Report> findReportsByGroup(DataForGroupStatistics data) {
+        if (getSearchFrom(data) == null)
+            if (getSemester(data) == null)
+                return reportRepository.getByStudentGroup_Id(getGroupId(data)).get();
+            else
+                return reportRepository.getByStudentGroup_IdAndEventData_Semester(getGroupId(data), getSemester(data)).get();
+        else
+            return reportRepository.getByStudentGroup_IdAndCreatedBetween(getGroupId(data), getSearchFrom(data), getSearchTo(data)).get();
+    }
+
+    private LocalDateTime getSearchFrom(DataForGroupStatistics data) {
+        return data.getSearchFrom();
+    }
+
+    private LocalDateTime getSearchTo(DataForGroupStatistics data) {
+        return data.getSearchTo();
+    }
+
+    private Integer getSemester(DataForGroupStatistics data) {
+        return data.getSemester();
+    }
+
+    private Long getGroupId(DataForGroupStatistics data) {
+        return findGroupById(data).getId();
+    }
+
+    private StudentGroup findGroupById(DataForGroupStatistics data) {
+        return studentGroupService.findOne(getGroupId(data));
     }
 
     private Set<Long> getStudentsFromReports(List<Report> reports) {
@@ -171,7 +199,7 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
         Map<Long, Double> facultyAttendance = new HashMap<>();
 
         for (Long groupId : getStudentGroupsId(data))
-            facultyAttendance.putAll(getAvgAttendanceForGroup(groupId));
+            facultyAttendance.putAll(getAvgAttendanceForGroup(new DataForGroupStatistics(groupId, getSemester(data), getSearchFrom(data), getSearchTo(data))));
 
         return facultyAttendance;
     }
@@ -180,7 +208,8 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
         Set<Long> ids = new HashSet<>();
 
         for (StudentGroup group : findAll(data)) {
-            ids.add(group.getId());
+            if (group.isDeleted() != true)
+                ids.add(group.getId());
         }
 
         return ids;
@@ -215,8 +244,7 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
                 reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.EXAM).get());
                 reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.TEST).get());
                 reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.COURSEWORK).get());
-            }
-            else {
+            } else {
                 reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndEventData_Semester(getGroupId(data), EventTypeEnum.EXAM, getSemester(data)).get());
                 reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndEventData_Semester(getGroupId(data), EventTypeEnum.TEST, getSemester(data)).get());
                 reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndEventData_Semester(getGroupId(data), EventTypeEnum.COURSEWORK, getSemester(data)).get());
@@ -228,5 +256,40 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
         }
 
         return reports;
+    }
+
+    @Override
+    public Map<Long, Double> getAvgGradeForStudentsOnFaculty(FindAllData data) {
+        Map<Long, Double> facultyAttendance = new HashMap<>();
+
+        for (Long studentId : getStudentsUids(data))
+            facultyAttendance.putAll(getAvgGradeForStudent(new DataForStudentStatistics(studentId, getSemester(data), getSearchFrom(data), getSearchTo(data))));
+
+        return facultyAttendance;
+    }
+
+    @Override
+    public Map<String, Integer> getExtractWithGradesForStudent(DataForStudentStatistics data) {
+        Map<String, Integer> extractWithGrades = new HashMap<>();
+        List<Report> reports = findFinals(data);
+        Student student = findStudent(data);
+
+        if (reports.size() != 0)
+            for (Report report : reports)
+                extractWithGrades.putAll(getFinal(report, student.getUid()));
+
+        else extractWithGrades.put("It seems that this student has no ratings yet...", 0);
+
+        return extractWithGrades;
+    }
+
+    private Map<String, Integer> getFinal(Report report, Long studentId) {
+        Map<String, Integer> finals = new HashMap<>();
+
+        for (Map.Entry<Long, Integer> entry : report.getStudentMarks().entrySet())
+            finals.put(report.getEventData().getPageName(), entry.getValue());
+
+        finals.put(report.getEventData().getPageName(), report.getStudentMarks().get(studentId));
+        return finals;
     }
 }

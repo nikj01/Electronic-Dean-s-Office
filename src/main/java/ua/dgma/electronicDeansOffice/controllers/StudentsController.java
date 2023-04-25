@@ -1,7 +1,6 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzer;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +85,12 @@ public class StudentsController {
         return reportsAnalyzer.getAvgGradeForStudent(new DataForStudentStatistics(uid, semester, convertData(searchFrom), convertData(searchTo)));
     }
 
+    @GetMapping("/extractRatings")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, Integer> showStudentExtractWithRatings(@RequestParam("uid") Long uid) {
+        return reportsAnalyzer.getExtractWithGradesForStudent(new DataForStudentStatistics(uid));
+    }
+
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
@@ -107,6 +111,16 @@ public class StudentsController {
                                                                 @RequestParam(value = "to", required = false) String searchTo) {
 
         return reportsAnalyzer.getAvgAttendanceForStudentsOnFaculty(new FindAllData(page, peoplePerPage, deleted, facultyId, semester, convertData(searchFrom), convertData(searchTo)));
+    }
+
+    @GetMapping("/facultyAvgGrade")
+    @ResponseStatus(HttpStatus.FOUND)
+    public Map<Long, Double> showStudentsAvgGradesOnFaculty(@RequestParam(value = "faculty", required = false) Long facultyId,
+                                                            @RequestParam(value = "semester", required = false) Integer semester,
+                                                            @RequestParam(value = "from", required = false) String searchFrom,
+                                                            @RequestParam(value = "to", required = false) String searchTo) {
+
+        return reportsAnalyzer.getAvgGradeForStudentsOnFaculty(new FindAllData(facultyId, semester, convertData(searchFrom), convertData(searchTo)));
     }
 
     @PostMapping("/register")

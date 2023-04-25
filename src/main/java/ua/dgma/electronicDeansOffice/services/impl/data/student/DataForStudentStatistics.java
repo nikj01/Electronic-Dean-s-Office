@@ -16,12 +16,6 @@ public class DataForStudentStatistics {
     private LocalDateTime searchTo;
 
     public DataForStudentStatistics(@NonNull Long studentId,
-                                    Integer semester) {
-        this.studentId = studentId;
-        this.semester = semester;
-    }
-
-    public DataForStudentStatistics(@NonNull Long studentId,
                                     Integer semester,
                                     LocalDateTime searchFrom,
                                     LocalDateTime searchTo) {

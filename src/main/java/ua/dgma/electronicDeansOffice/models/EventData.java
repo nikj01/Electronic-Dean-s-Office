@@ -51,4 +51,9 @@ public class EventData implements Serializable {
     @Column(nullable = false)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime eventDate;
+
+    @NotNull(message = "The field |TEACHER| cannot be empty!")
+    @Column(nullable = false)
+    @OneToOne
+    private Teacher teacher;
 }
