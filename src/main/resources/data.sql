@@ -1173,40 +1173,37 @@ INSERT INTO events_student_groups (events_id, student_groups_id) VALUES
 (6, 2),
 (6, 3);
 
-INSERT INTO event_data (id, event_date, event_description, event_id, event_theme, event_type, page_name, semester) VALUES
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Webinar on Network Management', 60, 'Network Management', 6, 'SOMEPAGE1', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Final Exam: Software Engineering', 14, 'Software Engineering', 6, 'SOMEPAGE2', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Webinar on Agile Software Development', 45, 'Agile Development', 6, 'SOMEPAGE3', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Panel Discussion on Software Security', 91, 'Software Security', 6, 'SOMEPAGE4', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Panel Discussion on Network Security Threats', 107, 'Network Security Threats', 6, 'SOMEPAGE5', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 75, 'Risk Management', 6, 'SOMEPAGE6', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 30, 'Risk Management', 6, 'SOMEPAGE7', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Demo Day: Present Your Final Projects', 13, 'Software Engineering', 6, 'SOMEPAGE8', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Guest Lecture on Software Design Patterns', 44, 'Design Patterns', 6, 'SOMEPAGE9', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Guest Lecture on Privacy and Security in Social Media', 29, 'Social Media Security', 6, 'SOMEPAGE10', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Guest Lecture on Cloud Networking', 105, 'Cloud Networking', 6, 'SOMEPAGE11', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Guest Lecture on Machine Learning with Python', 89, 'Machine Learning with Python', 6, 'SOMEPAGE12', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Guest Lecture on Cybersecurity Career Paths', 74, 'Career Paths', 6, 'SOMEPAGE13', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Guest Lecture on Network Performance Optimization', 59, 'Network Performance', 6, 'SOMEPAGE14', 8),
-(DEFAULT, '2023-04-24 21:28:15.000000', 'Guest Lecture on TCP/IP Networking', 99, 'TCP/IP Networking', 6, 'SOMEPAGE15', 8);
+INSERT INTO event_data (id, teacher_uid, event_date, event_description, event_id, event_theme, event_type, page_name, semester) VALUES
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Network Management', 60, 'Network Management', 6, 'SOMEPAGE1', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Final Exam: Software Engineering', 14, 'Software Engineering', 6, 'SOMEPAGE2', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Agile Software Development', 45, 'Agile Development', 6, 'SOMEPAGE3', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Panel Discussion on Software Security', 91, 'Software Security', 6, 'SOMEPAGE4', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Panel Discussion on Network Security Threats', 107, 'Network Security Threats', 6, 'SOMEPAGE5', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 75, 'Risk Management', 6, 'SOMEPAGE6', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 30, 'Risk Management', 6, 'SOMEPAGE7', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Demo Day: Present Your Final Projects', 13, 'Software Engineering', 6, 'SOMEPAGE8', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Software Design Patterns', 44, 'Design Patterns', 6, 'SOMEPAGE9', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Privacy and Security in Social Media', 29, 'Social Media Security', 6, 'SOMEPAGE10', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Cloud Networking', 105, 'Cloud Networking', 6, 'SOMEPAGE11', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Machine Learning with Python', 89, 'Machine Learning with Python', 6, 'SOMEPAGE12', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Cybersecurity Career Paths', 74, 'Career Paths', 6, 'SOMEPAGE13', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Network Performance Optimization', 59, 'Network Performance', 6, 'SOMEPAGE14', 8),
+(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on TCP/IP Networking', 99, 'TCP/IP Networking', 6, 'SOMEPAGE15', 8);
 
-
-
-INSERT INTO reports (id, created, report_name, updated, event_data_id, student_group_id) VALUES
-(DEFAULT, '2023-04-24 21:26:40.000000', '01', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '02', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '03', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '04', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '05', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '06', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '07', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '08', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '09', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '10', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '11', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '12', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '13', null, 1, 1),
-(DEFAULT, '2023-04-24 21:26:40.000000', '14', null, 1, 1);
+INSERT INTO reports (id, created, report_name, updated, event_data_id, student_group_id) VALUES(DEFAULT, '2023-04-24 21:26:40.000000', '01', null, 1 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '02', null, 2 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '03', null, 3 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '04', null, 4 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '05', null, 5 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '06', null, 6 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '07', null, 7 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '08', null, 8 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '09', null, 9 , 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '10', null, 10, 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '11', null, 11, 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '12', null, 12, 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '13', null, 13, 1),
+(DEFAULT, '2023-04-24 21:26:40.000000', '14', null, 14, 1);
 
 INSERT INTO student_attendance (report_id, attendance, student_attendance_key) VALUES
 (1 , true, 12723903),

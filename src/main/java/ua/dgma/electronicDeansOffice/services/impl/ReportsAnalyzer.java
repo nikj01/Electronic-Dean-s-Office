@@ -2,6 +2,8 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.extractWithGrades.Extract;
 import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 import ua.dgma.electronicDeansOffice.models.Report;
 import ua.dgma.electronicDeansOffice.models.Student;
@@ -10,26 +12,28 @@ import ua.dgma.electronicDeansOffice.repositories.ReportRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentStatistics;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.DataForGroupStatistics;
-import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
-import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzer;
-import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
+import ua.dgma.electronicDeansOffice.services.interfaces.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
-public class ReportsAnalyzerImpl implements ReportsAnalyzer {
+@Transactional(readOnly = true)
+public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyzerForGroups, ReportsAnalyzerForFaculty {
     private final ReportRepository reportRepository;
     private final StudentGroupService studentGroupService;
     private final PeopleService<Student> studentService;
+    private final ExtractServiceImpl extractService;
 
     @Autowired
-    public ReportsAnalyzerImpl(ReportRepository reportRepository,
-                               StudentGroupService studentGroupService,
-                               PeopleService<Student> studentService) {
+    public ReportsAnalyzer(ReportRepository reportRepository,
+                           StudentGroupService studentGroupService,
+                           PeopleService<Student> studentService,
+                           ExtractServiceImpl extractService) {
         this.reportRepository = reportRepository;
         this.studentGroupService = studentGroupService;
         this.studentService = studentService;
+        this.extractService = extractService;
     }
 
     @Override
@@ -269,27 +273,16 @@ public class ReportsAnalyzerImpl implements ReportsAnalyzer {
     }
 
     @Override
-    public Map<String, Integer> getExtractWithGradesForStudent(DataForStudentStatistics data) {
-        Map<String, Integer> extractWithGrades = new HashMap<>();
+    public List<Extract> getExtractWithGradesForStudent(DataForStudentStatistics data) {
+        List<Extract> extracts = new ArrayList<>();
         List<Report> reports = findFinals(data);
         Student student = findStudent(data);
 
-        if (reports.size() != 0)
+        if (reports.size() != 0) {
             for (Report report : reports)
-                extractWithGrades.putAll(getFinal(report, student.getUid()));
+                extracts.add(extractService.getExtractWithGradeForStudent(report, student.getUid()));
+        } else extracts.add(new Extract());
 
-        else extractWithGrades.put("It seems that this student has no ratings yet...", 0);
-
-        return extractWithGrades;
-    }
-
-    private Map<String, Integer> getFinal(Report report, Long studentId) {
-        Map<String, Integer> finals = new HashMap<>();
-
-        for (Map.Entry<Long, Integer> entry : report.getStudentMarks().entrySet())
-            finals.put(report.getEventData().getPageName(), entry.getValue());
-
-        finals.put(report.getEventData().getPageName(), report.getStudentMarks().get(studentId));
-        return finals;
+        return extracts;
     }
 }

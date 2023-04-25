@@ -15,7 +15,7 @@ import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.DataForGroupStatistics;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
-import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzer;
+import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzerForGroups;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 
 import javax.validation.Valid;
@@ -28,13 +28,13 @@ import static ua.dgma.electronicDeansOffice.utill.ConvertData.convertData;
 @RequestMapping("/studentGroups")
 public class StudentGroupsController {
     private final StudentGroupService studentGroupService;
-    private final ReportsAnalyzer reportsAnalyzer;
+    private final ReportsAnalyzerForGroups reportsAnalyzer;
     private final StudentGroupMapper studentGroupMapper;
     private final StudentGroupListMapper studentGroupListMapper;
 
     @Autowired
     public StudentGroupsController(StudentGroupService studentGroupService,
-                                   ReportsAnalyzer reportsAnalyzer,
+                                   ReportsAnalyzerForGroups reportsAnalyzer,
                                    StudentGroupMapper studentGroupMapper,
                                    StudentGroupListMapper studentGroupListMapper) {
         this.studentGroupService = studentGroupService;
@@ -71,15 +71,6 @@ public class StudentGroupsController {
                                                                  @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                                  @RequestParam(value = "faculty", required = false) Long facultyId) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findAll(new FindAllData(page, groupsPerPage, deleted, facultyId)));
-    }
-
-    @GetMapping("/facultyAttendace")
-    @ResponseStatus(HttpStatus.FOUND)
-    public Map<Long, Double> showGroupsAvgAttendanceOnFaculty(@RequestParam(value = "faculty", required = false) Long facultyId,
-                                                              @RequestParam(value = "semester", required = false) Integer semester,
-                                                              @RequestParam(value = "from", required = false) String searchFrom,
-                                                              @RequestParam(value = "to", required = false) String searchTo) {
-        return reportsAnalyzer.getAvgAttendanceForGroupsOnFaculty(new FindAllData(facultyId, semester, convertData(searchFrom), convertData(searchTo)));
     }
 
     @PostMapping("/register")

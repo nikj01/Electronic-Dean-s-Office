@@ -53,7 +53,7 @@ public class EventData implements Serializable {
     private LocalDateTime eventDate;
 
     @NotNull(message = "The field |TEACHER| cannot be empty!")
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @OneToOne
     private Teacher teacher;
 }
