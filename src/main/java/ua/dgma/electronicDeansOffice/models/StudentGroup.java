@@ -4,9 +4,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.*;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
@@ -14,7 +14,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -68,13 +70,22 @@ public class StudentGroup {
     @JoinColumn(nullable = false)
     private Department department;
 
+    @ManyToMany(mappedBy = "studentGroups")
+    @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
+    private Set<JournalPage> pages = new HashSet<>();
+
     @ManyToMany(
             mappedBy = "studentGroups",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
-    )
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+            fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Event> events;
+
+    @OneToMany(
+            mappedBy = "studentGroup",
+            fetch = FetchType.LAZY)
+    @Cascade(value = CascadeType.SAVE_UPDATE)
+    private List<Report> reports;
 
     @Column(nullable = false)
     private boolean deleted;

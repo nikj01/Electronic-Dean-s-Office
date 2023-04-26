@@ -6,5 +6,4 @@ import ua.dgma.electronicDeansOffice.repositories.functional.ExistByNameInterfac
 
 @Repository
 public interface StudentRepository extends PeopleRepository<Student>, ExistByNameInterface {
-
 }

@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 
 @Service
 @Transactional(readOnly = true)
@@ -66,11 +66,11 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     }
 
     private StudentGroup getStudentGroup(Student student) {
-        return studentGroupRepository.getByName(getStudentGroupName(student)).get();
+        return studentGroupRepository.findById(getStudentGroupId(student)).get();
     }
 
-    private String getStudentGroupName(Student student) {
-        return student.getStudentGroup().getName();
+    private Long getStudentGroupId(Student student) {
+        return student.getStudentGroup().getId();
     }
 
     @Override

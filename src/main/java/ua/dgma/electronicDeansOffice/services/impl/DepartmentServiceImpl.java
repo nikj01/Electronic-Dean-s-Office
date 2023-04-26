@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,6 @@ import ua.dgma.electronicDeansOffice.services.impl.data.department.RegisterDepar
 import ua.dgma.electronicDeansOffice.services.impl.data.department.UpdateDepartmentData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.DepartmentService;
-;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 import ua.dgma.electronicDeansOffice.services.specifications.DepartmentSpecifications;
@@ -31,6 +31,8 @@ import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
+
+;
 
 @Service
 @Transactional(readOnly = true)
@@ -78,11 +80,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private List<Department> findAllWithSpec(Specification spec) {
-        return departmentRepository.findAll(spec);
+        return departmentRepository.findAll(spec, Sort.by("name"));
     }
 
     private List<Department> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
-        return departmentRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+        return departmentRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("name"))).getContent();
     }
 
     private Specification getSpec(FindAllData data) {
@@ -99,8 +101,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         setFacultyInDepartment(newDepartment);
 
-        saveDepartment(newDepartment);
-        saveNewTeachers(newDepartment, data);
+        saveAll(newDepartment, data);
     }
 
     private String getDepartmentId(RegisterDepartmentData data) {
@@ -123,18 +124,27 @@ public class DepartmentServiceImpl implements DepartmentService {
         return department.getFaculty().getId();
     }
 
-    private void saveDepartment(Department department) {
-        departmentRepository.save(department);
+    private void saveAll(Department department, RegisterDepartmentData data) {
+        Department newDepartment = saveDepartment(department);
+
+        if (getTeachersFromDepartment(department) != null)
+            for (Teacher teacher : getTeachersFromDepartment(department)) {
+                setDepartmentForTeacher(teacher, newDepartment);
+                teacherService.register(new RegisterPersonData<>(teacher, data.getBindingResult()));
+            }
     }
 
-    private void saveNewTeachers(Department department, RegisterDepartmentData data) {
-        if (getTeachersFromDepartment(department) != null)
-            for (Teacher teacher : getTeachersFromDepartment(department))
-                teacherService.register(new RegisterPersonData<>(teacher, data.getBindingResult()));
+    private Department saveDepartment(Department department) {
+        departmentRepository.save(department);
+        return department;
     }
 
     private List<Teacher> getTeachersFromDepartment(Department department) {
         return department.getTeachers();
+    }
+
+    private void setDepartmentForTeacher(Teacher teacher, Department department) {
+        teacher.setDepartment(department);
     }
 
     @Override

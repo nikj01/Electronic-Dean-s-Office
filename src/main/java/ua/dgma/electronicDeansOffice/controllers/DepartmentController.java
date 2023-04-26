@@ -1,6 +1,7 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentGetDTO;
@@ -34,17 +35,20 @@ public class DepartmentController {
         this.departmentListMapper = departmentListMapper;
     }
 
-    @GetMapping("/findById")
-    public DepartmentGetDTO findDepartmentById(@RequestParam("id") Long id) {
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.FOUND)
+    public DepartmentGetDTO findDepartmentById(@PathVariable("id") Long id) {
         return departmentMapper.toDepartmentGetDTO(departmentService.findOne(id));
     }
 
-    @GetMapping("/findByName")
-    public List<DepartmentSlimGetDTO> findDepartmentByName(@RequestParam("name") String name) {
+    @GetMapping("names/{name}")
+    @ResponseStatus(HttpStatus.FOUND)
+    public List<DepartmentSlimGetDTO> findDepartmentByName(@PathVariable("name") String name) {
         return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findByName(name));
     }
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<DepartmentSlimGetDTO> findAllSlimDepartments(@RequestParam(value = "page", required = false) Integer page,
                                                              @RequestParam(value = "departmentsPerPage", required = false) Integer departmentsPerPage,
                                                              @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -53,6 +57,7 @@ public class DepartmentController {
     }
 
     @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public void registerNewDepartment(@RequestBody @Valid DepartmentPostDTO newPostDepartment,
                                                           BindingResult bindingResult) {
         Department newDepartment = departmentMapper.toDepartment(newPostDepartment);
@@ -60,21 +65,24 @@ public class DepartmentController {
         departmentService.register(new RegisterDepartmentData(newDepartment, bindingResult));
     }
 
-    @PatchMapping("/update")
-    public void updateDepartment(@RequestParam("id") Long id,
+    @PatchMapping("{id}/update")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateDepartment(@PathVariable("id") Long id,
                                  @RequestBody @Valid DepartmentPatchDTO departmentPatchDTO) {
         Department updatedDepartment = departmentMapper.toDepartment(departmentPatchDTO);
 
         departmentService.update(new UpdateDepartmentData(id, updatedDepartment));
     }
 
-    @DeleteMapping("/delete")
-    public void deleteDepartment(@RequestParam("id") Long departmentId) {
+    @DeleteMapping("{id}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteDepartment(@PathVariable("id") Long departmentId) {
         departmentService.delete(departmentId);
     }
 
-    @DeleteMapping("/soft/delete")
-    public void softDeleteDepartment(@RequestParam("id") Long departmentId) {
+    @DeleteMapping("{id}/softDelete")
+    @ResponseStatus(HttpStatus.OK)
+    public void softDeleteDepartment(@PathVariable("id") Long departmentId) {
         departmentService.softDelete(departmentId);
     }
 }

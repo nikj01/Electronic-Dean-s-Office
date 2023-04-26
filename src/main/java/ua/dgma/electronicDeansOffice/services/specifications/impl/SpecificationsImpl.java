@@ -1,14 +1,18 @@
 package ua.dgma.electronicDeansOffice.services.specifications.impl;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import ua.dgma.electronicDeansOffice.models.*;
 import ua.dgma.electronicDeansOffice.services.specifications.*;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 
 @Getter

@@ -65,7 +65,7 @@ public class TeacherValidator implements Validator {
     }
 
     private Optional<Department> findDepartment(Teacher teacher) {
-        return departmentRepository.getByName(getDepartmentName(teacher));
+        return departmentRepository.findById(getDepartmentId(teacher));
     }
 
     private Long getDepartmentId(Teacher teacher) {

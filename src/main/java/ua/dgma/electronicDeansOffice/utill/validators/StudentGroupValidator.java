@@ -54,15 +54,15 @@ public class StudentGroupValidator implements AbstractValidator {
 
     private void checkExistenceOfTheDepartment(StudentGroup studentGroup) {
         if (!findDepartment(studentGroup).isPresent())
-            throw new IncorrectPropertyException("Department with name " + getDepartmentName(studentGroup) + " does not exist!");
+            throw new IncorrectPropertyException("Department with name " + getDepartmentId(studentGroup) + " does not exist!");
     }
 
     private Optional<Department> findDepartment(StudentGroup studentGroup) {
-        return departmentRepository.getByName(getDepartmentName(studentGroup));
+        return departmentRepository.findById(getDepartmentId(studentGroup));
     }
 
-    private String getDepartmentName(StudentGroup studentGroup) {
-        return getDepartmentFromGroup(studentGroup).getName();
+    private Long getDepartmentId(StudentGroup studentGroup) {
+        return getDepartmentFromGroup(studentGroup).getId();
     }
 
     private Department getDepartmentFromGroup(StudentGroup studentGroup) {
@@ -133,7 +133,7 @@ public class StudentGroupValidator implements AbstractValidator {
                     " " + getTeacherName(studentGroup) +
                     " " + getTeacherPatronymic(studentGroup) +
                     " with uid " + getTeacherId(studentGroup) +
-                    " is not listed at the department " + getDepartmentName(studentGroup) + "!"
+                    " is not listed at the department " + getDepartmentId(studentGroup) + "!"
             );
     }
 

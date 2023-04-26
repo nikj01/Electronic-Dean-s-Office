@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPageGetDto;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPagePatchDto;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPagePostDto;
-import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.JournalPageListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.JournalPageMapper;
 import ua.dgma.electronicDeansOffice.models.JournalPage;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.RegisterJournalPageData;
@@ -21,44 +20,42 @@ import javax.validation.Valid;
 public class JournalPageController {
     private final JournalPageService pageService;
     private final JournalPageMapper pageMapper;
-    private final JournalPageListMapper pageListMapper;
 
     @Autowired
     public JournalPageController(JournalPageService pageService,
-                                 JournalPageMapper pageMapper,
-                                 JournalPageListMapper pageListMapper) {
+                                 JournalPageMapper pageMapper) {
         this.pageService = pageService;
         this.pageMapper = pageMapper;
-        this.pageListMapper = pageListMapper;
     }
 
-    @GetMapping("/findById")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    public JournalPageGetDto findJournalPageById(@RequestParam("id") Long id) {
+    public JournalPageGetDto findJournalPageById(@PathVariable("id") Long id) {
         return pageMapper.toPageGetDTO(pageService.findOne(id));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registerNewJournalPage(@RequestBody @Valid JournalPagePostDto journalPagePostDto,
-                                                           BindingResult bindingResult) {
+                                       BindingResult bindingResult) {
         JournalPage newJournalPage = pageMapper.toJournalPage(journalPagePostDto);
 
         pageService.register(new RegisterJournalPageData(newJournalPage, bindingResult));
     }
-    @PatchMapping("/update")
+
+    @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
-    public void updateJournalPage(@RequestParam("id") Long id,
-                            @RequestBody @Valid JournalPagePatchDto journalPagePatchDto,
-                                                BindingResult bindingResult) {
+    public void updateJournalPage(@PathVariable("id") Long id,
+                                  @RequestBody @Valid JournalPagePatchDto journalPagePatchDto,
+                                  BindingResult bindingResult) {
         JournalPage updatedJournalPage = pageMapper.toJournalPage(journalPagePatchDto);
 
         pageService.update(new UpdateJournalPageData(id, updatedJournalPage, bindingResult));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("{id}/delete")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@RequestParam("id") Long id) {
+    public void delete(@PathVariable("id") Long id) {
         pageService.delete(id);
     }
 }

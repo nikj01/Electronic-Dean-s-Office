@@ -52,7 +52,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
 
     @Override
     public void register(RegisterPersonData<DeaneryWorker> data) {
-        checkExistenceObjectWithSuchName(new CheckExistsByNameData<>(className, getFacultyName(data), facultyRepository));
+        checkExistenceObjectWithSuchName(new CheckExistsByNameData<>(className, getFacultyId(data), facultyRepository));
         validateObject(new ValidationData<>(deaneryWorkerValidator, data.getNewPerson(), data.getBindingResult()));
 
         DeaneryWorker newDeaneryWorker = data.getNewPerson();
@@ -62,7 +62,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
         savePerson(newDeaneryWorker);
     }
 
-    private String getFacultyName(RegisterPersonData<DeaneryWorker> data) {
+    private String getFacultyId(RegisterPersonData<DeaneryWorker> data) {
         return data.getNewPerson().getFaculty().getName();
     }
 
@@ -71,11 +71,11 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
     }
 
     private Faculty getExistingFaculty(DeaneryWorker deaneryWorker) {
-        return facultyRepository.getByName(getFacultyName(deaneryWorker)).get();
+        return facultyRepository.findById(getFacultyId(deaneryWorker)).get();
     }
 
-    private String getFacultyName(DeaneryWorker deaneryWorker) {
-        return deaneryWorker.getFaculty().getName();
+    private Long getFacultyId(DeaneryWorker deaneryWorker) {
+        return deaneryWorker.getFaculty().getId();
     }
 
     @Override

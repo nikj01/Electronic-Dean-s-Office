@@ -3,7 +3,10 @@ package ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.*;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultyGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultyPatchDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultyPostDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultySlimGetDTO;
 import ua.dgma.electronicDeansOffice.models.Faculty;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)

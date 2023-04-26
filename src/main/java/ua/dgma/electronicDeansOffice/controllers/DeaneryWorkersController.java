@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.*;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.DeaneryWorkerGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.DeaneryWorkerPatchDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.DeaneryWorkerPostDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.deaneryWorker.DeaneryWorkerSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.DeaneryWorkerListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.DeaneryWorkerMapper;
 import ua.dgma.electronicDeansOffice.models.DeaneryWorker;
@@ -32,31 +35,26 @@ public class DeaneryWorkersController {
         this.deaneryWorkerListMapper = deaneryWorkerListMapper;
     }
 
-    @GetMapping("/findByUid")
+    @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerGetDTO findDeaneryWorkerByUid(@RequestParam("uid") Long uid) {
+    public DeaneryWorkerGetDTO findDeaneryWorkerByUid(@PathVariable("uid") Long uid) {
         return deaneryWorkerMapper.toDeaneryWorkerGetDTO(deaneryWorkerService.findByUid(uid));
     }
 
-    @GetMapping("/slim/findByUid")
+    @GetMapping("emails/{email}")
     @ResponseStatus(HttpStatus.FOUND)
-    public DeaneryWorkerSlimGetDTO findSlimDeaneryWorkerByUid(@RequestParam("uid") Long uid) {
-        return deaneryWorkerMapper.toDeaneryWorkerSlimGetDTO(deaneryWorkerService.findByUid(uid));
-    }
-
-    @GetMapping("/findByEmail")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerByEmail(@RequestParam("email") String email) {
+    public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerByEmail(@PathVariable("email") String email) {
         return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findByEmail(email));
     }
 
-    @GetMapping("/findBySurname")
+    @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerBySurname(@RequestParam("surname") String surname) {
+    public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerBySurname(@PathVariable("surname") String surname) {
         return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findBySurname(surname));
     }
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
                                                                    @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                                    @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -73,8 +71,9 @@ public class DeaneryWorkersController {
         deaneryWorkerService.register(new RegisterPersonData<>(newDeaneryWorker, bindingResult));
     }
 
-    @PatchMapping("/update")
-    public void updateDeaneryWorker(@RequestParam("uid") Long uid,
+    @PatchMapping("{uid}/update")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateDeaneryWorker(@PathVariable("uid") Long uid,
                                     @RequestBody @Valid  DeaneryWorkerPatchDTO deaneryWorkerPatchDTO,
                                                          BindingResult bindingResult) {
         DeaneryWorker updatedDeaneryWorker = deaneryWorkerMapper.toDeaneryWorker(deaneryWorkerPatchDTO);
@@ -82,13 +81,15 @@ public class DeaneryWorkersController {
         deaneryWorkerService.update(new UpdatePersonData<>(uid, updatedDeaneryWorker, bindingResult));
     }
 
-    @DeleteMapping("/delete")
-    public void deleteDeaneryWorker(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteDeaneryWorker(@PathVariable("uid") Long uid) {
         deaneryWorkerService.delete(uid);
     }
 
-    @DeleteMapping("/soft/delete")
-    public void softDeletePerson(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/softDelete")
+    @ResponseStatus(HttpStatus.OK)
+    public void softDeletePerson(@PathVariable("uid") Long uid) {
         deaneryWorkerService.softDelete(uid);
     }
 

@@ -21,7 +21,6 @@ public class StudentPostDTO {
     private String patronymic;
     @NotNull(message = "The filed |ROLE| cannot be empty!")
     private List<PersonRoleEnum> personRoles;
-    @NotNull(message = "The field |STUDENT GROUP| group cannot be empty!")
     private StudentGroupSlimGetDTO studentGroup;
     @NotNull(message = "The field |DATE OF BIRTH| cannot be empty!")
     private Date dateOfBirth;

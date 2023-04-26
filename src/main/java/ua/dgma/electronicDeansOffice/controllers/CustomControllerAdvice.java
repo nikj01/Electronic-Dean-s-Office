@@ -1,17 +1,13 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.NotReadablePropertyException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import ua.dgma.electronicDeansOffice.exceptions.*;
 
-import javax.validation.ConstraintViolationException;
-import java.sql.SQLException;
 import java.util.Date;
 
 @ControllerAdvice

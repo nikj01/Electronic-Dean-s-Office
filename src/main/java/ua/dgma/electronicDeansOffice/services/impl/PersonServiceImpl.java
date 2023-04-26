@@ -5,7 +5,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.models.Person;
-import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
@@ -15,8 +14,8 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 
 import java.util.List;
 
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 
 @Service
 @Transactional(readOnly = true)

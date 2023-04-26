@@ -6,7 +6,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.teachersJournal.TeachersJour
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class JournalPagePostDto {
@@ -14,6 +14,6 @@ public class JournalPagePostDto {
     private String pageName;
     @NotNull(message = "The field |TEACHER`S JOURNAL| cannot be empty!")
     private TeachersJournalSlimGetDTO journal;
-    private List<StudentGroupSlimGetDTO> studentGroups;
+    private Set<StudentGroupSlimGetDTO> studentGroups;
 
 }

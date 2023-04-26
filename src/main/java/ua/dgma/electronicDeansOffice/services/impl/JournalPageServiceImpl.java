@@ -20,8 +20,8 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.JournalPageValidator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
@@ -93,8 +93,8 @@ public class JournalPageServiceImpl implements JournalPageService {
             page.setStudentGroups(getStudentGroupsFromPage(page));
     }
 
-    private List<StudentGroup> getStudentGroupsFromPage(JournalPage journalPage) {
-        List<StudentGroup> existingStudentGroups = new ArrayList<>();
+    private Set<StudentGroup> getStudentGroupsFromPage(JournalPage journalPage) {
+        Set<StudentGroup> existingStudentGroups = new HashSet<>();
 
         for (StudentGroup group : getStudentGroups(journalPage))
             existingStudentGroups.add(getStudentGroup(group.getId()));
@@ -102,7 +102,7 @@ public class JournalPageServiceImpl implements JournalPageService {
         return existingStudentGroups;
     }
 
-    private List<StudentGroup> getStudentGroups(JournalPage page) {
+    private Set<StudentGroup> getStudentGroups(JournalPage page) {
         return page.getStudentGroups();
     }
 
@@ -168,13 +168,13 @@ public class JournalPageServiceImpl implements JournalPageService {
     }
 
     private void setUpdatedStudentGroupsInEvents(JournalPage existingPage, JournalPage updatedPage) {
-        existingPage.getEvents().stream().forEach(event -> event.setStudentGroups(getStudentGroupsFromPage(updatedPage)));
+        existingPage.getEvents().stream().forEach(event -> event.setStudentGroups(getStudentGroupsFromPage(updatedPage).stream().toList()));
     }
 
     private void removeStudentGroupsFromPage(JournalPage existingPage) {
         removeStudentGroupsFromEvents(existingPage);
 
-        existingPage.setStudentGroups(new ArrayList<>());
+        existingPage.setStudentGroups(new HashSet<>());
     }
 
     private void removeStudentGroupsFromEvents(JournalPage page) {

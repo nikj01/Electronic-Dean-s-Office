@@ -12,42 +12,59 @@ import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentGroupL
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentGroupMapper;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
+import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.DataForGroupStatistics;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.UpdateStudentGroupData;
+import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzerForGroups;
 import ua.dgma.electronicDeansOffice.services.interfaces.StudentGroupService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+
+import static ua.dgma.electronicDeansOffice.utill.ConvertData.convertData;
 
 @RestController
 @RequestMapping("/studentGroups")
 public class StudentGroupsController {
     private final StudentGroupService studentGroupService;
+    private final ReportsAnalyzerForGroups reportsAnalyzer;
     private final StudentGroupMapper studentGroupMapper;
     private final StudentGroupListMapper studentGroupListMapper;
 
     @Autowired
     public StudentGroupsController(StudentGroupService studentGroupService,
+                                   ReportsAnalyzerForGroups reportsAnalyzer,
                                    StudentGroupMapper studentGroupMapper,
                                    StudentGroupListMapper studentGroupListMapper) {
         this.studentGroupService = studentGroupService;
+        this.reportsAnalyzer = reportsAnalyzer;
         this.studentGroupMapper = studentGroupMapper;
         this.studentGroupListMapper = studentGroupListMapper;
     }
 
-    @GetMapping("/findById")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGroupGetDTO findStudentGroupById(@RequestParam("id") Long id) {
+    public StudentGroupGetDTO findStudentGroupById(@PathVariable("id") Long id) {
         return studentGroupMapper.toStudentGroupGetDTO(studentGroupService.findOne(id));
     }
 
-    @GetMapping("/findByName")
+    @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<StudentGroupSlimGetDTO> findStudentGroupByName(@RequestParam("name") String name) {
+    public List<StudentGroupSlimGetDTO> findStudentGroupByName(@PathVariable("name") String name) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findByName(name));
     }
 
+    @GetMapping("{id}/attendance")
+    @ResponseStatus(HttpStatus.FOUND)
+    public Map<Long, Double> showGroupAvgAttendance(@PathVariable("id") Long groupId,
+                                                    @RequestParam(value = "from", required = false) String searchFrom,
+                                                    @RequestParam(value = "to", required = false) String searchTo) {
+        return reportsAnalyzer.getAvgAttendanceForGroup(new DataForGroupStatistics(groupId, convertData(searchFrom), convertData(searchTo)));
+    }
+
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroups(@RequestParam(value = "page", required = false) Integer page,
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                                  @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -64,22 +81,24 @@ public class StudentGroupsController {
         studentGroupService.register(new RegisterStudentGroupData(studentGroup, bindingResult));
     }
 
-    @PatchMapping("/update")
+    @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
-    public void updateStudentGroup(@RequestParam("id") Long groupId,
+    public void updateStudentGroup(@PathVariable("id") Long groupId,
                                    @RequestBody @Valid StudentGroupPatchDTO studentGroupPatchDTO) {
         StudentGroup studentGroup = studentGroupMapper.toStudentGroup(studentGroupPatchDTO);
 
         studentGroupService.update(new UpdateStudentGroupData(groupId, studentGroup));
     }
 
-    @DeleteMapping("/delete")
-    public void deleteStudentGroup(@RequestParam("id") Long groupId) {
+    @DeleteMapping("{id}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteStudentGroup(@PathVariable("id") Long groupId) {
         studentGroupService.delete(groupId);
     }
 
-    @DeleteMapping("/soft/delete")
-    public void softDeleteStudentGroup(@RequestParam("id") Long groupId) {
+    @DeleteMapping("{id}/softDelete")
+    @ResponseStatus(HttpStatus.OK)
+    public void softDeleteStudentGroup(@PathVariable("id") Long groupId) {
         studentGroupService.softDelete(groupId);
     }
 

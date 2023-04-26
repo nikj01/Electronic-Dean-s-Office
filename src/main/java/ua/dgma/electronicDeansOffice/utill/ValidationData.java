@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
-import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 
 @Getter
 @Setter

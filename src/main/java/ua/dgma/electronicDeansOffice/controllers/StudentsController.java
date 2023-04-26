@@ -4,60 +4,88 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.*;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.extractWithGrades.Extract;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentGetDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentPatchDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentPostDTO;
+import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentMapper;
 import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.services.impl.StudentServiceImpl;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
+import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentStatistics;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
+import ua.dgma.electronicDeansOffice.services.interfaces.ReportsAnalyzerForStudent;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+
+import static ua.dgma.electronicDeansOffice.utill.ConvertData.convertData;
 
 @RestController
 @RequestMapping("/students")
 public class StudentsController {
     private final PeopleService<Student> studentService;
+    private final ReportsAnalyzerForStudent reportsAnalyzer;
     private final StudentMapper studentMapper;
     private final StudentListMapper studentListMapper;
 
     @Autowired
-    public StudentsController(StudentServiceImpl studentService,
+    public StudentsController(PeopleService<Student> studentService,
+                              ReportsAnalyzerForStudent reportsAnalyzer,
                               StudentMapper studentMapper,
                               StudentListMapper studentListMapper) {
         this.studentService = studentService;
+        this.reportsAnalyzer = reportsAnalyzer;
         this.studentMapper = studentMapper;
         this.studentListMapper = studentListMapper;
     }
 
-    @GetMapping("/findByUid")
+    @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGetDTO findStudentByUid(@RequestParam("uid") Long uid) {
+    public StudentGetDTO findStudentByUid(@PathVariable("uid") Long uid) {
         return studentMapper.toStudentGetDTO(studentService.findByUid(uid));
     }
 
-    @GetMapping("/slim/findByUid")
+    @GetMapping("/emails/{email}")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentSlimGetDTO findSlimStudentByUid(@RequestParam("uid") Long uid) {
-        return studentMapper.toStudentSlimGetDTO(studentService.findByUid(uid));
-    }
-
-    @GetMapping("/findByEmail")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<StudentSlimGetDTO> findSlimStudentByEmail(@RequestParam("email") String email) {
+    public List<StudentSlimGetDTO> findSlimStudentByEmail(@PathVariable("email") String email) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findByEmail(email));
     }
 
-    @GetMapping("/findBySurname")
+    @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<StudentSlimGetDTO> findSlimStudentBySurname(@RequestParam("surname") String surname) {
+    public List<StudentSlimGetDTO> findSlimStudentBySurname(@PathVariable("surname") String surname) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findBySurname(surname));
     }
 
+    @GetMapping("{uid}/attendance")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<Long, Double> showStudentAvgAttendance(@PathVariable("uid") Long uid,
+                                                      @RequestParam(value = "from", required = false) String searchFrom,
+                                                      @RequestParam(value = "to", required = false) String searchTo) {
+        return reportsAnalyzer.getAvgAttendanceForStudent(new DataForStudentStatistics(uid, convertData(searchFrom), convertData(searchTo)));
+    }
+
+    @GetMapping("{uid}/avgGrade")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<Long, Double> showStudentAvgGrade(@PathVariable("uid") Long uid,
+                                                 @RequestParam(value = "from", required = false) String searchFrom,
+                                                 @RequestParam(value = "to", required = false) String searchTo) {
+        return reportsAnalyzer.getAvgGradeForStudent(new DataForStudentStatistics(uid, convertData(searchFrom), convertData(searchTo)));
+    }
+
+    @GetMapping("{uid}/extractRatings")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Extract> showStudentExtractWithRatings(@PathVariable("uid") Long uid) {
+        return reportsAnalyzer.getExtractWithGradesForStudent(new DataForStudentStatistics(uid));
+    }
+
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -74,8 +102,9 @@ public class StudentsController {
         studentService.register(new RegisterPersonData<>(newStudent, bindingResult));
     }
 
-    @PatchMapping("/update")
-    public void updateStudent(@RequestParam("uid") Long uid,
+    @PatchMapping("{uid}/update")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateStudent(@PathVariable("uid") Long uid,
                               @RequestBody @Valid  StudentPatchDTO studentPatchDTO,
                                                    BindingResult bindingResult) {
         Student updatedStudent = studentMapper.toStudent(studentPatchDTO);
@@ -83,13 +112,15 @@ public class StudentsController {
         studentService.update(new UpdatePersonData<>(uid, updatedStudent, bindingResult));
     }
 
-    @DeleteMapping("/delete")
-    public void deleteStudent(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteStudent(@PathVariable("uid") Long uid) {
         studentService.delete(uid);
     }
 
-    @DeleteMapping("/soft/delete")
-    public void softDeletePerson(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/softDelete")
+    @ResponseStatus(HttpStatus.OK)
+    public void softDeletePerson(@PathVariable("uid") Long uid) {
         studentService.softDelete(uid);
     }
 

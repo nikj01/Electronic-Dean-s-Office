@@ -2,12 +2,16 @@ package ua.dgma.electronicDeansOffice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
-import ua.dgma.electronicDeansOffice.models.*;
+import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.models.Student;
+import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
@@ -31,8 +35,6 @@ import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
 @Transactional(readOnly = true)
 public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentGroupRepository studentGroupRepository;
-    //    private final TeacherRepository teacherRepository;
-//    private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
     private final PeopleService<Teacher> teacherService;
     private final PeopleService<Student> studentService;
@@ -60,6 +62,10 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     public StudentGroup findOne(Long groupId) {
         return studentGroupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", groupId)));
     }
+    @Override
+    public StudentGroup findByStudent(Student student) {
+        return studentGroupRepository.getByStudentsContaining(student).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "student_id", student.getUid())));
+    }
 
     @Override
     public List<StudentGroup> findByName(String groupName) {
@@ -75,11 +81,11 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private List<StudentGroup> findAllWithSpec(Specification spec) {
-        return studentGroupRepository.findAll(spec);
+        return studentGroupRepository.findAll(spec, Sort.by("name"));
     }
 
     private List<StudentGroup> findAllWithSpecAndPagination(Specification spec, FindAllData data) {
-        return studentGroupRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage())).getContent();
+        return studentGroupRepository.findAll(spec, PageRequest.of(data.getPage(), data.getObjectsPerPage(), Sort.by("name"))).getContent();
     }
 
     private Specification getSpec(FindAllData data) {
@@ -96,8 +102,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
         setDepartmentInStudentGroup(newStudentGroup);
 
-        saveStudentGroup(newStudentGroup);
-        saveNewStudents(newStudentGroup, data);
+        saveAll(newStudentGroup, data);
     }
 
     private String getStudentGroupId(RegisterStudentGroupData data) {
@@ -120,19 +125,28 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         return studentGroup.getDepartment().getId();
     }
 
-    private void saveStudentGroup(StudentGroup studentGroup) {
-        studentGroupRepository.save(studentGroup);
+    private void saveAll(StudentGroup studentGroup, RegisterStudentGroupData data) {
+        StudentGroup newStudentGroup = saveStudentGroup(studentGroup);
+
+        if (getStudentsFromGroup(studentGroup) != null) {
+            for (Student student : getStudentsFromGroup(studentGroup)) {
+                setGroupForStudent(student, newStudentGroup);
+                studentService.register(new RegisterPersonData<>(student, data.getBindingResult()));
+            }
+        }
     }
 
-    private void saveNewStudents(StudentGroup studentGroup, RegisterStudentGroupData data) {
-        if (getStudentsFromGroup(studentGroup) != null) {
-            for (Student student : getStudentsFromGroup(studentGroup))
-                studentService.register(new RegisterPersonData<>(student, data.getBindingResult()));
-        }
+    private StudentGroup saveStudentGroup(StudentGroup studentGroup) {
+        studentGroupRepository.save(studentGroup);
+        return studentGroup;
     }
 
     private List<Student> getStudentsFromGroup(StudentGroup studentGroup) {
         return studentGroup.getStudents();
+    }
+
+    private void setGroupForStudent(Student student, StudentGroup studentGroup) {
+        student.setStudentGroup(studentGroup);
     }
 
     @Override
@@ -153,10 +167,6 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
     private Long getStudentGroupId(UpdateStudentGroupData data) {
         return data.getId();
-    }
-
-    private String getStudentGroupName(UpdateStudentGroupData data) {
-        return getStudentGroup(data).getName();
     }
 
     private StudentGroup getStudentGroup(UpdateStudentGroupData data) {

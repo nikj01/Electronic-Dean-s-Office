@@ -21,8 +21,8 @@ import ua.dgma.electronicDeansOffice.utill.validators.TeacherValidator;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
-import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchID;
+import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkExistenceObjectWithSuchIDBeforeRegistrationOrUpdate;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,11 +72,11 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
     }
 
     private Department getDepartment(Teacher teacher) {
-        return departmentRepository.getByName(getDepartmentName(teacher)).get();
+        return departmentRepository.findById(getDepartmentId(teacher)).get();
     }
 
-    private String getDepartmentName(Teacher teacher) {
-        return teacher.getDepartment().getName();
+    private Long getDepartmentId(Teacher teacher) {
+        return teacher.getDepartment().getId();
     }
 
     private void makeNewTeachersJournal(Teacher teacher, RegisterPersonData data) {
