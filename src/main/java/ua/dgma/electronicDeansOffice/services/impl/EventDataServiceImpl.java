@@ -32,19 +32,52 @@ public class EventDataServiceImpl implements EventDataService {
     @Override
     @Transactional
     public EventData createNewEventData(Event event) {
-        EventData newEventData = new EventData();
+        EventData data = new EventData();
 
-        newEventData.setEventId(event.getId());
-        newEventData.setSemester(event.getSemester());
-        newEventData.setPageName(event.getPage().getPageName());
-        newEventData.setEventTheme(event.getEventTheme());
-        newEventData.setEventDescription(event.getDescription());
-        newEventData.setEventType(event.getEventType());
-        newEventData.setEventDate(event.getDate());
-        newEventData.setTeacher(event.getPage().getJournal().getTeacher());
+        setEventId(data, event);
+        setSemester(data, event);
+        setPageId(data, event);
+        setPageName(data, event);
+        setEventTheme(data, event);
+        setEventDescription(data, event);
+        setEventType(data, event);
+        setEventDate(data, event);
+        setTeacher(data, event);
 
-        dataRepository.save(newEventData);
-        return newEventData;
+        dataRepository.save(data);
+        return data;
+    }
+
+    private void setEventId(EventData data, Event event) {
+        data.setEventId(event.getId());
+    }
+
+    private void setSemester(EventData data, Event event) {
+        data.setSemester(event.getSemester());
+    }
+
+    private void setPageId(EventData data, Event event) { data.setPageId(event.getPage().getId()); }
+
+    private void setPageName(EventData data, Event event) { data.setPageName(event.getPage().getPageName()); }
+
+    private void setEventTheme(EventData data, Event event) {
+        data.setEventTheme(event.getEventTheme());
+    }
+
+    private void setEventDescription(EventData data, Event event) {
+        data.setEventDescription(event.getDescription());
+    }
+
+    private void setEventType(EventData data, Event event) {
+        data.setEventType(event.getEventType());
+    }
+
+    private void setEventDate(EventData data, Event event) {
+        data.setEventDate(event.getDate());
+    }
+
+    private void setTeacher(EventData data, Event event) {
+        data.setTeacher(event.getPage().getJournal().getTeacher());
     }
 
     @Override

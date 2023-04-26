@@ -1028,7 +1028,7 @@ INSERT INTO Journals_pages (id, archive, page_name, journal_id) VALUES
 (DEFAULT, false, 'Subject-1099', 100),
 (DEFAULT, false, 'Subject-1100', 101);
 
-INSERT INTO journals_pages_student_groups (journal_page_id, student_groups_id) VALUES
+INSERT INTO journals_pages_student_groups (pages_id, student_groups_id) VALUES
 (1, 1),
 (1, 2),
 (1, 3);
@@ -1173,22 +1173,23 @@ INSERT INTO events_student_groups (events_id, student_groups_id) VALUES
 (6, 2),
 (6, 3);
 
-INSERT INTO event_data (id, teacher_uid, event_date, event_description, event_id, event_theme, event_type, page_name, semester) VALUES
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Network Management', 60, 'Network Management', 6, 'SOMEPAGE1', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Final Exam: Software Engineering', 14, 'Software Engineering', 6, 'SOMEPAGE2', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Agile Software Development', 45, 'Agile Development', 6, 'SOMEPAGE3', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Panel Discussion on Software Security', 91, 'Software Security', 6, 'SOMEPAGE4', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Panel Discussion on Network Security Threats', 107, 'Network Security Threats', 6, 'SOMEPAGE5', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 75, 'Risk Management', 6, 'SOMEPAGE6', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 30, 'Risk Management', 6, 'SOMEPAGE7', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Demo Day: Present Your Final Projects', 13, 'Software Engineering', 6, 'SOMEPAGE8', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Software Design Patterns', 44, 'Design Patterns', 6, 'SOMEPAGE9', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Privacy and Security in Social Media', 29, 'Social Media Security', 6, 'SOMEPAGE10', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Cloud Networking', 105, 'Cloud Networking', 6, 'SOMEPAGE11', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Machine Learning with Python', 89, 'Machine Learning with Python', 6, 'SOMEPAGE12', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Cybersecurity Career Paths', 74, 'Career Paths', 6, 'SOMEPAGE13', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Network Performance Optimization', 59, 'Network Performance', 6, 'SOMEPAGE14', 8),
-(DEFAULT, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on TCP/IP Networking', 99, 'TCP/IP Networking', 6, 'SOMEPAGE15', 8);
+INSERT INTO event_data (id, page_id, teacher_uid, event_date, event_description, event_id, event_theme, event_type, page_name, semester) VALUES
+(DEFAULT, 21, 100,'2023-04-24 21:28:15.000000', 'Webinar on Network Management', 60, 'Network Management', 6, 'SOMEPAGE1', 8),
+(DEFAULT, 1, 100,'2023-04-24 21:28:15.000000', 'Final Exam: Software Engineering', 14, 'Software Engineering', 6, 'SOMEPAGE2', 8),
+(DEFAULT, 76, 100,'2023-04-24 21:28:15.000000', 'Webinar on Agile Software Development', 45, 'Agile Development', 6, 'SOMEPAGE3', 8),
+(DEFAULT, 91, 100,'2023-04-24 21:28:15.000000', 'Panel Discussion on Software Security', 91, 'Software Security', 6, 'SOMEPAGE4', 8),
+(DEFAULT, 55, 100,'2023-04-24 21:28:15.000000', 'Panel Discussion on Network Security Threats', 107, 'Network Security Threats', 6, 'SOMEPAGE5', 8),
+(DEFAULT, 43, 100,'2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 75, 'Risk Management', 6, 'SOMEPAGE6', 8),
+(DEFAULT, 19, 100,'2023-04-24 21:28:15.000000', 'Webinar on Cybersecurity Risk Management', 30, 'Risk Management', 6, 'SOMEPAGE7', 8),
+(DEFAULT, 1, 100,'2023-04-24 21:28:15.000000', 'Demo Day: Present Your Final Projects', 13, 'Software Engineering', 4, 'SOMEPAGE8', 8),
+(DEFAULT, 76, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Software Design Patterns', 44, 'Design Patterns', 4, 'SOMEPAGE9', 8),
+(DEFAULT, 43, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Privacy and Security in Social Media', 29, 'Social Media Security', 4, 'SOMEPAGE10', 8),
+(DEFAULT, 55, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Cloud Networking', 105, 'Cloud Networking', 4, 'SOMEPAGE11', 8),
+(DEFAULT, 91, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Machine Learning with Python', 89, 'Machine Learning with Python', 4, 'SOMEPAGE12', 8),
+(DEFAULT, 19, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Cybersecurity Career Paths', 74, 'Career Paths', 4, 'SOMEPAGE13', 8),
+(DEFAULT, 21, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on Network Performance Optimization', 59, 'Network Performance', 4, 'SOMEPAGE14', 8),
+(DEFAULT, 55, 100,'2023-04-24 21:28:15.000000', 'Guest Lecture on TCP/IP Networking', 99, 'TCP/IP Networking', 6, 'SOMEPAGE15', 8);
+
 
 INSERT INTO reports (id, created, report_name, updated, event_data_id, student_group_id) VALUES(DEFAULT, '2023-04-24 21:26:40.000000', '01', null, 1 , 1),
 (DEFAULT, '2023-04-24 21:26:40.000000', '02', null, 2 , 1),
@@ -1489,42 +1490,6 @@ INSERT INTO student_marks_map (report_id, mark, student_marks_key) VALUES
 (14, 86, 12723911),
 (14, 90, 12723912);
 
-
--- (1, true, 12723903),
--- (1, true, 12723904),
--- (1, true, 12723905),
--- (1, true, 12723906),
--- (1, true, 12723907),
--- (1, true, 12723908),
--- (1, true, 12723909),
--- (1, true, 12723910),
--- (1, true, 12723911),
--- (1, true, 12723912);
---
--- INSERT INTO student_attendance (report_id, attendance, student_attendance_key) VALUES
--- (2, true, 12723903),
--- (2, true, 12723904),
--- (2, true, 12723905),
--- (2, true, 12723906),
--- (2, true, 12723907),
--- (2, true, 12723908),
--- (2, true, 12723909),
--- (2, true, 12723910),
--- (2, true, 12723911),
--- (2, true, 12723912);
---
--- INSERT INTO student_attendance (report_id, attendance, student_attendance_key) VALUES
--- (2, true, 12723903),
--- (2, true, 12723904),
--- (2, true, 12723905),
--- (2, true, 12723906),
--- (2, true, 12723907),
--- (2, true, 12723908),
--- (2, true, 12723909),
--- (2, true, 12723910),
--- (2, true, 12723911),
--- (2, true, 12723912);
---
 -- INSERT INTO student_attendance (report_id, attendance, student_attendance_key) VALUES
 -- (1, true, 12723903),
 -- (1, true, 12723904),
@@ -1633,6 +1598,38 @@ INSERT INTO student_marks_map (report_id, mark, student_marks_key) VALUES
 -- (2, true, 12723911),
 -- (2, true, 12723912);
 --
--- -- INSERT INTO student_marks_map (report_id, mark, student_marks_key) VALUES
--- -- (3, 1, 12723535);
--- ----------------------------------------------------------------------------------------------
+-- INSERT INTO student_attendance (report_id, attendance, student_attendance_key) VALUES
+-- (1, true, 12723903),
+-- (1, true, 12723904),
+-- (1, true, 12723905),
+-- (1, true, 12723906),
+-- (1, true, 12723907),
+-- (1, true, 12723908),
+-- (1, true, 12723909),
+-- (1, true, 12723910),
+-- (1, true, 12723911),
+-- (1, true, 12723912);
+--
+-- INSERT INTO student_attendance (report_id, attendance, student_attendance_key) VALUES
+-- (2, true, 12723903),
+-- (2, true, 12723904),
+-- (2, true, 12723905),
+-- (2, true, 12723906),
+-- (2, true, 12723907),
+-- (2, true, 12723908),
+-- (2, true, 12723909),
+-- (2, true, 12723910),
+-- (2, true, 12723911),
+-- (2, true, 12723912);
+--
+-- INSERT INTO student_attendance (report_id, attendance, student_attendance_key) VALUES
+-- (2, true, 12723903),
+-- (2, true, 12723904),
+-- (2, true, 12723905),
+-- (2, true, 12723906),
+-- (2, true, 12723907),
+-- (2, true, 12723908),
+-- (2, true, 12723909),
+-- (2, true, 12723910),
+-- (2, true, 12723911),
+-- (2, true, 12723912);

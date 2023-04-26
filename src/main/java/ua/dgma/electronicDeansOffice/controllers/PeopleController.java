@@ -36,31 +36,26 @@ public class PeopleController {
         this.personListMapper = personListMapper;
     }
 
-    @GetMapping("/findByUid")
+    @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonGetDTO findPersonByUid(@RequestParam("uid") Long uid) {
+    public PersonGetDTO findPersonByUid(@PathVariable("uid") Long uid) {
         return personMapper.toPersonGetDTO(personService.findByUid(uid));
     }
 
-    @GetMapping("/slim/findByUid")
+    @GetMapping("/emails/{email}")
     @ResponseStatus(HttpStatus.FOUND)
-    public PersonSlimGetDTO findSlimPersonByUid(@RequestParam("uid") Long uid) {
-        return personMapper.toPersonSlimGetDTO(personService.findByUid(uid));
-    }
-
-    @GetMapping("/findByEmail")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<PersonSlimGetDTO> findSlimPersonByEmail(@RequestParam("email") String email) {
+    public List<PersonSlimGetDTO> findSlimPersonByEmail(@PathVariable("email") String email) {
         return personListMapper.toPeopleSlimGetDTO(personService.findByEmail(email));
     }
 
-    @GetMapping("/findBySurname")
+    @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<PersonSlimGetDTO> findSlimPersonBySurname(@RequestParam("surname") String surname) {
+    public List<PersonSlimGetDTO> findSlimPersonBySurname(@PathVariable("surname") String surname) {
         return personListMapper.toPeopleSlimGetDTO(personService.findBySurname(surname));
     }
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<PersonSlimGetDTO> findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
                                                     @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                     @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -77,8 +72,9 @@ public class PeopleController {
         personService.register(new RegisterPersonData<>(newPerson, bindingResult));
     }
 
-    @PatchMapping("/update")
-    public void updatePerson(@RequestParam("uid") Long uid,
+    @PatchMapping("{uid}/update")
+    @ResponseStatus(HttpStatus.OK)
+    public void updatePerson(@PathVariable("uid") Long uid,
                              @RequestBody @Valid  PersonPatchDTO personPatchDTO,
                                                   BindingResult bindingResult) {
         Person updatedPerson = personMapper.toPerson(personPatchDTO);
@@ -86,14 +82,13 @@ public class PeopleController {
         personService.update(new UpdatePersonData<>(uid, updatedPerson, bindingResult));
     }
 
-    @DeleteMapping("/delete")
-    public void deletePerson(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/delete")
+    public void deletePerson(@PathVariable("uid") Long uid) {
         personService.delete(uid);
     }
 
-    @DeleteMapping("/soft/delete")
-    public void softDeletePerson(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/softDelete")
+    public void softDeletePerson(@PathVariable("uid") Long uid) {
         personService.softDelete(uid);
     }
-
 }

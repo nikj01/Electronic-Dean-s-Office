@@ -10,8 +10,8 @@ import ua.dgma.electronicDeansOffice.models.TeachersJournal;
 import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeachersJournalRepository;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class JournalPageValidator implements Validator {
@@ -70,7 +70,7 @@ public class JournalPageValidator implements Validator {
                 findStudentGroup(studentGroup, errors);
     }
 
-    private List<StudentGroup> getGroupsFromPage(JournalPage page) {
+    private Set<StudentGroup> getGroupsFromPage(JournalPage page) {
         return page.getStudentGroups();
     }
 

@@ -31,11 +31,15 @@ public class EventData implements Serializable {
     @Column(nullable = false)
     private Long eventId;
 
-    @NotBlank(message = "The field |DESCRIPTION| cannot be empty!")
+    @NotNull(message = "The field |PAGE ID| cannot be empty!")
+    @Column(nullable = false)
+    private Long pageId;
+
+    @NotBlank(message = "The field |PAGE NAME| cannot be empty!")
     @Column(nullable = false)
     private String pageName;
 
-    @NotBlank(message = "The field |DESCRIPTION| cannot be empty!")
+    @NotBlank(message = "The field |EVENT THEME| cannot be empty!")
     @Column(nullable = false)
     private String eventTheme;
 

@@ -43,25 +43,24 @@ public class StudentGroupsController {
         this.studentGroupListMapper = studentGroupListMapper;
     }
 
-    @GetMapping("/findById")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    public StudentGroupGetDTO findStudentGroupById(@RequestParam("id") Long id) {
+    public StudentGroupGetDTO findStudentGroupById(@PathVariable("id") Long id) {
         return studentGroupMapper.toStudentGroupGetDTO(studentGroupService.findOne(id));
     }
 
-    @GetMapping("/findByName")
+    @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<StudentGroupSlimGetDTO> findStudentGroupByName(@RequestParam("name") String name) {
+    public List<StudentGroupSlimGetDTO> findStudentGroupByName(@PathVariable("name") String name) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findByName(name));
     }
 
-    @GetMapping("/attendance")
-    @ResponseStatus(HttpStatus.OK)
-    public Map<Long, Double> showGroupAvgAttendance(@RequestParam("id") Long groupId,
-                                                    @RequestParam(value = "semester", required = false) Integer semester,
+    @GetMapping("{id}/attendance")
+    @ResponseStatus(HttpStatus.FOUND)
+    public Map<Long, Double> showGroupAvgAttendance(@PathVariable("id") Long groupId,
                                                     @RequestParam(value = "from", required = false) String searchFrom,
                                                     @RequestParam(value = "to", required = false) String searchTo) {
-        return reportsAnalyzer.getAvgAttendanceForGroup(new DataForGroupStatistics(groupId, semester, convertData(searchFrom), convertData(searchTo)));
+        return reportsAnalyzer.getAvgAttendanceForGroup(new DataForGroupStatistics(groupId, convertData(searchFrom), convertData(searchTo)));
     }
 
     @GetMapping()
@@ -82,22 +81,24 @@ public class StudentGroupsController {
         studentGroupService.register(new RegisterStudentGroupData(studentGroup, bindingResult));
     }
 
-    @PatchMapping("/update")
+    @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
-    public void updateStudentGroup(@RequestParam("id") Long groupId,
+    public void updateStudentGroup(@PathVariable("id") Long groupId,
                                    @RequestBody @Valid StudentGroupPatchDTO studentGroupPatchDTO) {
         StudentGroup studentGroup = studentGroupMapper.toStudentGroup(studentGroupPatchDTO);
 
         studentGroupService.update(new UpdateStudentGroupData(groupId, studentGroup));
     }
 
-    @DeleteMapping("/delete")
-    public void deleteStudentGroup(@RequestParam("id") Long groupId) {
+    @DeleteMapping("{id}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteStudentGroup(@PathVariable("id") Long groupId) {
         studentGroupService.delete(groupId);
     }
 
-    @DeleteMapping("/soft/delete")
-    public void softDeleteStudentGroup(@RequestParam("id") Long groupId) {
+    @DeleteMapping("{id}/softDelete")
+    @ResponseStatus(HttpStatus.OK)
+    public void softDeleteStudentGroup(@PathVariable("id") Long groupId) {
         studentGroupService.softDelete(groupId);
     }
 

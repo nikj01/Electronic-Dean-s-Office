@@ -57,10 +57,7 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
 
     private List<Report> findReportsByGroup(DataForStudentStatistics data) {
         if (getSearchFrom(data) == null)
-            if (getSemester(data) == null)
-                return reportRepository.getByStudentGroup_Id(getGroupId(data)).get();
-            else
-                return reportRepository.getByStudentGroup_IdAndEventData_Semester(getGroupId(data), getSemester(data)).get();
+            return reportRepository.getByStudentGroup_Id(getGroupId(data)).get();
         else
             return reportRepository.getByStudentGroup_IdAndCreatedBetween(getGroupId(data), getSearchFrom(data), getSearchTo(data)).get();
     }
@@ -75,10 +72,6 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
 
     private Long getStudentId(DataForStudentStatistics data) {
         return data.getStudentId();
-    }
-
-    private Integer getSemester(DataForStudentStatistics data) {
-        return data.getSemester();
     }
 
     private Long getGroupId(DataForStudentStatistics data) {
@@ -98,7 +91,7 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
         Map<Long, Double> facultyAttendance = new HashMap<>();
 
         for (Long studentId : getStudentsUids(data))
-            facultyAttendance.putAll(getAvgAttendanceForStudent(new DataForStudentStatistics(studentId, getSemester(data), getSearchFrom(data), getSearchTo(data))));
+            facultyAttendance.putAll(getAvgAttendanceForStudent(new DataForStudentStatistics(studentId, getSearchFrom(data), getSearchTo(data))));
 
         return facultyAttendance;
     }
@@ -116,10 +109,6 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
 
     private List<Student> findAllPeople(FindAllData data) {
         return studentService.findAllPeople(data);
-    }
-
-    private Integer getSemester(FindAllData data) {
-        return data.getSemester();
     }
 
     private LocalDateTime getSearchFrom(FindAllData data) {
@@ -157,10 +146,7 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
 
     private List<Report> findReportsByGroup(DataForGroupStatistics data) {
         if (getSearchFrom(data) == null)
-            if (getSemester(data) == null)
-                return reportRepository.getByStudentGroup_Id(getGroupId(data)).get();
-            else
-                return reportRepository.getByStudentGroup_IdAndEventData_Semester(getGroupId(data), getSemester(data)).get();
+            return reportRepository.getByStudentGroup_Id(getGroupId(data)).get();
         else
             return reportRepository.getByStudentGroup_IdAndCreatedBetween(getGroupId(data), getSearchFrom(data), getSearchTo(data)).get();
     }
@@ -173,16 +159,8 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
         return data.getSearchTo();
     }
 
-    private Integer getSemester(DataForGroupStatistics data) {
-        return data.getSemester();
-    }
-
     private Long getGroupId(DataForGroupStatistics data) {
-        return findGroupById(data).getId();
-    }
-
-    private StudentGroup findGroupById(DataForGroupStatistics data) {
-        return studentGroupService.findOne(getGroupId(data));
+        return data.getGroupId();
     }
 
     private Set<Long> getStudentsFromReports(List<Report> reports) {
@@ -203,7 +181,7 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
         Map<Long, Double> facultyAttendance = new HashMap<>();
 
         for (Long groupId : getStudentGroupsId(data))
-            facultyAttendance.putAll(getAvgAttendanceForGroup(new DataForGroupStatistics(groupId, getSemester(data), getSearchFrom(data), getSearchTo(data))));
+            facultyAttendance.putAll(getAvgAttendanceForGroup(new DataForGroupStatistics(groupId, getSearchFrom(data), getSearchTo(data))));
 
         return facultyAttendance;
     }
@@ -243,15 +221,10 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
 
     private List<Report> findFinals(DataForStudentStatistics data) {
         List<Report> reports = new ArrayList<>();
-        if (getSearchFrom(data) == null)
-            if (getSemester(data) == null) {
-                reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.EXAM).get());
-                reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.TEST).get());
-                reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.COURSEWORK).get());
-            } else {
-                reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndEventData_Semester(getGroupId(data), EventTypeEnum.EXAM, getSemester(data)).get());
-                reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndEventData_Semester(getGroupId(data), EventTypeEnum.TEST, getSemester(data)).get());
-                reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndEventData_Semester(getGroupId(data), EventTypeEnum.COURSEWORK, getSemester(data)).get());
+        if (getSearchFrom(data) == null) {
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.EXAM).get());
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.TEST).get());
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.COURSEWORK).get());
             }
         else {
             reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndCreatedBetween(getGroupId(data), EventTypeEnum.EXAM, getSearchFrom(data), getSearchTo(data)).get());
@@ -267,7 +240,7 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
         Map<Long, Double> facultyAttendance = new HashMap<>();
 
         for (Long studentId : getStudentsUids(data))
-            facultyAttendance.putAll(getAvgGradeForStudent(new DataForStudentStatistics(studentId, getSemester(data), getSearchFrom(data), getSearchTo(data))));
+            facultyAttendance.putAll(getAvgGradeForStudent(new DataForStudentStatistics(studentId, getSearchFrom(data), getSearchTo(data))));
 
         return facultyAttendance;
     }

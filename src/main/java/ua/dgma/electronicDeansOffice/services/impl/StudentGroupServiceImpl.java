@@ -102,8 +102,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
         setDepartmentInStudentGroup(newStudentGroup);
 
-        saveStudentGroup(newStudentGroup);
-        saveNewStudents(newStudentGroup, data);
+        saveAll(newStudentGroup, data);
     }
 
     private String getStudentGroupId(RegisterStudentGroupData data) {
@@ -126,19 +125,28 @@ public class StudentGroupServiceImpl implements StudentGroupService {
         return studentGroup.getDepartment().getId();
     }
 
-    private void saveStudentGroup(StudentGroup studentGroup) {
-        studentGroupRepository.save(studentGroup);
+    private void saveAll(StudentGroup studentGroup, RegisterStudentGroupData data) {
+        StudentGroup newStudentGroup = saveStudentGroup(studentGroup);
+
+        if (getStudentsFromGroup(studentGroup) != null) {
+            for (Student student : getStudentsFromGroup(studentGroup)) {
+                setGroupForStudent(student, newStudentGroup);
+                studentService.register(new RegisterPersonData<>(student, data.getBindingResult()));
+            }
+        }
     }
 
-    private void saveNewStudents(StudentGroup studentGroup, RegisterStudentGroupData data) {
-        if (getStudentsFromGroup(studentGroup) != null) {
-            for (Student student : getStudentsFromGroup(studentGroup))
-                studentService.register(new RegisterPersonData<>(student, data.getBindingResult()));
-        }
+    private StudentGroup saveStudentGroup(StudentGroup studentGroup) {
+        studentGroupRepository.save(studentGroup);
+        return studentGroup;
     }
 
     private List<Student> getStudentsFromGroup(StudentGroup studentGroup) {
         return studentGroup.getStudents();
+    }
+
+    private void setGroupForStudent(Student student, StudentGroup studentGroup) {
+        student.setStudentGroup(studentGroup);
     }
 
     @Override

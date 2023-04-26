@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class EventDataGetDTO {
     private Long id;
     private Integer semester;
+    private Long pageId;
     private String pageName;
     private String eventTheme;
     private String eventDescription;

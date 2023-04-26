@@ -12,14 +12,16 @@ import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"events", "studentGroups", "reports"})
 @Table(name = "JournalsPages")
 public class JournalPage {
 
@@ -31,27 +33,18 @@ public class JournalPage {
     @Column(nullable = false)
     private String pageName;
 
-    @OneToMany(
-            fetch = FetchType.LAZY
-    )
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
-    private List<StudentGroup> studentGroups = new ArrayList<>();
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Set<StudentGroup> studentGroups = new HashSet<>();
 
     @OneToMany(
             mappedBy = "page",
-            fetch = FetchType.LAZY
-    )
+            fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
     private List<Event> events = new ArrayList<>();
-
-    @OneToMany(
-            fetch = FetchType.LAZY
-    )
-    @Fetch(value = FetchMode.SELECT)
-    @Cascade(value = CascadeType.SAVE_UPDATE)
-    private List<Report> reports = new ArrayList<>();
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

@@ -72,11 +72,11 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
     }
 
     private Department getDepartment(Teacher teacher) {
-        return departmentRepository.getByName(getDepartmentName(teacher)).get();
+        return departmentRepository.findById(getDepartmentId(teacher)).get();
     }
 
-    private String getDepartmentName(Teacher teacher) {
-        return teacher.getDepartment().getName();
+    private Long getDepartmentId(Teacher teacher) {
+        return teacher.getDepartment().getId();
     }
 
     private void makeNewTeachersJournal(Teacher teacher, RegisterPersonData data) {

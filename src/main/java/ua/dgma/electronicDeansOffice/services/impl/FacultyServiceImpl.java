@@ -92,8 +92,7 @@ public class FacultyServiceImpl implements FacultyService {
 
         Faculty newFaculty = getNewFaculty(data);
 
-        saveFaculty(newFaculty);
-        saveNewDeaneryWorkers(newFaculty, data);
+        saveAll(newFaculty, data);
     }
 
     private String getFacultyId(RegisterFacultyData data) {
@@ -103,20 +102,29 @@ public class FacultyServiceImpl implements FacultyService {
     private Faculty getNewFaculty(RegisterFacultyData data) {
         return data.getNewFaculty();
     }
-    private void saveFaculty(Faculty faculty) {
-        facultyRepository.save(faculty);
+
+    private void saveAll(Faculty faculty, RegisterFacultyData data) {
+        Faculty newFaculty = saveFaculty(faculty);
+
+        if (getDeaneryWorkersFromFaculty(faculty) != null)
+            for (DeaneryWorker worker : getDeaneryWorkersFromFaculty(faculty)) {
+                setFacultyForWorkers(worker, newFaculty);
+                deaneryWorkerService.register(new RegisterPersonData<>(worker, data.getBindingResult()));
+            }
     }
 
-    private void saveNewDeaneryWorkers(Faculty faculty, RegisterFacultyData data) {
-        if (getDeaneryWorkersFromFaculty(faculty) != null)
-            for (DeaneryWorker worker : getDeaneryWorkersFromFaculty(faculty))
-                deaneryWorkerService.register(new RegisterPersonData<>(worker, data.getBindingResult()));
+    private Faculty saveFaculty(Faculty faculty) {
+        facultyRepository.save(faculty);
+        return faculty;
     }
 
     private List<DeaneryWorker> getDeaneryWorkersFromFaculty(Faculty faculty) {
         return faculty.getDeaneryWorkers();
     }
 
+    private void setFacultyForWorkers(DeaneryWorker worker, Faculty faculty) {
+        worker.setFaculty(faculty);
+    }
 
     @Override
     @Transactional

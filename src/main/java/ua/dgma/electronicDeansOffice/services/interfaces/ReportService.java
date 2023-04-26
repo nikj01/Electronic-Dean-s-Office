@@ -10,6 +10,7 @@ public interface ReportService {
     Report findOne(Long reportId);
     List<Report> findByName(String reportName);
     List<Report> findByEvent(Long eventId);
+    List<Report> findByJournalPage(Long pageId);
     void create(RegisterReportData data);
     void update(UpdateReportData data);
     void delete(Long reportId);

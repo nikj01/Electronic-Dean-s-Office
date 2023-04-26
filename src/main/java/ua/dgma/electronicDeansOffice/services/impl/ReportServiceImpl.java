@@ -6,7 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.*;
-import ua.dgma.electronicDeansOffice.repositories.*;
+import ua.dgma.electronicDeansOffice.repositories.EventRepository;
+import ua.dgma.electronicDeansOffice.repositories.ReportRepository;
+import ua.dgma.electronicDeansOffice.repositories.StudentGroupRepository;
+import ua.dgma.electronicDeansOffice.repositories.StudentRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.report.RegisterReportData;
 import ua.dgma.electronicDeansOffice.services.impl.data.report.UpdateReportData;
 import ua.dgma.electronicDeansOffice.services.interfaces.EventDataService;
@@ -26,7 +29,6 @@ public class ReportServiceImpl implements ReportService {
     private final StudentGroupRepository groupRepository;
     private final StudentRepository studentRepository;
     private final EventRepository eventRepository;
-    private final JournalPageRepository pageRepository;
     private final EventDataService dataService;
     private String className;
     private String eventClassName;
@@ -36,14 +38,13 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     public ReportServiceImpl(ReportRepository reportRepository,
                              StudentGroupRepository groupRepository,
-                             StudentRepository studentRepository, EventRepository eventRepository,
-                             JournalPageRepository pageRepository,
+                             StudentRepository studentRepository,
+                             EventRepository eventRepository,
                              EventDataService dataService) {
         this.reportRepository = reportRepository;
         this.groupRepository = groupRepository;
         this.studentRepository = studentRepository;
         this.eventRepository = eventRepository;
-        this.pageRepository = pageRepository;
         this.dataService = dataService;
         this.className = Report.class.getSimpleName();
         this.eventClassName = Event.class.getSimpleName();
@@ -55,6 +56,7 @@ public class ReportServiceImpl implements ReportService {
     public Report findOne(Long reportId) {
         return reportRepository.findById(reportId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "id", reportId)));
     }
+
     @Override
     public List<Report> findByName(String reportName) {
         return reportRepository.getByReportNameContainingIgnoreCase(reportName).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "reportName", reportName)));
@@ -66,6 +68,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public List<Report> findByJournalPage(Long pageId) {
+        return reportRepository.getByEventData_PageId(pageId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "page_id", pageId)));
+    }
+
+    @Override
     @Transactional
     public void create(RegisterReportData data) {
         validateObjects(data);
@@ -73,11 +80,11 @@ public class ReportServiceImpl implements ReportService {
         Report newReport = new Report();
 
         setNewReportName(newReport, data);
-        setCreated(newReport);
         setStudentAttendance(newReport, data);
         setStudentMarks(newReport, data);
         setStudentGroup(newReport, data);
         setEventData(newReport, data);
+        setCreated(newReport);
 
         saveReport(newReport);
     }
@@ -178,11 +185,31 @@ public class ReportServiceImpl implements ReportService {
         Report existingReport = findOne(data.getReportId());
         Report updatedReport = data.getReport();
 
-        existingReport.setStudentAttendance(updatedReport.getStudentAttendance());
-        existingReport.setStudentMarks(updatedReport.getStudentMarks());
-        existingReport.setUpdated(LocalDateTime.now());
+        setStudentAttendance(existingReport, updatedReport);
+        setStudentMarks(existingReport, updatedReport);
+        setUpdated(existingReport);
 
         saveReport(existingReport);
+    }
+
+    private void setStudentAttendance(Report existingReport, Report updatedReport) {
+        existingReport.setStudentAttendance(getUpdatedAttendance(updatedReport));
+    }
+
+    private Map<Long, Boolean> getUpdatedAttendance(Report report) {
+        return report.getStudentAttendance();
+    }
+
+    private void setStudentMarks(Report existingReport, Report updatedReport) {
+        existingReport.setStudentMarks(getUpdatedMarks(updatedReport));
+    }
+
+    private Map<Long, Integer> getUpdatedMarks(Report report) {
+        return report.getStudentMarks();
+    }
+
+    private void setUpdated(Report existingReport) {
+        existingReport.setUpdated(LocalDateTime.now());
     }
 
     @Override

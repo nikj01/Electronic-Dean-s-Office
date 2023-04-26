@@ -59,4 +59,14 @@ public class FindAllData {
         this.searchFrom = searchFrom;
         this.searchTo = searchTo;
     }
+
+    public FindAllData(Long facultyId,
+                       LocalDateTime searchFrom,
+                       LocalDateTime searchTo,
+                       Boolean deleted) {
+        this.facultyId = facultyId;
+        this.searchFrom = searchFrom;
+        this.searchTo = searchTo;
+        this.deleted = deleted;
+    }
 }

@@ -66,11 +66,11 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
     }
 
     private StudentGroup getStudentGroup(Student student) {
-        return studentGroupRepository.getByName(getStudentGroupName(student)).get();
+        return studentGroupRepository.findById(getStudentGroupId(student)).get();
     }
 
-    private String getStudentGroupName(Student student) {
-        return student.getStudentGroup().getName();
+    private Long getStudentGroupId(Student student) {
+        return student.getStudentGroup().getId();
     }
 
     @Override

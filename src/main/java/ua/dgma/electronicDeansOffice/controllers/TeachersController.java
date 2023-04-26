@@ -35,31 +35,26 @@ public class TeachersController {
         this.teacherListMapper = teacherListMapper;
     }
 
-    @GetMapping("/findByUid")
+    @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    public TeacherGetDTO findTeacherByUid(@RequestParam("uid") Long uid) {
+    public TeacherGetDTO findTeacherByUid(@PathVariable("uid") Long uid) {
         return teacherMapper.toTeacherGetDTO(teacherService.findByUid(uid));
     }
 
-    @GetMapping("/slim/findByUid")
+    @GetMapping("/emails/{email}")
     @ResponseStatus(HttpStatus.FOUND)
-    public TeacherSlimGetDTO findSlimTeacherByUid(@RequestParam("uid") Long uid) {
-        return teacherMapper.toTeacherSlimGetDTO(teacherService.findByUid(uid));
-    }
-
-    @GetMapping("/findByEmail")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<TeacherSlimGetDTO> findSlimTeacherByEmail(@RequestParam("email") String email) {
+    public List<TeacherSlimGetDTO> findSlimTeacherByEmail(@PathVariable("email") String email) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findByEmail(email));
     }
 
-    @GetMapping("/findBySurname")
+    @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    public List<TeacherSlimGetDTO> findSlimTeacherBySurname(@RequestParam("surname") String surname) {
+    public List<TeacherSlimGetDTO> findSlimTeacherBySurname(@PathVariable("surname") String surname) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findBySurname(surname));
     }
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.FOUND)
     public List<TeacherSlimGetDTO> findAllSlimTeachers(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -76,8 +71,9 @@ public class TeachersController {
         teacherService.register(new RegisterPersonData<>(newTeacher, bindingResult));
     }
 
-    @PatchMapping("/update")
-    public void updateTeacher(@RequestParam("uid") Long uid,
+    @PatchMapping("{uid}/update")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateTeacher(@PathVariable("uid") Long uid,
                               @RequestBody @Valid  TeacherPatchDTO teacherPatchDTO,
                                                    BindingResult bindingResult) {
         Teacher newTeacher = teacherMapper.toTeacher(teacherPatchDTO);
@@ -85,13 +81,15 @@ public class TeachersController {
         teacherService.update(new UpdatePersonData<>(uid, newTeacher, bindingResult));
     }
 
-    @DeleteMapping("/delete")
-    public void deleteTeacher(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTeacher(@PathVariable("uid") Long uid) {
         teacherService.delete(uid);
     }
 
-    @DeleteMapping("/soft/delete")
-    public void softDeleteTeacher(@RequestParam("uid") Long uid) {
+    @DeleteMapping("{uid}/softDelete")
+    @ResponseStatus(HttpStatus.OK)
+    public void softDeleteTeacher(@PathVariable("uid") Long uid) {
         teacherService.softDelete(uid);
     }
 }

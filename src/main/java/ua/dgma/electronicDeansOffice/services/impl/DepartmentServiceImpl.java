@@ -101,8 +101,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         setFacultyInDepartment(newDepartment);
 
-        saveDepartment(newDepartment);
-        saveNewTeachers(newDepartment, data);
+        saveAll(newDepartment, data);
     }
 
     private String getDepartmentId(RegisterDepartmentData data) {
@@ -125,18 +124,27 @@ public class DepartmentServiceImpl implements DepartmentService {
         return department.getFaculty().getId();
     }
 
-    private void saveDepartment(Department department) {
-        departmentRepository.save(department);
+    private void saveAll(Department department, RegisterDepartmentData data) {
+        Department newDepartment = saveDepartment(department);
+
+        if (getTeachersFromDepartment(department) != null)
+            for (Teacher teacher : getTeachersFromDepartment(department)) {
+                setDepartmentForTeacher(teacher, newDepartment);
+                teacherService.register(new RegisterPersonData<>(teacher, data.getBindingResult()));
+            }
     }
 
-    private void saveNewTeachers(Department department, RegisterDepartmentData data) {
-        if (getTeachersFromDepartment(department) != null)
-            for (Teacher teacher : getTeachersFromDepartment(department))
-                teacherService.register(new RegisterPersonData<>(teacher, data.getBindingResult()));
+    private Department saveDepartment(Department department) {
+        departmentRepository.save(department);
+        return department;
     }
 
     private List<Teacher> getTeachersFromDepartment(Department department) {
         return department.getTeachers();
+    }
+
+    private void setDepartmentForTeacher(Teacher teacher, Department department) {
+        teacher.setDepartment(department);
     }
 
     @Override

@@ -31,9 +31,9 @@ public class EventsController {
         this.reportService = reportService;
     }
 
-    @GetMapping("/findById")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    public EventGetDTO findEventById(@RequestParam("id") Long eventId) {
+    public EventGetDTO findEventById(@PathVariable("id") Long eventId) {
         return eventMapper.toEventGetDTO(eventService.findOne(eventId));
     }
 
@@ -45,9 +45,9 @@ public class EventsController {
         eventService.register(new RegisterEventData(newEvent, bindingResult));
     }
 
-    @PatchMapping("/update")
+    @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
-    public void updateEvent(@RequestParam("id") Long eventId,
+    public void updateEvent(@PathVariable("id") Long eventId,
                             @RequestBody @Valid EventPatchDTO eventPatchDTO,
                             BindingResult bindingResult) {
         Event updatedEvent = eventMapper.toEvent(eventPatchDTO);
@@ -55,9 +55,9 @@ public class EventsController {
         eventService.update(new UpdateEventData(eventId, updatedEvent, bindingResult));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("{id}/delete")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteEvent(@RequestParam("id") Long eventId) {
+    public void deleteEvent(@PathVariable("id") Long eventId) {
         eventService.delete(eventId);
     }
 }
