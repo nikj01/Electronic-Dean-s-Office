@@ -24,24 +24,20 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"students", "events"})
 @Table(name = "StundentGroups", indexes = {
-        @Index(columnList = "name DESC", name = "studentGroupNameIndex")
-})
+        @Index(columnList = "name DESC", name = "studentGroupNameIndex")})
 public class StudentGroup {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "groupSeq")
+    @SequenceGenerator(name = "groupSeq", sequenceName = "groupSeqq", initialValue = 1)
     private Long id;
 
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             unique = true,
-            nullable = false
-    )
+            nullable = false)
     private String name;
 
-    @OneToOne(
-            fetch = FetchType.LAZY
-    )
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             unique = true,
             referencedColumnName = "uid"
@@ -53,10 +49,10 @@ public class StudentGroup {
     @OneToMany(
             mappedBy = "studentGroup",
             fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
+            orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<Student> students = new ArrayList<>();
 
     @ManyToOne
@@ -70,21 +66,28 @@ public class StudentGroup {
     @JoinColumn(nullable = false)
     private Department department;
 
-    @ManyToMany(mappedBy = "studentGroups")
+    @ManyToMany(
+            mappedBy = "studentGroups",
+            fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
-    @Cascade(value = CascadeType.SAVE_UPDATE)
+    @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private Set<JournalPage> pages = new HashSet<>();
 
     @ManyToMany(
             mappedBy = "studentGroups",
             fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<Event> events;
 
     @OneToMany(
             mappedBy = "studentGroup",
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     @Cascade(value = CascadeType.SAVE_UPDATE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<Report> reports;
 
     @Column(nullable = false)

@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -17,11 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "People", indexes = {
-        @Index(columnList = "surname DESC", name="peopleSurnameIndex")
-})
+        @Index(columnList = "surname DESC", name="peopleSurnameIndex")})
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Person implements Comparable<Person> {
-
     @Id
     @NotNull(message = "The field |UID| cannot be empty!")
     @Column(
@@ -50,6 +50,7 @@ public class Person implements Comparable<Person> {
     @ElementCollection(targetClass = PersonRoleEnum.class)
     @CollectionTable(name = "personRoles")
     @Column(name = "roles", nullable = false)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<PersonRoleEnum> personRoles;
 
     @NotBlank(message = "The field |PASSWORD| cannot be empty!")

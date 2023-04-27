@@ -4,13 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -25,7 +25,8 @@ import java.util.TreeMap;
 @Table(name = "Reports")
 public class Report {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reportSeq")
+    @SequenceGenerator(name = "reportSeq", sequenceName = "reportSeqq", initialValue = 1)
     private Long id;
 
     @NotBlank(message = "The field |REPORT NAME| cannot be empty!")
@@ -58,6 +59,7 @@ public class Report {
     @MapKeyJoinColumn(name = "student_uid")
     @Column(name = "attendance")
     @Fetch(FetchMode.SUBSELECT)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private Map<Long, Boolean> studentAttendance = new TreeMap<>();
 
     @ElementCollection
@@ -67,5 +69,6 @@ public class Report {
     @MapKeyJoinColumn(name = "student_uid")
     @Column(name = "mark")
     @Fetch(FetchMode.SUBSELECT)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private Map<Long, Integer> studentMarks = new TreeMap<>();
 }

@@ -80,6 +80,11 @@ public class StudentGroupServiceImpl implements StudentGroupService {
             return findAllWithSpecAndPagination(getSpec(data), data);
     }
 
+    @Override
+    public List<StudentGroup> findByFaculty(Long facultyId) {
+        return studentGroupRepository.getByDepartment_Faculty_Id(facultyId).get();
+    }
+
     private List<StudentGroup> findAllWithSpec(Specification spec) {
         return studentGroupRepository.findAll(spec, Sort.by("name"));
     }

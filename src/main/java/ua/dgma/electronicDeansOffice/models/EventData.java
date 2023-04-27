@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -20,7 +22,8 @@ import java.time.LocalDateTime;
 @Table(name = "EventData")
 public class EventData implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "edSeq")
+    @SequenceGenerator(name = "edSeq", sequenceName = "edSeqq", initialValue = 1)
     private Long id;
 
     @NotNull(message = "The field |SEMESTER| cannot be empty!")
@@ -59,5 +62,6 @@ public class EventData implements Serializable {
     @NotNull(message = "The field |TEACHER| cannot be empty!")
     @JoinColumn(nullable = false)
     @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Teacher teacher;
 }

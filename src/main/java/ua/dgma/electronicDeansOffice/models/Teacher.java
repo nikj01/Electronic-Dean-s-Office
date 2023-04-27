@@ -20,7 +20,6 @@ import java.util.List;
 @EqualsAndHashCode(exclude = {"studentGroup", "department"})
 @Table(name = "Teachers")
 public class Teacher extends Person {
-
     @NotNull(message = "The field |DEPARTMENT| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -36,6 +35,7 @@ public class Teacher extends Person {
     )
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
 }

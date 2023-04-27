@@ -4,13 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -25,7 +25,8 @@ import java.util.List;
 @Table(name = "Events")
 public class Event {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventSeq")
+    @SequenceGenerator(name = "eventSeq", sequenceName = "eventSeqq", initialValue = 1)
     private Long id;
 
     @NotNull(message = "The field |SEMESTER| cannot be empty!")
@@ -45,7 +46,8 @@ public class Event {
 
     @ManyToMany
     @Cascade(value = CascadeType.SAVE_UPDATE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @NotNull(message = "The field |DATE| cannot be empty!")

@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = false)
 @Table(name = "DeaneryWorkers")
 public class DeaneryWorker extends Person {
-
     @NotNull(message = "The field |FACULTY| cannot be empty!")
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

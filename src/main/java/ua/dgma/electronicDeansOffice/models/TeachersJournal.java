@@ -20,9 +20,9 @@ import java.util.List;
 @EqualsAndHashCode(exclude = {"teacher", "pages"})
 @Table(name = "TeachersJournals")
 public class TeachersJournal {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "journalSeq")
+    @SequenceGenerator(name = "journalSeq", sequenceName = "journalSeqq", initialValue = 1)
     private Long id;
 
     @OneToOne(
@@ -40,6 +40,7 @@ public class TeachersJournal {
     )
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<JournalPage> pages = new ArrayList<>();
 
     @Column(nullable = false)

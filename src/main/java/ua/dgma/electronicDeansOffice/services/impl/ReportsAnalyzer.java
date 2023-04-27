@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.extractWithGrades.Extract;
-import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
-import ua.dgma.electronicDeansOffice.models.Report;
-import ua.dgma.electronicDeansOffice.models.Student;
-import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import ua.dgma.electronicDeansOffice.models.*;
 import ua.dgma.electronicDeansOffice.repositories.ReportRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentStatistics;
@@ -19,7 +16,9 @@ import java.util.*;
 
 @Component
 @Transactional(readOnly = true)
-public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyzerForGroups, ReportsAnalyzerForFaculty {
+public class ReportsAnalyzer implements ReportsAnalyzerForStudent,
+                                        ReportsAnalyzerForGroups,
+                                        ReportsAnalyzerForFaculty {
     private final ReportRepository reportRepository;
     private final StudentGroupService studentGroupService;
     private final PeopleService<Student> studentService;
@@ -204,7 +203,8 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
     @Override
     public Map<Long, Double> getAvgGradeForStudent(DataForStudentStatistics data) {
         Map<Long, Double> studentAvgGrade = new HashMap<>();
-        List<Report> reports = findFinals(data);
+        List<Report> reports = getReports(data);
+
         Student student = findStudent(data);
         double totalGrade = 0;
 
@@ -219,7 +219,30 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
         return studentAvgGrade;
     }
 
+    private List<Report> getReports(DataForStudentStatistics data) {
+        if (data.getReports() == null)
+            return findFinals(data);
+        else
+            return data.getReports();
+    }
+
     private List<Report> findFinals(DataForStudentStatistics data) {
+        List<Report> reports = new ArrayList<>();
+        if (getSearchFrom(data) == null) {
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.EXAM).get());
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.TEST).get());
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.COURSEWORK).get());
+            }
+        else {
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndCreatedBetween(getGroupId(data), EventTypeEnum.EXAM, getSearchFrom(data), getSearchTo(data)).get());
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndCreatedBetween(getGroupId(data), EventTypeEnum.TEST, getSearchFrom(data), getSearchTo(data)).get());
+            reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventTypeAndCreatedBetween(getGroupId(data), EventTypeEnum.COURSEWORK, getSearchFrom(data), getSearchTo(data)).get());
+        }
+
+        return reports;
+    }
+
+    private List<Report> findFinals(DataForGroupStatistics data) {
         List<Report> reports = new ArrayList<>();
         if (getSearchFrom(data) == null) {
             reports.addAll(reportRepository.getByStudentGroup_IdAndEventData_EventType(getGroupId(data), EventTypeEnum.EXAM).get());
@@ -239,8 +262,12 @@ public class ReportsAnalyzer implements ReportsAnalyzerForStudent, ReportsAnalyz
     public Map<Long, Double> getAvgGradeForStudentsOnFaculty(FindAllData data) {
         Map<Long, Double> facultyAttendance = new HashMap<>();
 
-        for (Long studentId : getStudentsUids(data))
-            facultyAttendance.putAll(getAvgGradeForStudent(new DataForStudentStatistics(studentId, getSearchFrom(data), getSearchTo(data))));
+        List<StudentGroup> groups =  studentGroupService.findByFaculty(data.getFacultyId());
+        for (StudentGroup group : groups) {
+            List<Report> reports = findFinals(new DataForGroupStatistics(group.getId(), getSearchFrom(data), getSearchTo(data)));
+            for (Long studentId : getStudentsUids(data))
+                facultyAttendance.putAll(getAvgGradeForStudent(new DataForStudentStatistics(studentId, getSearchFrom(data), getSearchTo(data))));
+        }
 
         return facultyAttendance;
     }

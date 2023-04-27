@@ -1,6 +1,7 @@
 package ua.dgma.electronicDeansOffice.services.interfaces;
 
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.extractWithGrades.Extract;
+import ua.dgma.electronicDeansOffice.models.Report;
 import ua.dgma.electronicDeansOffice.services.impl.data.student.DataForStudentStatistics;
 
 import java.util.List;
