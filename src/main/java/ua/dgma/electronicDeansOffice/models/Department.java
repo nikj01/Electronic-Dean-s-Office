@@ -26,7 +26,7 @@ import java.util.List;
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "depSeq")
-    @SequenceGenerator(name = "depSeq", sequenceName = "depSeqq", initialValue = 1)
+    @SequenceGenerator(name = "depSeq", sequenceName = "depSeqq", initialValue = 21)
     private Long id;
 
     @NotBlank(message = "The field |NAME| cannot be empty!")
@@ -36,7 +36,7 @@ public class Department {
     private String name;
 
     @NotNull(message = "The field |FACULTY| cannot be empty!")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Faculty faculty;

@@ -9,7 +9,9 @@ import java.util.Map;
 
 public interface ReportsAnalyzerForStudent {
     Map<Long, Double> getAvgAttendanceForStudent(DataForStudentStatistics data);
+    Map<Long, Double> getAvgAttendanceForStudent(Long studentId, List<Report> reports);
     Map<Long, Double> getAvgGradeForStudent(DataForStudentStatistics data);
+    Map<Long, Double> getAvgGradeForStudent(Long studentId, List<Report> reports);
     List<Extract> getExtractWithGradesForStudent(DataForStudentStatistics data);
 
 

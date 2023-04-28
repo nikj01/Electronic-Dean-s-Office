@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -22,11 +22,13 @@ import java.util.TreeMap;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-@Table(name = "Reports")
+@Table(name = "Reports", indexes = {
+        @Index(columnList = "created, student_group_id", name = "createdAngGroupIndex"),
+        @Index(columnList = "student_group_id", name = "studentGroupIndex")})
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reportSeq")
-    @SequenceGenerator(name = "reportSeq", sequenceName = "reportSeqq", initialValue = 1)
+    @SequenceGenerator(name = "reportSeq", sequenceName = "reportSeqq", initialValue = 15)
     private Long id;
 
     @NotBlank(message = "The field |REPORT NAME| cannot be empty!")
@@ -34,12 +36,13 @@ public class Report {
     private String reportName;
 
     @NotNull(message = "The field |EVENT DATA| cannot be empty!")
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(nullable = false)
     private EventData eventData;
 
     @NotNull(message = "The field |STUDENT GROUP| cannot be empty!")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private StudentGroup studentGroup;

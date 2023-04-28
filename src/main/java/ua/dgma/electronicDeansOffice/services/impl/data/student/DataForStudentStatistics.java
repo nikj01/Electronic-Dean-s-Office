@@ -24,14 +24,4 @@ public class DataForStudentStatistics {
         this.searchFrom = searchFrom;
         this.searchTo = searchTo;
     }
-
-    public DataForStudentStatistics(@NonNull Long studentId,
-                                    LocalDateTime searchFrom,
-                                    LocalDateTime searchTo,
-                                    List<Report> reports) {
-        this.studentId = studentId;
-        this.searchFrom = searchFrom;
-        this.searchTo = searchTo;
-        this.reports = reports;
-    }
 }

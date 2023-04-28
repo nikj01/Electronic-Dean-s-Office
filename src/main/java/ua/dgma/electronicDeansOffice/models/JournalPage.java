@@ -26,7 +26,7 @@ import java.util.Set;
 public class JournalPage {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pageSeq")
-    @SequenceGenerator(name = "pageSeq", sequenceName = "pageSeqq", initialValue = 1)
+    @SequenceGenerator(name = "pageSeq", sequenceName = "pageSeqq", initialValue = 203)
     private Long id;
 
     @NotBlank(message = "The field |PAGE NAME| cannot be empty!")
@@ -35,7 +35,8 @@ public class JournalPage {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
     private Set<StudentGroup> studentGroups = new HashSet<>();
 
@@ -48,7 +49,7 @@ public class JournalPage {
     @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<Event> events = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private TeachersJournal journal;

@@ -6,6 +6,7 @@ import ua.dgma.electronicDeansOffice.exceptions.NotFoundException;
 import ua.dgma.electronicDeansOffice.exceptions.data.ExceptionData;
 import ua.dgma.electronicDeansOffice.models.Event;
 import ua.dgma.electronicDeansOffice.models.EventData;
+import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.EventDataRepository;
 import ua.dgma.electronicDeansOffice.repositories.EventRepository;
 import ua.dgma.electronicDeansOffice.services.interfaces.EventDataService;
@@ -42,7 +43,8 @@ public class EventDataServiceImpl implements EventDataService {
         setEventDescription(data, event);
         setEventType(data, event);
         setEventDate(data, event);
-        setTeacher(data, event);
+        setTeachersUid(data, event);
+        setTeachersFIO(data, event);
 
         dataRepository.save(data);
         return data;
@@ -76,8 +78,15 @@ public class EventDataServiceImpl implements EventDataService {
         data.setEventDate(event.getDate());
     }
 
-    private void setTeacher(EventData data, Event event) {
-        data.setTeacher(event.getPage().getJournal().getTeacher());
+    private void setTeachersUid(EventData data, Event event) {
+        data.setTeachersUid(event.getPage().getJournal().getTeacher().getUid());
+    }
+    private void setTeachersFIO(EventData data, Event event) {
+        data.setTeachersFIO(getTeachersSurnameAndInitials(event.getPage().getJournal().getTeacher()));
+    }
+
+    private String getTeachersSurnameAndInitials(Teacher teacher) {
+        return teacher.getSurname()+ " " + teacher.getName().charAt(0) + "." + teacher.getPatronymic().charAt(0) + ".";
     }
 
     @Override

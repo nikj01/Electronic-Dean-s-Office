@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.*;
+import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.Entity;
 import javax.persistence.Index;
@@ -28,7 +29,7 @@ import java.util.Set;
 public class StudentGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "groupSeq")
-    @SequenceGenerator(name = "groupSeq", sequenceName = "groupSeqq", initialValue = 1)
+    @SequenceGenerator(name = "groupSeq", sequenceName = "groupSeqq", initialValue = 11)
     private Long id;
 
     @NotBlank(message = "The field |NAME| cannot be empty!")
@@ -40,8 +41,7 @@ public class StudentGroup {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             unique = true,
-            referencedColumnName = "uid"
-    )
+            referencedColumnName = "uid")
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Student groupLeader;
@@ -51,17 +51,17 @@ public class StudentGroup {
             fetch = FetchType.LAZY,
             orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<Student> students = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JoinColumn
     private Teacher curator;
 
     @NotNull(message = "The field |DEPARTMENT| cannot be empty!")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Department department;
@@ -80,15 +80,15 @@ public class StudentGroup {
             fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
-    private List<Event> events;
+    private List<Event> events = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "studentGroup",
             fetch = FetchType.LAZY,
             orphanRemoval = true)
-    @Cascade(value = CascadeType.SAVE_UPDATE)
+    @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
     @LazyCollection(value = LazyCollectionOption.TRUE)
-    private List<Report> reports;
+    private List<Report> reports = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted;

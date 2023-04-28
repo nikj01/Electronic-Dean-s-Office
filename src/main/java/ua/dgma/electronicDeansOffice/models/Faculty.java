@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
 
-import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 public class Faculty {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "facultySeq")
-    @SequenceGenerator(name = "facultySeq", sequenceName = "facultySeqq", initialValue = 1)
+    @SequenceGenerator(name = "facultySeq", sequenceName = "facultySeqq", initialValue = 6)
     private Long id;
 
     @NotBlank(message = "The field |NAME| cannot be empty!")

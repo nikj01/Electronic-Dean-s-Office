@@ -12,7 +12,6 @@ public class FindAllData {
     private Integer objectsPerPage;
     private Boolean deleted;
     private Long facultyId;
-    private Integer semester;
     private LocalDateTime searchFrom;
     private LocalDateTime searchTo;
 
@@ -28,36 +27,10 @@ public class FindAllData {
 
     public FindAllData(Integer page,
                        Integer objectsPerPage,
-                       Boolean deleted,
-                       Long facultyId,
-                       Integer semester,
-                       LocalDateTime searchFrom,
-                       LocalDateTime searchTo) {
-        this.page = page;
-        this.objectsPerPage = objectsPerPage;
-        this.deleted = deleted;
-        this.facultyId = facultyId;
-        this.semester = semester;
-        this.searchFrom = searchFrom;
-        this.searchTo = searchTo;
-    }
-
-    public FindAllData(Integer page,
-                       Integer objectsPerPage,
                        Boolean deleted) {
         this.page = page;
         this.objectsPerPage = objectsPerPage;
         this.deleted = deleted;
-    }
-
-    public FindAllData(Long facultyId,
-                       Integer semester,
-                       LocalDateTime searchFrom,
-                       LocalDateTime searchTo) {
-        this.facultyId = facultyId;
-        this.semester = semester;
-        this.searchFrom = searchFrom;
-        this.searchTo = searchTo;
     }
 
     public FindAllData(Long facultyId,

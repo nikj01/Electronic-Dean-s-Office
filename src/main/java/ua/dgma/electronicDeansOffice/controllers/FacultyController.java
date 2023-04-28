@@ -64,7 +64,7 @@ public class FacultyController {
 
     @GetMapping("{id}/attendance")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<Long, Double> showStudentsAvgAttendanceOnFaculty(@PathVariable(value = "faculty", required = false) Long facultyId,
+    public Map<Long, Double> showStudentsAvgAttendanceOnFaculty(@PathVariable(value = "id", required = false) Long facultyId,
                                                                 @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                                 @RequestParam(value = "from", required = false) String searchFrom,
                                                                 @RequestParam(value = "to", required = false) String searchTo) {
@@ -74,7 +74,7 @@ public class FacultyController {
 
     @GetMapping("{id}/avgGrades")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<Long, Double> showStudentsAvgGradesOnFaculty(@PathVariable(value = "faculty", required = false) Long facultyId,
+    public Map<Long, Double> showStudentsAvgGradesOnFaculty(@PathVariable(value = "id", required = false) Long facultyId,
                                                             @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                             @RequestParam(value = "from", required = false) String searchFrom,
                                                             @RequestParam(value = "to", required = false) String searchTo) {
@@ -83,7 +83,7 @@ public class FacultyController {
 
     @GetMapping("{id}/groupsAttendance")
     @ResponseStatus(HttpStatus.FOUND)
-    public Map<Long, Double> showGroupsAvgAttendanceOnFaculty(@PathVariable(value = "faculty", required = false) Long facultyId,
+    public Map<Long, Double> showGroupsAvgAttendanceOnFaculty(@PathVariable(value = "id", required = false) Long facultyId,
                                                               @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                               @RequestParam(value = "from", required = false) String searchFrom,
                                                               @RequestParam(value = "to", required = false) String searchTo) {

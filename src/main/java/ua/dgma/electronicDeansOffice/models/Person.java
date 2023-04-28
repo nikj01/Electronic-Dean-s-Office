@@ -26,8 +26,7 @@ public class Person implements Comparable<Person> {
     @NotNull(message = "The field |UID| cannot be empty!")
     @Column(
             nullable = false,
-            unique = true
-    )
+            unique = true)
     private Long uid;
 
     @NotBlank(message = "The field |SURNAME| cannot be empty!")
