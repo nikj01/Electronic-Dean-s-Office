@@ -5,5 +5,6 @@ public enum PersonRoleEnum {
     ADMIN,
     DEANERY_WORKER,
     TEACHER,
-    STUDENT;
+    STUDENT,
+    HEAD_OF_THE_DEPARTMENT;
 }

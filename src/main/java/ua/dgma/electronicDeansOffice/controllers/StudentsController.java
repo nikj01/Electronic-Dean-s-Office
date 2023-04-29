@@ -2,6 +2,7 @@ package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.extractWithGrades.Extract;
@@ -46,6 +47,7 @@ public class StudentsController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
+    @PreAuthorize("hasRole('')")
     public StudentGetDTO findStudentByUid(@PathVariable("uid") Long uid) {
         return studentMapper.toStudentGetDTO(studentService.findByUid(uid));
     }
