@@ -9,6 +9,10 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPagePatch
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.journalPage.JournalPagePostDto;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.JournalPageMapper;
 import ua.dgma.electronicDeansOffice.models.JournalPage;
+import ua.dgma.electronicDeansOffice.security.annotations.IsAdmin;
+import ua.dgma.electronicDeansOffice.security.annotations.IsDeaneryWorker;
+import ua.dgma.electronicDeansOffice.security.annotations.IsRoot;
+import ua.dgma.electronicDeansOffice.security.annotations.IsTeacher;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.RegisterJournalPageData;
 import ua.dgma.electronicDeansOffice.services.impl.data.journalPage.UpdateJournalPageData;
 import ua.dgma.electronicDeansOffice.services.interfaces.JournalPageService;
@@ -30,12 +34,19 @@ public class JournalPageController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    @IsTeacher
     public JournalPageGetDto findJournalPageById(@PathVariable("id") Long id) {
         return pageMapper.toPageGetDTO(pageService.findOne(id));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void registerNewJournalPage(@RequestBody @Valid JournalPagePostDto journalPagePostDto,
                                        BindingResult bindingResult) {
         JournalPage newJournalPage = pageMapper.toJournalPage(journalPagePostDto);
@@ -45,6 +56,9 @@ public class JournalPageController {
 
     @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void updateJournalPage(@PathVariable("id") Long id,
                                   @RequestBody @Valid JournalPagePatchDto journalPagePatchDto,
                                   BindingResult bindingResult) {
@@ -55,6 +69,9 @@ public class JournalPageController {
 
     @DeleteMapping("{id}/delete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void delete(@PathVariable("id") Long id) {
         pageService.delete(id);
     }

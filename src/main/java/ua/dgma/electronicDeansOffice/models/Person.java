@@ -11,7 +11,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -42,15 +44,17 @@ public class Person implements Comparable<Person> {
     private String patronymic;
 
     @NotBlank(message = "The field |EMAIL| cannot be empty!")
-    @Column(nullable = false)
+    @Column(
+            nullable = false,
+            unique = true)
     private String email;
 
     @NotNull(message = "The filed |ROLE| cannot be empty!")
-    @ElementCollection(targetClass = PersonRoleEnum.class)
+    @ElementCollection(targetClass = PersonRoleEnum.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "personRoles")
     @Column(name = "roles", nullable = false)
-    @LazyCollection(value = LazyCollectionOption.TRUE)
-    private List<PersonRoleEnum> personRoles;
+//    @LazyCollection(value = LazyCollectionOption.TRUE)
+    private Set<PersonRoleEnum> personRoles = new HashSet<>();
 
     @NotBlank(message = "The field |PASSWORD| cannot be empty!")
     @Column(nullable = false)

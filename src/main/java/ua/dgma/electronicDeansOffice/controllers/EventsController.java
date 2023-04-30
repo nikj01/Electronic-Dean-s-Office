@@ -9,6 +9,10 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.event.EventPatchDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.event.EventPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.EventMapper;
 import ua.dgma.electronicDeansOffice.models.Event;
+import ua.dgma.electronicDeansOffice.security.annotations.AllPerople;
+import ua.dgma.electronicDeansOffice.security.annotations.IsAdmin;
+import ua.dgma.electronicDeansOffice.security.annotations.IsRoot;
+import ua.dgma.electronicDeansOffice.security.annotations.IsTeacher;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.RegisterEventData;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.UpdateEventData;
 import ua.dgma.electronicDeansOffice.services.interfaces.EventService;
@@ -33,12 +37,14 @@ public class EventsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public EventGetDTO findEventById(@PathVariable("id") Long eventId) {
         return eventMapper.toEventGetDTO(eventService.findOne(eventId));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsTeacher
     public void registerNewEvent(@RequestBody @Valid EventPostDTO eventPostDTO, BindingResult bindingResult) {
         Event newEvent = eventMapper.toEvent(eventPostDTO);
 
@@ -47,6 +53,9 @@ public class EventsController {
 
     @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void updateEvent(@PathVariable("id") Long eventId,
                             @RequestBody @Valid EventPatchDTO eventPatchDTO,
                             BindingResult bindingResult) {
@@ -57,6 +66,9 @@ public class EventsController {
 
     @DeleteMapping("{id}/delete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void deleteEvent(@PathVariable("id") Long eventId) {
         eventService.delete(eventId);
     }

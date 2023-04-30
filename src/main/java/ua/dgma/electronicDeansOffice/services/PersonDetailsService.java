@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.models.Person;
 import ua.dgma.electronicDeansOffice.repositories.PeopleRepository;
 import ua.dgma.electronicDeansOffice.security.PersonDetails;
@@ -21,6 +22,7 @@ public class PersonDetailsService implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Person> person = peopleRepository.findById(Long.parseLong(username));
 

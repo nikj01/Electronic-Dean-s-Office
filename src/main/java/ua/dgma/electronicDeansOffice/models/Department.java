@@ -48,6 +48,7 @@ public class Department {
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @OneToMany(
@@ -57,6 +58,7 @@ public class Department {
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<Teacher> teachers = new ArrayList<>();
 
     @Column(nullable = false)

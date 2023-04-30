@@ -11,6 +11,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.teacher.TeacherSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.TeacherListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.TeacherMapper;
 import ua.dgma.electronicDeansOffice.models.Teacher;
+import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
@@ -37,24 +38,28 @@ public class TeachersController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public TeacherGetDTO findTeacherByUid(@PathVariable("uid") Long uid) {
         return teacherMapper.toTeacherGetDTO(teacherService.findByUid(uid));
     }
 
     @GetMapping("/emails/{email}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public List<TeacherSlimGetDTO> findSlimTeacherByEmail(@PathVariable("email") String email) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findByEmail(email));
     }
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public List<TeacherSlimGetDTO> findSlimTeacherBySurname(@PathVariable("surname") String surname) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findBySurname(surname));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public List<TeacherSlimGetDTO> findAllSlimTeachers(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -64,6 +69,10 @@ public class TeachersController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    @IsHeadOfTheDepartment
     public void registerNewTeacher(@RequestBody @Valid TeacherPostDTO teacherPostDTO,
                                                        BindingResult bindingResult) {
         Teacher newTeacher = teacherMapper.toTeacher(teacherPostDTO);
@@ -73,6 +82,10 @@ public class TeachersController {
 
     @PatchMapping("{uid}/update")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    @IsHeadOfTheDepartment
     public void updateTeacher(@PathVariable("uid") Long uid,
                               @RequestBody @Valid  TeacherPatchDTO teacherPatchDTO,
                                                    BindingResult bindingResult) {
@@ -83,12 +96,18 @@ public class TeachersController {
 
     @DeleteMapping("{uid}/delete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
     public void deleteTeacher(@PathVariable("uid") Long uid) {
         teacherService.delete(uid);
     }
 
     @DeleteMapping("{uid}/softDelete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    @IsHeadOfTheDepartment
     public void softDeleteTeacher(@PathVariable("uid") Long uid) {
         teacherService.softDelete(uid);
     }

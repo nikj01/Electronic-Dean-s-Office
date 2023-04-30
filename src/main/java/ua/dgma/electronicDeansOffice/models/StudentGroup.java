@@ -53,6 +53,7 @@ public class StudentGroup {
     @Fetch(value = FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<Student> students = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

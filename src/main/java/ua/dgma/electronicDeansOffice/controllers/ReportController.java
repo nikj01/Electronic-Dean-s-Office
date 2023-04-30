@@ -10,6 +10,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.report.ReportSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.ReportListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.ReportMapper;
 import ua.dgma.electronicDeansOffice.models.Report;
+import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.data.report.RegisterReportData;
 import ua.dgma.electronicDeansOffice.services.impl.data.report.UpdateReportData;
 import ua.dgma.electronicDeansOffice.services.interfaces.ReportService;
@@ -35,30 +36,37 @@ public class ReportController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public ReportGetDTO findReportById(@PathVariable("id") Long reportId) {
         return reportMapper.toReportGetDTO(reportService.findOne(reportId));
     }
 
     @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<ReportSlimGetDTO> findReportsByName(@PathVariable("name") String reportName) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByName(reportName));
     }
 
     @GetMapping("/events/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<ReportSlimGetDTO> findReportsByEvent(@PathVariable("id") Long eventId) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByEvent(eventId));
     }
 
     @GetMapping("/pages/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public List<ReportSlimGetDTO> findReportsByPage(@PathVariable("id") Long pageId) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByJournalPage(pageId));
     }
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void createReport(@RequestBody @Valid ReportPostDTO reportPostDTO) {
         RegisterReportData data = reportMapper.toReport(reportPostDTO);
 
@@ -67,6 +75,9 @@ public class ReportController {
 
     @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void updateReport(@PathVariable("id") Long reportId,
                              @RequestBody @Valid ReportPatchDTO reportPatchDTO) {
         Report updatedReport = reportMapper.toReport(reportPatchDTO);
@@ -76,6 +87,9 @@ public class ReportController {
 
     @DeleteMapping("{id}/delete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsTeacher
     public void deleteReport(@PathVariable("id") Long reportId) {
         reportService.delete(reportId);
     }

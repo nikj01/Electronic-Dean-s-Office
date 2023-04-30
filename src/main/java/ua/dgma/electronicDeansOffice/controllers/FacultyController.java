@@ -11,6 +11,10 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultySlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.FacultyListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.FacultyMapper;
 import ua.dgma.electronicDeansOffice.models.Faculty;
+import ua.dgma.electronicDeansOffice.security.annotations.AllPerople;
+import ua.dgma.electronicDeansOffice.security.annotations.IsAdmin;
+import ua.dgma.electronicDeansOffice.security.annotations.IsDeaneryWorker;
+import ua.dgma.electronicDeansOffice.security.annotations.IsRoot;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.faculty.RegisterFacultyData;
 import ua.dgma.electronicDeansOffice.services.impl.data.faculty.UpdateFacultyData;
@@ -44,18 +48,21 @@ public class FacultyController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public FacultyGetDTO findFacultyById(@PathVariable("id") Long id) {
         return facultyMapper.toFacultyGetDTO(facultyService.findOne(id));
     }
 
     @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<FacultySlimGetDTO> findSlimFacultyByName(@PathVariable("name") String name) {
         return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findByName(name));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
                                                         @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
                                                         @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted) {
@@ -64,6 +71,9 @@ public class FacultyController {
 
     @GetMapping("{id}/attendance")
     @ResponseStatus(HttpStatus.FOUND)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public Map<Long, Double> showStudentsAvgAttendanceOnFaculty(@PathVariable(value = "id", required = false) Long facultyId,
                                                                 @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                                 @RequestParam(value = "from", required = false) String searchFrom,
@@ -74,6 +84,9 @@ public class FacultyController {
 
     @GetMapping("{id}/avgGrades")
     @ResponseStatus(HttpStatus.FOUND)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public Map<Long, Double> showStudentsAvgGradesOnFaculty(@PathVariable(value = "id", required = false) Long facultyId,
                                                             @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                             @RequestParam(value = "from", required = false) String searchFrom,
@@ -83,6 +96,9 @@ public class FacultyController {
 
     @GetMapping("{id}/groupsAttendance")
     @ResponseStatus(HttpStatus.FOUND)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public Map<Long, Double> showGroupsAvgAttendanceOnFaculty(@PathVariable(value = "id", required = false) Long facultyId,
                                                               @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
                                                               @RequestParam(value = "from", required = false) String searchFrom,
@@ -92,6 +108,7 @@ public class FacultyController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
     public void registerNewFaculty(@RequestBody @Valid FacultyPostDTO newPostFaculty,
                                                        BindingResult bindingResult) {
         Faculty newFaculty = facultyMapper.toFaculty(newPostFaculty);
@@ -100,6 +117,8 @@ public class FacultyController {
     }
 
     @PatchMapping("{id}/update")
+    @IsRoot
+    @IsAdmin
     public void updateFaculty(@PathVariable("id") Long facultyId,
                               @RequestBody @Valid FacultyPatchDTO facultyPatchDTO,
                                                   BindingResult bindingResult) {
@@ -109,11 +128,14 @@ public class FacultyController {
     }
 
     @DeleteMapping("{id}/delete")
+    @IsRoot
     public void deleteFaculty(@PathVariable("id") Long facultyId) {
         facultyService.delete(facultyId);
     }
 
     @DeleteMapping("{id}/softDelete")
+    @IsRoot
+    @IsAdmin
     public void softDeleteFaculty(@PathVariable("id") Long facultyId) {
         facultyService.softDelete(facultyId);
     }

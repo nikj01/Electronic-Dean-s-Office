@@ -13,6 +13,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.student.StudentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentMapper;
 import ua.dgma.electronicDeansOffice.models.Student;
+import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
@@ -47,25 +48,28 @@ public class StudentsController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    @PreAuthorize("hasRole('')")
+    @AllPerople
     public StudentGetDTO findStudentByUid(@PathVariable("uid") Long uid) {
         return studentMapper.toStudentGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("/emails/{email}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public List<StudentSlimGetDTO> findSlimStudentByEmail(@PathVariable("email") String email) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findByEmail(email));
     }
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<StudentSlimGetDTO> findSlimStudentBySurname(@PathVariable("surname") String surname) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findBySurname(surname));
     }
 
     @GetMapping("{uid}/attendance")
     @ResponseStatus(HttpStatus.OK)
+    @AllPerople
     public Map<Long, Double> showStudentAvgAttendance(@PathVariable("uid") Long uid,
                                                       @RequestParam(value = "from", required = false) String searchFrom,
                                                       @RequestParam(value = "to", required = false) String searchTo) {
@@ -74,6 +78,7 @@ public class StudentsController {
 
     @GetMapping("{uid}/avgGrade")
     @ResponseStatus(HttpStatus.OK)
+    @AllPerople
     public Map<Long, Double> showStudentAvgGrade(@PathVariable("uid") Long uid,
                                                  @RequestParam(value = "from", required = false) String searchFrom,
                                                  @RequestParam(value = "to", required = false) String searchTo) {
@@ -82,12 +87,14 @@ public class StudentsController {
 
     @GetMapping("{uid}/extractRatings")
     @ResponseStatus(HttpStatus.OK)
+    @AllPerople
     public List<Extract> showStudentExtractWithRatings(@PathVariable("uid") Long uid) {
         return reportsAnalyzer.getExtractWithGradesForStudent(new DataForStudentStatistics(uid));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -97,6 +104,9 @@ public class StudentsController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public void registerNewStudent(@RequestBody @Valid StudentPostDTO newPostStudent,
                                                        BindingResult bindingResult) {
         Student newStudent = studentMapper.toStudent(newPostStudent);
@@ -106,6 +116,10 @@ public class StudentsController {
 
     @PatchMapping("{uid}/update")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    @IsStudent
     public void updateStudent(@PathVariable("uid") Long uid,
                               @RequestBody @Valid  StudentPatchDTO studentPatchDTO,
                                                    BindingResult bindingResult) {
@@ -116,13 +130,18 @@ public class StudentsController {
 
     @DeleteMapping("{uid}/delete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
     public void deleteStudent(@PathVariable("uid") Long uid) {
         studentService.delete(uid);
     }
 
     @DeleteMapping("{uid}/softDelete")
     @ResponseStatus(HttpStatus.OK)
-    public void softDeletePerson(@PathVariable("uid") Long uid) {
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    public void softDeleteStudent(@PathVariable("uid") Long uid) {
         studentService.softDelete(uid);
     }
 

@@ -35,6 +35,7 @@ public class Teacher extends Person {
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = {org.hibernate.annotations.CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
     @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
 }

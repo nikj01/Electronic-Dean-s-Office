@@ -40,6 +40,7 @@ public class Faculty {
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<Department> departments = new ArrayList<>();
 
     @OneToMany(
@@ -49,6 +50,7 @@ public class Faculty {
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<DeaneryWorker> deaneryWorkers = new ArrayList<>();
 
     @Column(nullable = false)
