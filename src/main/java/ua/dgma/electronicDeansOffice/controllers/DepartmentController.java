@@ -75,6 +75,7 @@ public class DepartmentController {
     @ResponseStatus(HttpStatus.OK)
     @IsRoot
     @IsAdmin
+    @IsDeaneryWorker
     @IsHeadOfTheDepartment
     public void updateDepartment(@PathVariable("id") Long id,
                                  @RequestBody @Valid DepartmentPatchDTO departmentPatchDTO) {
@@ -86,7 +87,6 @@ public class DepartmentController {
     @DeleteMapping("{id}/delete")
     @ResponseStatus(HttpStatus.OK)
     @IsRoot
-    @IsAdmin
     public void deleteDepartment(@PathVariable("id") Long departmentId) {
         departmentService.delete(departmentId);
     }

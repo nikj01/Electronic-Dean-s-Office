@@ -43,13 +43,6 @@ public class DeaneryWorkersController {
         return deaneryWorkerMapper.toDeaneryWorkerGetDTO(deaneryWorkerService.findByUid(uid));
     }
 
-    @GetMapping("emails/{email}")
-    @ResponseStatus(HttpStatus.FOUND)
-    @IsRoot
-    public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerByEmail(@PathVariable("email") String email) {
-        return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findByEmail(email));
-    }
-
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
     @AllPerople
@@ -82,7 +75,6 @@ public class DeaneryWorkersController {
     @ResponseStatus(HttpStatus.OK)
     @IsRoot
     @IsAdmin
-    @IsDeaneryWorker
     public void updateDeaneryWorker(@PathVariable("uid") Long uid,
                                     @RequestBody @Valid  DeaneryWorkerPatchDTO deaneryWorkerPatchDTO,
                                                          BindingResult bindingResult) {
@@ -94,6 +86,7 @@ public class DeaneryWorkersController {
     @DeleteMapping("{uid}/delete")
     @ResponseStatus(HttpStatus.OK)
     @IsRoot
+    @IsAdmin
     public void deleteDeaneryWorker(@PathVariable("uid") Long uid) {
         deaneryWorkerService.delete(uid);
     }

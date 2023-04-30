@@ -32,7 +32,7 @@ public class TeachersJournalsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @PreAuthorize("hasRole('TEACHER')")
+    @AllButOfStudents
     public TeachersJournalGetDTO findJournalById(@PathVariable("id") Long id) {
         return journalMapper.toJournalGetDTO(journalService.findOne(id));
     }

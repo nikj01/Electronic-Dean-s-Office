@@ -11,6 +11,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.PersonListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;
 import ua.dgma.electronicDeansOffice.models.Person;
+import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.PersonServiceImpl;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
@@ -19,7 +20,10 @@ import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/people")
@@ -110,5 +114,11 @@ public class PeopleController {
     @IsDeaneryWorker
     public void softDeletePerson(@PathVariable("uid") Long uid) {
         personService.softDelete(uid);
+    }
+
+    @GetMapping("/roles")
+    @AllPerople
+    public List<String> getAllPeopleRoles() {
+        return Arrays.stream(PersonRoleEnum.values()).map(role -> role.name()).collect(Collectors.toList());
     }
 }

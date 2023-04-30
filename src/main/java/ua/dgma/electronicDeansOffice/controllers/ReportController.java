@@ -61,6 +61,12 @@ public class ReportController {
     public List<ReportSlimGetDTO> findReportsByPage(@PathVariable("id") Long pageId) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByJournalPage(pageId));
     }
+    @GetMapping("/pages/{id}")
+    @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
+    public List<ReportSlimGetDTO> findReportsByStudentGroup(@PathVariable("id") Long groupId) {
+        return reportListMapper.toReportsSlimGetDTO(reportService.findByGroup(groupId));
+    }
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)

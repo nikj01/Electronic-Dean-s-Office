@@ -17,6 +17,5 @@ public class StudentGetDTO {
     private StudentGroupSlimGetDTO studentGroup;
     private Date dateOfBirth;
     private String email;
-    private String password;
     private boolean deleted;
 }

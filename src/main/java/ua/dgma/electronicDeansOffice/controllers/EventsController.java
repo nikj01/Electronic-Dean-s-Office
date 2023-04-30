@@ -9,6 +9,8 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.event.EventPatchDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.event.EventPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.EventMapper;
 import ua.dgma.electronicDeansOffice.models.Event;
+import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
+import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 import ua.dgma.electronicDeansOffice.security.annotations.AllPerople;
 import ua.dgma.electronicDeansOffice.security.annotations.IsAdmin;
 import ua.dgma.electronicDeansOffice.security.annotations.IsRoot;
@@ -19,6 +21,9 @@ import ua.dgma.electronicDeansOffice.services.interfaces.EventService;
 import ua.dgma.electronicDeansOffice.services.interfaces.ReportService;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/events")
@@ -44,6 +49,8 @@ public class EventsController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
+    @IsAdmin
     @IsTeacher
     public void registerNewEvent(@RequestBody @Valid EventPostDTO eventPostDTO, BindingResult bindingResult) {
         Event newEvent = eventMapper.toEvent(eventPostDTO);
@@ -71,5 +78,11 @@ public class EventsController {
     @IsTeacher
     public void deleteEvent(@PathVariable("id") Long eventId) {
         eventService.delete(eventId);
+    }
+
+    @GetMapping("/types")
+    @AllPerople
+    public List<String> getAllEventTypes() {
+        return Arrays.stream(EventTypeEnum.values()).map(type -> type.name()).collect(Collectors.toList());
     }
 }

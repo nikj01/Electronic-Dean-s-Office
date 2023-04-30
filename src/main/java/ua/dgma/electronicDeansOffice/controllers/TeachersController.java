@@ -38,7 +38,7 @@ public class TeachersController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllButOfStudents
+    @AllPerople
     public TeacherGetDTO findTeacherByUid(@PathVariable("uid") Long uid) {
         return teacherMapper.toTeacherGetDTO(teacherService.findByUid(uid));
     }
@@ -52,7 +52,7 @@ public class TeachersController {
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllButOfStudents
+    @AllPerople
     public List<TeacherSlimGetDTO> findSlimTeacherBySurname(@PathVariable("surname") String surname) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findBySurname(surname));
     }

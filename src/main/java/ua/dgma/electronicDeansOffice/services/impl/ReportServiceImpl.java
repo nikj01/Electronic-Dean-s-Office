@@ -73,6 +73,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public List<Report> findByGroup(Long groupId) {
+        return reportRepository.getByStudentGroup_Id(groupId).orElseThrow(() -> new NotFoundException(new ExceptionData<>(className, "page_id", groupId)));
+    }
+
+    @Override
     @Transactional
     public void create(RegisterReportData data) {
         validateObjects(data);
