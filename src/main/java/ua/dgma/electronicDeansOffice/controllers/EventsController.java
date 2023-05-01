@@ -11,10 +11,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.EventMapper;
 import ua.dgma.electronicDeansOffice.models.Event;
 import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
-import ua.dgma.electronicDeansOffice.security.annotations.AllPerople;
-import ua.dgma.electronicDeansOffice.security.annotations.IsAdmin;
-import ua.dgma.electronicDeansOffice.security.annotations.IsRoot;
-import ua.dgma.electronicDeansOffice.security.annotations.IsTeacher;
+import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.RegisterEventData;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.UpdateEventData;
 import ua.dgma.electronicDeansOffice.services.interfaces.EventService;
@@ -42,7 +39,7 @@ public class EventsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllButOfStudents
     public EventGetDTO findEventById(@PathVariable("id") Long eventId) {
         return eventMapper.toEventGetDTO(eventService.findOne(eventId));
     }

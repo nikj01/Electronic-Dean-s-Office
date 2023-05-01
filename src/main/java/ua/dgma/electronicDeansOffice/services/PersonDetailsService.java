@@ -24,11 +24,14 @@ public class PersonDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Person> person = peopleRepository.findById(Long.parseLong(username));
+        if (findPersonByUid(username).isEmpty())
+            throw new UsernameNotFoundException("User not found");
 
-        if (person.isEmpty())
-            throw new UsernameNotFoundException("User not found!");
-
-        return new PersonDetails(person.get());
+        return new PersonDetails(findPersonByUid(username).get());
     }
+
+    private Optional<Person> findPersonByUid(String uid) {
+        return peopleRepository.findById(Long.parseLong(uid));
+    }
+
 }

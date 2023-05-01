@@ -44,16 +44,13 @@ public class Person implements Comparable<Person> {
     private String patronymic;
 
     @NotBlank(message = "The field |EMAIL| cannot be empty!")
-    @Column(
-            nullable = false,
-            unique = true)
+    @Column(unique = true)
     private String email;
 
     @NotNull(message = "The filed |ROLE| cannot be empty!")
     @ElementCollection(targetClass = PersonRoleEnum.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "personRoles")
     @Column(name = "roles", nullable = false)
-//    @LazyCollection(value = LazyCollectionOption.TRUE)
     private Set<PersonRoleEnum> personRoles = new HashSet<>();
 
     @NotBlank(message = "The field |PASSWORD| cannot be empty!")

@@ -8,7 +8,9 @@ import ua.dgma.electronicDeansOffice.security.annotations.AllPerople;
 public class AuthController {
     @PostMapping("/login")
     @AllPerople
-    public void login() {};
+    public void login() {
+
+    };
     @PostMapping("/logout")
     @AllPerople
     public void logout() {};

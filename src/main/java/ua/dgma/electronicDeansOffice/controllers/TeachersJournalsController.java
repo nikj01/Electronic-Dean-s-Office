@@ -1,5 +1,6 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
+import org.hibernate.annotations.Where;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,7 +47,9 @@ public class TeachersJournalsController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllButOfStudents
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public List<TeachersJournalSlimGetDTO> findAllJournals(@RequestParam(value = "page", required = false) Integer page,
                                                            @RequestParam(value = "journalsPerPage", required = false) Integer journalsPerPage,
                                                            @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,

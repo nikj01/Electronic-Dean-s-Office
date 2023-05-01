@@ -43,13 +43,6 @@ public class TeachersController {
         return teacherMapper.toTeacherGetDTO(teacherService.findByUid(uid));
     }
 
-    @GetMapping("/emails/{email}")
-    @ResponseStatus(HttpStatus.FOUND)
-    @AllButOfStudents
-    public List<TeacherSlimGetDTO> findSlimTeacherByEmail(@PathVariable("email") String email) {
-        return teacherListMapper.toTeachersSlimGetDTO(teacherService.findByEmail(email));
-    }
-
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
     @AllPerople
