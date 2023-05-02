@@ -1,12 +1,15 @@
 package ua.dgma.electronicDeansOffice.controllers;
 
+import org.hibernate.annotations.Where;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.teachersJournal.TeachersJournalGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.teachersJournal.TeachersJournalSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.TeachersJournalListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.TeachersJournalMapper;
+import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.interfaces.TeachersJournalService;
 
@@ -30,18 +33,23 @@ public class TeachersJournalsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public TeachersJournalGetDTO findJournalById(@PathVariable("id") Long id) {
         return journalMapper.toJournalGetDTO(journalService.findOne(id));
     }
 
     @GetMapping("teacher/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllButOfStudents
     public TeachersJournalGetDTO findJournalByTeacher(@PathVariable("uid") Long id) {
         return journalMapper.toJournalGetDTO(journalService.findOneByTeacher(id));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public List<TeachersJournalSlimGetDTO> findAllJournals(@RequestParam(value = "page", required = false) Integer page,
                                                            @RequestParam(value = "journalsPerPage", required = false) Integer journalsPerPage,
                                                            @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -50,10 +58,15 @@ public class TeachersJournalsController {
     }
 
     @DeleteMapping("{id}/delete")
+    @IsRoot
+    @IsAdmin
     public void deleteJournal(@PathVariable("id") Long id) {
         journalService.delete(id);
     }
     @DeleteMapping("{id}/softDelete")
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public void softDeleteJournal(@PathVariable("id") Long id) {
         journalService.softDelete(id);
     }

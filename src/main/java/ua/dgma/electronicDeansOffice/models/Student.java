@@ -7,10 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 
@@ -21,15 +18,13 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(exclude = "studentGroup")
 @Table(name = "Students")
 public class Student extends Person {
-
     @NotNull(message = "The field |STUDENT GROUP| group cannot be empty!")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             name = "group_id",
             referencedColumnName = "id",
-            nullable = false
-    )
+            nullable = false)
     private StudentGroup studentGroup;
 
 }

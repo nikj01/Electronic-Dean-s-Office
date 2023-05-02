@@ -11,6 +11,8 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.PersonListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;
 import ua.dgma.electronicDeansOffice.models.Person;
+import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
+import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.PersonServiceImpl;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
@@ -18,7 +20,10 @@ import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/people")
@@ -38,24 +43,31 @@ public class PeopleController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public PersonGetDTO findPersonByUid(@PathVariable("uid") Long uid) {
         return personMapper.toPersonGetDTO(personService.findByUid(uid));
     }
 
     @GetMapping("/emails/{email}")
     @ResponseStatus(HttpStatus.FOUND)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    @IsHeadOfTheDepartment
     public List<PersonSlimGetDTO> findSlimPersonByEmail(@PathVariable("email") String email) {
         return personListMapper.toPeopleSlimGetDTO(personService.findByEmail(email));
     }
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<PersonSlimGetDTO> findSlimPersonBySurname(@PathVariable("surname") String surname) {
         return personListMapper.toPeopleSlimGetDTO(personService.findBySurname(surname));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<PersonSlimGetDTO> findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
                                                     @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                     @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -65,6 +77,9 @@ public class PeopleController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public void registerNewPerson(@RequestBody @Valid PersonPostDTO newPostPerson,
                                                       BindingResult bindingResult) {
         Person newPerson = personMapper.toPerson(newPostPerson);
@@ -74,6 +89,10 @@ public class PeopleController {
 
     @PatchMapping("{uid}/update")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
+    @IsHeadOfTheDepartment
     public void updatePerson(@PathVariable("uid") Long uid,
                              @RequestBody @Valid  PersonPatchDTO personPatchDTO,
                                                   BindingResult bindingResult) {
@@ -83,12 +102,23 @@ public class PeopleController {
     }
 
     @DeleteMapping("{uid}/delete")
+    @IsRoot
+    @IsAdmin
     public void deletePerson(@PathVariable("uid") Long uid) {
         personService.delete(uid);
     }
 
     @DeleteMapping("{uid}/softDelete")
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public void softDeletePerson(@PathVariable("uid") Long uid) {
         personService.softDelete(uid);
+    }
+
+    @GetMapping("/roles")
+    @AllPerople
+    public List<String> getAllPeopleRoles() {
+        return Arrays.stream(PersonRoleEnum.values()).map(role -> role.name()).collect(Collectors.toList());
     }
 }

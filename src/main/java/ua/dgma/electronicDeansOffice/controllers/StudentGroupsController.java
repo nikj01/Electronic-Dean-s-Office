@@ -11,6 +11,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSli
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.StudentGroupListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.StudentGroupMapper;
 import ua.dgma.electronicDeansOffice.models.StudentGroup;
+import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.DataForGroupStatistics;
 import ua.dgma.electronicDeansOffice.services.impl.data.studentGroup.RegisterStudentGroupData;
@@ -45,18 +46,21 @@ public class StudentGroupsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public StudentGroupGetDTO findStudentGroupById(@PathVariable("id") Long id) {
         return studentGroupMapper.toStudentGroupGetDTO(studentGroupService.findOne(id));
     }
 
     @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<StudentGroupSlimGetDTO> findStudentGroupByName(@PathVariable("name") String name) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findByName(name));
     }
 
     @GetMapping("{id}/attendance")
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public Map<Long, Double> showGroupAvgAttendance(@PathVariable("id") Long groupId,
                                                     @RequestParam(value = "from", required = false) String searchFrom,
                                                     @RequestParam(value = "to", required = false) String searchTo) {
@@ -65,6 +69,7 @@ public class StudentGroupsController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
+    @AllPerople
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroups(@RequestParam(value = "page", required = false) Integer page,
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                                  @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -74,6 +79,9 @@ public class StudentGroupsController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public void registerNewStudentGroup(@RequestBody @Valid StudentGroupPostDTO newPostStudentGroup,
                                                             BindingResult bindingResult) {
         StudentGroup studentGroup = studentGroupMapper.toStudentGroup(newPostStudentGroup);
@@ -83,6 +91,9 @@ public class StudentGroupsController {
 
     @PatchMapping("{id}/update")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public void updateStudentGroup(@PathVariable("id") Long groupId,
                                    @RequestBody @Valid StudentGroupPatchDTO studentGroupPatchDTO) {
         StudentGroup studentGroup = studentGroupMapper.toStudentGroup(studentGroupPatchDTO);
@@ -92,12 +103,17 @@ public class StudentGroupsController {
 
     @DeleteMapping("{id}/delete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
     public void deleteStudentGroup(@PathVariable("id") Long groupId) {
         studentGroupService.delete(groupId);
     }
 
     @DeleteMapping("{id}/softDelete")
     @ResponseStatus(HttpStatus.OK)
+    @IsRoot
+    @IsAdmin
+    @IsDeaneryWorker
     public void softDeleteStudentGroup(@PathVariable("id") Long groupId) {
         studentGroupService.softDelete(groupId);
     }

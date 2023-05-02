@@ -13,6 +13,7 @@ public interface StudentGroupService {
     List<StudentGroup> findByName(String groupName);
     StudentGroup findByStudent(Student student);
     List<StudentGroup> findAll(FindAllData data);
+    List<StudentGroup> findByFaculty(Long facultyId);
     void register(RegisterStudentGroupData data);
     void update(UpdateStudentGroupData data);
     void delete(Long groupId);

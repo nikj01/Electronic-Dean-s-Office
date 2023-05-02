@@ -22,23 +22,21 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "studentGroups")
 @Table(name = "Departments", indexes = {
-        @Index(columnList = "name DESC", name = "departmentNameIndex")
-})
+        @Index(columnList = "name DESC", name = "departmentNameIndex")})
 public class Department {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "depSeq")
+    @SequenceGenerator(name = "depSeq", sequenceName = "depSeqq", initialValue = 21)
     private Long id;
 
     @NotBlank(message = "The field |NAME| cannot be empty!")
     @Column(
             nullable = false,
-            unique = true
-    )
+            unique = true)
     private String name;
 
     @NotNull(message = "The field |FACULTY| cannot be empty!")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false)
     private Faculty faculty;
@@ -46,19 +44,21 @@ public class Department {
     @OneToMany(
             mappedBy = "department",
             fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
+            orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "department",
             fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
+            orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @Cascade(value = CascadeType.SAVE_UPDATE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
+    @Where(clause = "deleted != true")
     private List<Teacher> teachers = new ArrayList<>();
 
     @Column(nullable = false)

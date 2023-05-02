@@ -6,6 +6,6 @@ import java.util.Map;
 
 public interface ReportsAnalyzerForFaculty {
     Map<Long, Double> getAvgAttendanceForStudentsOnFaculty(FindAllData data);
-    Map<Long, Double> getAvgGradeForStudentsOnFaculty(FindAllData data);
     Map<Long, Double> getAvgAttendanceForGroupsOnFaculty(FindAllData data);
+    Map<Long, Double> getAvgGradeForStudentsOnFaculty(FindAllData data);
 }

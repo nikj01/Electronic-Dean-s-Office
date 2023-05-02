@@ -16,6 +16,7 @@ public interface StudentGroupRepository extends JpaRepository<StudentGroup, Long
     Optional<List<StudentGroup>> getByNameContainingIgnoreCase(String name);
     Optional<StudentGroup> getByGroupLeader_Uid(Long groupLeaderUid);
     Optional<StudentGroup> getByStudentsContaining(Student student);
+    Optional<List<StudentGroup>> getByDepartment_Faculty_Id(Long facultyId);
     void deleteByName(String name);
     boolean existsByName(String name);
 }

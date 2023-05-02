@@ -15,6 +15,5 @@ public class PersonGetDTO {
     private List<PersonRoleEnum> personRoles;
     private Date dateOfBirth;
     private String email;
-    private String password;
     private boolean deleted;
 }

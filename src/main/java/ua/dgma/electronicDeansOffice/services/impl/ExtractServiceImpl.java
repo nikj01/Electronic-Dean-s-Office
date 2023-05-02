@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.extractWithGrades.Extract;
-import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.PersonMapper;
 import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
 import ua.dgma.electronicDeansOffice.models.Report;
-import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.services.interfaces.ExtractService;
 
 import java.time.LocalDateTime;
@@ -69,15 +67,11 @@ public class ExtractServiceImpl implements ExtractService {
     }
 
     private void setTeacher(ExtractData data) {
-        data.getExtract().setTeacher(getTeacherFromReport(data));
+        data.getExtract().setTeacher(setTeachersFIO(data));
     }
 
-    private PersonSlimGetDTO getTeacherFromReport(ExtractData data) {
-        return teacherMapper.toPersonSlimGetDTO(getTeacher(data));
-    }
-
-    private Teacher getTeacher(ExtractData data) {
-        return data.getReport().getEventData().getTeacher();
+    private String setTeachersFIO(ExtractData data) {
+        return data.getReport().getEventData().getTeachersFIO();
     }
 
     private void setEventDate(ExtractData data) {

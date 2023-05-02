@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Extract {
     private String pageName;
     private EventTypeEnum eventType;
-    private PersonSlimGetDTO teacher;
+    private String teacher;
     private LocalDateTime eventDate;
     private Integer grade;
 }

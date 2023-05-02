@@ -5,8 +5,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dgma.electronicDeansOffice.models.Department;
+import ua.dgma.electronicDeansOffice.models.EventData;
 import ua.dgma.electronicDeansOffice.models.Teacher;
 import ua.dgma.electronicDeansOffice.repositories.DepartmentRepository;
+import ua.dgma.electronicDeansOffice.repositories.EventDataRepository;
 import ua.dgma.electronicDeansOffice.repositories.TeacherRepository;
 import ua.dgma.electronicDeansOffice.services.impl.data.FindAllData;
 import ua.dgma.electronicDeansOffice.services.impl.data.person.RegisterPersonData;
@@ -30,6 +32,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
     private final TeacherRepository teacherRepository;
     private final TeachersJournalService journalService;
     private final DepartmentRepository departmentRepository;
+    private final EventDataRepository dataRepository;
     private final TeacherValidator teacherValidator;
     private final TeacherSpecifications specifications;
     private String className;
@@ -39,13 +42,15 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
                               TeacherValidator teacherValidator,
                               DepartmentRepository departmentRepository,
                               TeacherSpecifications specifications,
-                              TeachersJournalService journalService) {
+                              TeachersJournalService journalService,
+                              EventDataRepository dataRepository) {
         super(teacherRepository, specifications);
         this.teacherRepository = teacherRepository;
         this.teacherValidator = teacherValidator;
         this.departmentRepository = departmentRepository;
         this.specifications = specifications;
         this.journalService = journalService;
+        this.dataRepository = dataRepository;
         this.className = Teacher.class.getSimpleName();
     }
 
@@ -101,6 +106,7 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
         checkExistenceObjectWithSuchID(new CheckExistsByIdData<>(className, uid, teacherRepository));
 
         removeTeacherFromStudentGroups(getTeacher(uid));
+        deleteTeachersJournal(uid);
 
         teacherRepository.deleteByUid(uid);
     }
@@ -111,6 +117,10 @@ public class TeacherServiceImpl extends PeopleServiceImpl<Teacher> {
 
     private void removeTeacherFromStudentGroups(Teacher teacher) {
         teacher.getStudentGroups().stream().forEach(studentGroup -> studentGroup.setCurator(null));
+    }
+
+    private void deleteTeachersJournal(Long teacherUid) {
+        journalService.delete(journalService.findOneByTeacher(teacherUid).getId());
     }
 
     @Override

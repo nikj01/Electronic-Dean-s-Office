@@ -11,6 +11,7 @@ public interface ReportService {
     List<Report> findByName(String reportName);
     List<Report> findByEvent(Long eventId);
     List<Report> findByJournalPage(Long pageId);
+    List<Report> findByGroup(Long groupId);
     void create(RegisterReportData data);
     void update(UpdateReportData data);
     void delete(Long reportId);

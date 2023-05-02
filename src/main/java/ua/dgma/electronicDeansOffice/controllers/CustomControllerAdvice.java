@@ -4,14 +4,17 @@ import org.springframework.beans.NotReadablePropertyException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.dgma.electronicDeansOffice.exceptions.*;
 
 import java.util.Date;
 
 @ControllerAdvice
-public class CustomControllerAdvice {
+public class CustomControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(CustomException e) {
         ErrorResponse response = new ErrorResponse(new Date(), 400, "Bad Request", e.getMessage());
@@ -68,11 +71,15 @@ public class CustomControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(SqlExceptionHelper.class)
-//    private ResponseEntity<ErrorResponse> handleException(SQLException e) {
-//        ErrorResponse response = new ErrorResponse(new Date(), 400, e.getClass().getSimpleName(), e.getSQLState());
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getClass().getSimpleName(),  e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(new Date(), HttpStatus.UNAUTHORIZED.value(), e.getClass().getSimpleName(), e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
 }

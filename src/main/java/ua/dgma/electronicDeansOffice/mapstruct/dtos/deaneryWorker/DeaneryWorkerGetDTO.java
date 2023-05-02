@@ -17,6 +17,5 @@ public class DeaneryWorkerGetDTO {
     private FacultySlimGetDTO faculty;
     private Date dateOfBirth;
     private String email;
-    private String password;
     private boolean deleted;
 }

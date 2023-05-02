@@ -4,12 +4,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,7 +25,8 @@ import java.util.List;
 @Table(name = "Events")
 public class Event {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventSeq")
+    @SequenceGenerator(name = "eventSeq", sequenceName = "eventSeqq", initialValue = 109)
     private Long id;
 
     @NotNull(message = "The field |SEMESTER| cannot be empty!")
@@ -43,9 +44,10 @@ public class Event {
     @Column(nullable = false)
     private EventTypeEnum eventType;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @Cascade(value = CascadeType.SAVE_UPDATE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<StudentGroup> studentGroups = new ArrayList<>();
 
     @NotNull(message = "The field |DATE| cannot be empty!")
@@ -54,12 +56,11 @@ public class Event {
     private LocalDateTime date;
 
     @NotNull(message = "The field |JOURNAL PAGE| cannot be empty!")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             name = "page_id",
             referencedColumnName = "id",
-            nullable = false
-    )
+            nullable = false)
     private JournalPage page;
 }

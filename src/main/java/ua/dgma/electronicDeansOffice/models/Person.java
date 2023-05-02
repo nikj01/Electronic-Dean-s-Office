@@ -4,12 +4,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -17,17 +21,14 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "People", indexes = {
-        @Index(columnList = "surname DESC", name="peopleSurnameIndex")
-})
+        @Index(columnList = "surname DESC", name="peopleSurnameIndex")})
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Person implements Comparable<Person> {
-
     @Id
     @NotNull(message = "The field |UID| cannot be empty!")
     @Column(
             nullable = false,
-            unique = true
-    )
+            unique = true)
     private Long uid;
 
     @NotBlank(message = "The field |SURNAME| cannot be empty!")
@@ -43,14 +44,14 @@ public class Person implements Comparable<Person> {
     private String patronymic;
 
     @NotBlank(message = "The field |EMAIL| cannot be empty!")
-    @Column(nullable = false)
+    @Column(unique = true)
     private String email;
 
     @NotNull(message = "The filed |ROLE| cannot be empty!")
-    @ElementCollection(targetClass = PersonRoleEnum.class)
+    @ElementCollection(targetClass = PersonRoleEnum.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "personRoles")
     @Column(name = "roles", nullable = false)
-    private List<PersonRoleEnum> personRoles;
+    private Set<PersonRoleEnum> personRoles = new HashSet<>();
 
     @NotBlank(message = "The field |PASSWORD| cannot be empty!")
     @Column(nullable = false)

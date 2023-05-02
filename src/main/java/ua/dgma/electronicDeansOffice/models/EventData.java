@@ -4,13 +4,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,9 +22,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "EventData")
-public class EventData implements Serializable {
+public class EventData {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "edSeq")
+    @SequenceGenerator(name = "edSeq", sequenceName = "edSeqq", initialValue = 16)
     private Long id;
 
     @NotNull(message = "The field |SEMESTER| cannot be empty!")
@@ -57,7 +62,19 @@ public class EventData implements Serializable {
     private LocalDateTime eventDate;
 
     @NotNull(message = "The field |TEACHER| cannot be empty!")
-    @JoinColumn(nullable = false)
-    @OneToOne
-    private Teacher teacher;
+    @Column(nullable = false)
+    private Long teachersUid;
+
+    @NotNull(message = "The field |TEACHER| cannot be empty!")
+    @Column(nullable = false)
+    private String teachersFIO;
+
+    @OneToMany(
+            mappedBy = "eventData",
+            fetch = FetchType.LAZY
+    )
+    @Fetch(value = FetchMode.SELECT)
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @LazyCollection(value = LazyCollectionOption.TRUE)
+    private List<Report> report = new ArrayList<>();
 }

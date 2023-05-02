@@ -20,26 +20,24 @@ import java.util.List;
 @EqualsAndHashCode(exclude = {"teacher", "pages"})
 @Table(name = "TeachersJournals")
 public class TeachersJournal {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "journalSeq")
+    @SequenceGenerator(name = "journalSeq", sequenceName = "journalSeqq", initialValue = 102)
     private Long id;
 
-    @OneToOne(
-            fetch = FetchType.LAZY
-    )
+    @OneToOne(fetch = FetchType.LAZY)
     @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn
+    @JoinColumn(nullable = false)
     private Teacher teacher;
 
     @OneToMany(
             mappedBy = "journal",
             fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
+            orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
-    @Cascade(value = CascadeType.SAVE_UPDATE)
+    @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @LazyCollection(value = LazyCollectionOption.TRUE)
     private List<JournalPage> pages = new ArrayList<>();
 
     @Column(nullable = false)

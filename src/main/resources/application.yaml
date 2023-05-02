@@ -6,4 +6,10 @@ spring:
 
   main:
     allow-circular-references: true
-
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: strict
+        secure: true
