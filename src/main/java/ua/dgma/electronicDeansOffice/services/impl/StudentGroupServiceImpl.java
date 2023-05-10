@@ -26,6 +26,7 @@ import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByNameData;
 import ua.dgma.electronicDeansOffice.utill.validators.AbstractValidator;
 import ua.dgma.electronicDeansOffice.utill.validators.data.DataForAbstractValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.ValidateObject.validateObject;
@@ -256,6 +257,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
 
     private StudentGroup markStudentGroupAsDeleted(StudentGroup studentGroup) {
         studentGroup.setDeleted(true);
+        studentGroup.setWasDeleted(LocalDateTime.now());
         return studentGroup;
     }
 

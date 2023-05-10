@@ -4,6 +4,7 @@ import lombok.Data;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.department.DepartmentSlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.person.PersonSlimGetDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -13,5 +14,6 @@ public class StudentGroupGetDTO extends StudentGroupSlimGetDTO{
     private PersonSlimGetDTO curator;
     private DepartmentSlimGetDTO department;
     private List<PersonSlimGetDTO> students;
-
+    private boolean deleted;
+    private LocalDateTime wasDeleted;
 }

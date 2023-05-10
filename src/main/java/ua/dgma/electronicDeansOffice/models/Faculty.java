@@ -11,6 +11,7 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,4 +56,6 @@ public class Faculty {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    private LocalDateTime wasDeleted;
 }

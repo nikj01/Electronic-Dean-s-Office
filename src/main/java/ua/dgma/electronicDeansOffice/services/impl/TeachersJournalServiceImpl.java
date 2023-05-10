@@ -19,6 +19,7 @@ import ua.dgma.electronicDeansOffice.services.specifications.TeachersJournalSpec
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.TeachersJournalValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.*;
@@ -136,6 +137,7 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
 
     private TeachersJournal markTeachersJournalAsDeleted(TeachersJournal existingJournal) {
         existingJournal.setDeleted(true);
+        existingJournal.setWasDeleted(LocalDateTime.now());
         return existingJournal;
     }
 }

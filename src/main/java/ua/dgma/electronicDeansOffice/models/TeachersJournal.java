@@ -10,6 +10,7 @@ import org.hibernate.annotations.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,4 +43,6 @@ public class TeachersJournal {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    private LocalDateTime wasDeleted;
 }

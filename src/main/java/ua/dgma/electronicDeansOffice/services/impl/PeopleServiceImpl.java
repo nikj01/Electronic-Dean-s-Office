@@ -17,6 +17,7 @@ import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 import ua.dgma.electronicDeansOffice.services.specifications.PeopleSpecifications;
 
 import java.lang.reflect.ParameterizedType;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.dgma.electronicDeansOffice.utill.check.CheckMethods.checkPaginationParameters;
@@ -108,6 +109,7 @@ public abstract class PeopleServiceImpl<P extends Person> implements PeopleServi
 
     protected P markPersonAsDeleted(P person) {
         person.setDeleted(true);
+        person.setWasDeleted(LocalDateTime.now());
         return person;
     }
 

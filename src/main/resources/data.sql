@@ -1173,7 +1173,7 @@ INSERT INTO events_student_groups (events_id, student_groups_id) VALUES
 (6, 2),
 (6, 3);
 
-INSERT INTO event_data (id, teachersfio, page_id, teachers_uid, event_date, event_description, event_id, event_theme, event_type, page_name, semester) VALUES
+INSERT INTO event_data (id, teachers_data, page_id, teachers_uid, event_date, event_description, event_id, event_theme, event_type, page_name, semester) VALUES
 (1 , 'Kostikov O.A.', 21, 100,'2023-04-24 21:28:15.000000', 'Webinar on Network Management', 60, 'Network Management', 6, 'SOMEPAGE1', 8),
 (2 , 'Kostikov O.A.', 1, 100,'2023-04-24 21:28:15.000000', 'Final Exam: Software Engineering', 14, 'Software Engineering', 6, 'SOMEPAGE2', 8),
 (3 , 'Kostikov O.A.', 76, 100,'2023-04-24 21:28:15.000000', 'Webinar on Agile Software Development', 45, 'Agile Development', 6, 'SOMEPAGE3', 8),

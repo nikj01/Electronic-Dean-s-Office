@@ -65,9 +65,9 @@ public class EventData {
     @Column(nullable = false)
     private Long teachersUid;
 
-    @NotNull(message = "The field |TEACHER| cannot be empty!")
+    @NotNull(message = "The field |TEACHER`S DATA| cannot be empty!")
     @Column(nullable = false)
-    private String teachersFIO;
+    private String teachersData;
 
     @OneToMany(
             mappedBy = "eventData",

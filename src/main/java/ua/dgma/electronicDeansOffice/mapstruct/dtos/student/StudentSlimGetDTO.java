@@ -3,10 +3,9 @@ package ua.dgma.electronicDeansOffice.mapstruct.dtos.student;
 import lombok.Data;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.studentGroup.StudentGroupSlimGetDTO;
 
+import java.time.LocalDateTime;
+
 @Data
-//@JsonIdentityInfo(   generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "uid")
-//@JsonIdentityReference(alwaysAsId = true)
 public class StudentSlimGetDTO {
     private Long uid;
     private String surname;
@@ -14,4 +13,5 @@ public class StudentSlimGetDTO {
     private String patronymic;
     private StudentGroupSlimGetDTO studentGroup;
     private boolean deleted;
+    private LocalDateTime wasDeleted;
 }

@@ -20,6 +20,7 @@ import ua.dgma.electronicDeansOffice.utill.ValidationData;
 import ua.dgma.electronicDeansOffice.utill.check.data.CheckExistsByIdData;
 import ua.dgma.electronicDeansOffice.utill.validators.JournalPageValidator;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -187,6 +188,7 @@ public class JournalPageServiceImpl implements JournalPageService {
 
     private void setArchiveFlagInExistingPage(JournalPage existingPage, JournalPage updatedPage) {
         existingPage.setArchive(updatedPage.isArchive());
+        existingPage.setWasArchived(LocalDateTime.now());
     }
 
     @Override

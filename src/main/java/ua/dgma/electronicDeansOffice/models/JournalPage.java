@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -56,4 +57,6 @@ public class JournalPage {
 
     @Column(nullable = false)
     private boolean archive;
+
+    private LocalDateTime wasArchived;
 }

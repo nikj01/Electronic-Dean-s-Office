@@ -4,15 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -63,6 +61,8 @@ public class Person implements Comparable<Person> {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    private LocalDateTime wasDeleted;
 
     @Override
     public int compareTo(Person o) {

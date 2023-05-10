@@ -82,7 +82,7 @@ public class EventDataServiceImpl implements EventDataService {
         data.setTeachersUid(event.getPage().getJournal().getTeacher().getUid());
     }
     private void setTeachersFIO(EventData data, Event event) {
-        data.setTeachersFIO(getTeachersSurnameAndInitials(event.getPage().getJournal().getTeacher()));
+        data.setTeachersData(getTeachersSurnameAndInitials(event.getPage().getJournal().getTeacher()));
     }
 
     private String getTeachersSurnameAndInitials(Teacher teacher) {

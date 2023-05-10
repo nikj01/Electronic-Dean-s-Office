@@ -67,11 +67,11 @@ public class ExtractServiceImpl implements ExtractService {
     }
 
     private void setTeacher(ExtractData data) {
-        data.getExtract().setTeacher(setTeachersFIO(data));
+        data.getExtract().setTeacher(setTeachersData(data));
     }
 
-    private String setTeachersFIO(ExtractData data) {
-        return data.getReport().getEventData().getTeachersFIO();
+    private String setTeachersData(ExtractData data) {
+        return data.getReport().getEventData().getTeachersData();
     }
 
     private void setEventDate(ExtractData data) {

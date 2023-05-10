@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.*;
-import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.Entity;
 import javax.persistence.Index;
@@ -14,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -93,4 +93,6 @@ public class StudentGroup {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    private LocalDateTime wasDeleted;
 }
