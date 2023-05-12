@@ -38,28 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.cors()
-//                .and()
-//            .csrf().disable()
-////            .and()
-////                .antMatcher("/login").anonymous().and()
-//                .authorizeRequests()
-////                .antMatchers("/login").permitAll()
-//                .anyRequest().authenticated()
-//            .and()
-//                .formLogin()
-//                .loginPage("/login")
-//                .and()
-//                .logout()
-//                .logoutSuccessUrl("/login")
-//                .invalidateHttpSession(true)
-//                .deleteCookies("JSESSIONID")
-//                .permitAll()
-//            .and()
-//                .sessionManagement()
-//                .maximumSessions(1)
-//                .expiredUrl("/login");
-
             http.cors()
                 .and()
                     .csrf().disable()

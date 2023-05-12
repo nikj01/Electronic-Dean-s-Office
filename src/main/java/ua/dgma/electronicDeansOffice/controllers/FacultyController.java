@@ -11,7 +11,7 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.faculty.FacultySlimGetDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.collections.FacultyListMapper;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.FacultyMapper;
 import ua.dgma.electronicDeansOffice.models.Faculty;
-import ua.dgma.electronicDeansOffice.security.annotations.AllPerople;
+import ua.dgma.electronicDeansOffice.security.annotations.AllPeople;
 import ua.dgma.electronicDeansOffice.security.annotations.IsAdmin;
 import ua.dgma.electronicDeansOffice.security.annotations.IsDeaneryWorker;
 import ua.dgma.electronicDeansOffice.security.annotations.IsRoot;
@@ -48,21 +48,21 @@ public class FacultyController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public FacultyGetDTO findFacultyById(@PathVariable("id") Long id) {
         return facultyMapper.toFacultyGetDTO(facultyService.findOne(id));
     }
 
     @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<FacultySlimGetDTO> findSlimFacultyByName(@PathVariable("name") String name) {
         return facultyListMapper.toFacultiesSlimGetDTO(facultyService.findByName(name));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<FacultySlimGetDTO> findAllSlimFaculties(@RequestParam(value = "page", required = false) Integer page,
                                                         @RequestParam(value = "facultiesPerPage", required = false) Integer facultiesPerPage,
                                                         @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted) {

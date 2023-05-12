@@ -38,21 +38,21 @@ public class DeaneryWorkersController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public DeaneryWorkerGetDTO findDeaneryWorkerByUid(@PathVariable("uid") Long uid) {
         return deaneryWorkerMapper.toDeaneryWorkerGetDTO(deaneryWorkerService.findByUid(uid));
     }
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<DeaneryWorkerSlimGetDTO> findSlimDeaneryWorkerBySurname(@PathVariable("surname") String surname) {
         return deaneryWorkerListMapper.toDeaneryWorkersSlimGetDTO(deaneryWorkerService.findBySurname(surname));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<DeaneryWorkerSlimGetDTO> findAllSlimDeaneryWorkers(@RequestParam(value = "page", required = false) Integer page,
                                                                    @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                                    @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,

@@ -72,7 +72,7 @@ public class JournalPageController {
     @IsRoot
     @IsAdmin
     @IsTeacher
-    public void delete(@PathVariable("id") Long id) {
+    public void deleteJournalPage(@PathVariable("id") Long id) {
         pageService.delete(id);
     }
 }

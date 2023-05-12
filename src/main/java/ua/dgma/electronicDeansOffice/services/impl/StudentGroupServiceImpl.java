@@ -95,7 +95,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.getStudentGroupByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return specifications.getSpecForStudentGroups(data);
     }
 
     @Override
@@ -124,10 +124,10 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     }
 
     private Department getExistingDepartment(StudentGroup studentGroup) {
-        return departmentRepository.findById(getDepartmentName(studentGroup)).get();
+        return departmentRepository.findById(getDepartmentId(studentGroup)).get();
     }
 
-    private Long getDepartmentName(StudentGroup studentGroup) {
+    private Long getDepartmentId(StudentGroup studentGroup) {
         return studentGroup.getDepartment().getId();
     }
 

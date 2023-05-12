@@ -1,4 +1,4 @@
-package ua.dgma.electronicDeansOffice.services.specifications;
+    package ua.dgma.electronicDeansOffice.services.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;

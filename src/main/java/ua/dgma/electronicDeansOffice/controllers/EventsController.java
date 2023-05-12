@@ -10,7 +10,6 @@ import ua.dgma.electronicDeansOffice.mapstruct.dtos.event.EventPostDTO;
 import ua.dgma.electronicDeansOffice.mapstruct.mappers.interfaces.EventMapper;
 import ua.dgma.electronicDeansOffice.models.Event;
 import ua.dgma.electronicDeansOffice.models.EventTypeEnum;
-import ua.dgma.electronicDeansOffice.models.PersonRoleEnum;
 import ua.dgma.electronicDeansOffice.security.annotations.*;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.RegisterEventData;
 import ua.dgma.electronicDeansOffice.services.impl.data.event.UpdateEventData;
@@ -78,7 +77,7 @@ public class EventsController {
     }
 
     @GetMapping("/types")
-    @AllPerople
+    @AllPeople
     public List<String> getAllEventTypes() {
         return Arrays.stream(EventTypeEnum.values()).map(type -> type.name()).collect(Collectors.toList());
     }

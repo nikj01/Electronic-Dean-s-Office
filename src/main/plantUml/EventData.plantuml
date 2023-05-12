@@ -1,0 +1,131 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class DeaneryWorker {
+  - faculty: Faculty
+}
+class Department {
+  - wasDeleted: LocalDateTime
+  - studentGroups: List<StudentGroup>
+  - id: Long
+  - name: String
+  - faculty: Faculty
+  - deleted: boolean
+  - teachers: List<Teacher>
+}
+class Event {
+  - id: Long
+  - page: JournalPage
+  - date: LocalDateTime
+  - studentGroups: List<StudentGroup>
+  - eventType: EventTypeEnum
+  - semester: Integer
+  - eventTheme: String
+  - description: String
+}
+class EventData {
+  - id: Long
+  - pageName: String
+  - eventType: EventTypeEnum
+  - pageId: Long
+  - eventDate: LocalDateTime
+  - eventId: Long
+  - teachersData: String
+  - report: List<Report>
+  - semester: Integer
+  - eventDescription: String
+  - teachersUid: Long
+  - eventTheme: String
+}
+enum EventTypeEnum << enumeration >> {
+  + LECTURE: 
+  + PRACTICE_SESSION: 
+  + OTHER: 
+  + SEMINAR: 
+  + CONTROL_POINT: 
+  + EXAM: 
+  + COURSEWORK: 
+  + TEST: 
+}
+class Faculty {
+  - id: Long
+  - deleted: boolean
+  - wasDeleted: LocalDateTime
+  - departments: List<Department>
+  - name: String
+  - deaneryWorkers: List<DeaneryWorker>
+}
+class JournalPage {
+  - pageName: String
+  - archive: boolean
+  - events: List<Event>
+  - id: Long
+  - wasArchived: LocalDateTime
+  - studentGroups: Set<StudentGroup>
+  - journal: TeachersJournal
+}
+class Person {
+  - surname: String
+  - dateOfBirth: Date
+  - uid: Long
+  - email: String
+  - wasDeleted: LocalDateTime
+  - personRoles: Set<PersonRoleEnum>
+  - password: String
+  - name: String
+  - patronymic: String
+  - deleted: boolean
+}
+enum PersonRoleEnum << enumeration >> {
+  + ROLE_HEAD_OF_THE_DEPARTMENT: 
+  + ROLE_TEACHER: 
+  + ROLE_ADMIN: 
+  + ROLE_ROOT: 
+  + ROLE_STUDENT: 
+  + ROLE_DEANERY_WORKER: 
+}
+class Report {
+  - studentMarks: Map<Long, Integer>
+  - created: LocalDateTime
+  - id: Long
+  - studentGroup: StudentGroup
+  - updated: LocalDateTime
+  - reportName: String
+  - eventData: EventData
+  - studentAttendance: Map<Long, Boolean>
+}
+class Student {
+  - studentGroup: StudentGroup
+}
+class StudentGroup {
+  - students: List<Student>
+  - groupLeader: Student
+  - deleted: boolean
+  - wasDeleted: LocalDateTime
+  - events: List<Event>
+  - pages: Set<JournalPage>
+  - reports: List<Report>
+  - id: Long
+  - curator: Teacher
+  - department: Department
+  - name: String
+}
+class Teacher {
+  - studentGroups: List<StudentGroup>
+  - department: Department
+}
+class TeachersJournal {
+  - teacher: Teacher
+  - pages: List<JournalPage>
+  - id: Long
+  - deleted: boolean
+  - wasDeleted: LocalDateTime
+}
+
+DeaneryWorker    -[#000082,plain]-^  Person          
+Student          -[#000082,plain]-^  Person          
+Teacher          -[#000082,plain]-^  Person          
+@enduml

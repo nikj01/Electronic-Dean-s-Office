@@ -38,21 +38,21 @@ public class TeachersController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public TeacherGetDTO findTeacherByUid(@PathVariable("uid") Long uid) {
         return teacherMapper.toTeacherGetDTO(teacherService.findByUid(uid));
     }
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<TeacherSlimGetDTO> findSlimTeacherBySurname(@PathVariable("surname") String surname) {
         return teacherListMapper.toTeachersSlimGetDTO(teacherService.findBySurname(surname));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllButOfStudents
+    @AllPeople
     public List<TeacherSlimGetDTO> findAllSlimTeachers(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -79,6 +79,7 @@ public class TeachersController {
     @IsAdmin
     @IsDeaneryWorker
     @IsHeadOfTheDepartment
+    @IsTeacher
     public void updateTeacher(@PathVariable("uid") Long uid,
                               @RequestBody @Valid  TeacherPatchDTO teacherPatchDTO,
                                                    BindingResult bindingResult) {

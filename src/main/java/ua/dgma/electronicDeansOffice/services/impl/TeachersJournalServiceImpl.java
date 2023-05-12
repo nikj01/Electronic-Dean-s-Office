@@ -75,7 +75,7 @@ public class TeachersJournalServiceImpl implements TeachersJournalService {
     }
 
     private Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.getTeacherJournalByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return specifications.getSpecForTeacherJournals(data);
     }
 
     @Override

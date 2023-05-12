@@ -2,7 +2,6 @@ package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.dgma.electronicDeansOffice.mapstruct.dtos.extractWithGrades.Extract;
@@ -48,21 +47,21 @@ public class StudentsController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public StudentGetDTO findStudentByUid(@PathVariable("uid") Long uid) {
         return studentMapper.toStudentGetDTO(studentService.findByUid(uid));
     }
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<StudentSlimGetDTO> findSlimStudentBySurname(@PathVariable("surname") String surname) {
         return studentListMapper.toStudentsSlimGetDTO(studentService.findBySurname(surname));
     }
 
     @GetMapping("{uid}/attendance")
     @ResponseStatus(HttpStatus.OK)
-    @AllPerople
+    @AllPeople
     public Map<Long, Double> showStudentAvgAttendance(@PathVariable("uid") Long uid,
                                                       @RequestParam(value = "from", required = false) String searchFrom,
                                                       @RequestParam(value = "to", required = false) String searchTo) {
@@ -71,7 +70,7 @@ public class StudentsController {
 
     @GetMapping("{uid}/avgGrade")
     @ResponseStatus(HttpStatus.OK)
-    @AllPerople
+    @AllPeople
     public Map<Long, Double> showStudentAvgGrade(@PathVariable("uid") Long uid,
                                                  @RequestParam(value = "from", required = false) String searchFrom,
                                                  @RequestParam(value = "to", required = false) String searchTo) {
@@ -80,14 +79,14 @@ public class StudentsController {
 
     @GetMapping("{uid}/extractRatings")
     @ResponseStatus(HttpStatus.OK)
-    @AllPerople
+    @AllPeople
     public List<Extract> showStudentExtractWithRatings(@PathVariable("uid") Long uid) {
         return reportsAnalyzer.getExtractWithGradesForStudent(new DataForStudentStatistics(uid));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<StudentSlimGetDTO> findAllSlimStudents(@RequestParam(value = "page", required = false) Integer page,
                                                        @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                        @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,

@@ -47,7 +47,7 @@ public class DeaneryWorkerServiceImpl extends PeopleServiceImpl<DeaneryWorker> {
 
     @Override
     protected Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.findDeaneryWorkersByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return specifications.getSpecForDeaneryWorkers(data);
     }
 
     @Override

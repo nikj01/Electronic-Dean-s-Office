@@ -36,21 +36,21 @@ public class ReportController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public ReportGetDTO findReportById(@PathVariable("id") Long reportId) {
         return reportMapper.toReportGetDTO(reportService.findOne(reportId));
     }
 
     @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<ReportSlimGetDTO> findReportsByName(@PathVariable("name") String reportName) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByName(reportName));
     }
 
     @GetMapping("/events/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<ReportSlimGetDTO> findReportsByEvent(@PathVariable("id") Long eventId) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByEvent(eventId));
     }
@@ -63,7 +63,7 @@ public class ReportController {
     }
     @GetMapping("/studentGroup/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllButOfStudents
+    @AllPeople
     public List<ReportSlimGetDTO> findReportsByStudentGroup(@PathVariable("id") Long groupId) {
         return reportListMapper.toReportsSlimGetDTO(reportService.findByGroup(groupId));
     }

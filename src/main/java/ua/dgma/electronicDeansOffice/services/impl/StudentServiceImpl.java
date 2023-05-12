@@ -47,7 +47,7 @@ public class StudentServiceImpl extends PeopleServiceImpl<Student> {
 
     @Override
     protected Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.findStudentsByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return specifications.getSpecForStudents(data);
     }
 
     @Override

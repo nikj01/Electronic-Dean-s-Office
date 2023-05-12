@@ -20,7 +20,6 @@ import ua.dgma.electronicDeansOffice.services.impl.data.person.UpdatePersonData;
 import ua.dgma.electronicDeansOffice.services.interfaces.PeopleService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ public class PeopleController {
 
     @GetMapping("/{uid}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public PersonGetDTO findPersonByUid(@PathVariable("uid") Long uid) {
         return personMapper.toPersonGetDTO(personService.findByUid(uid));
     }
@@ -60,14 +59,14 @@ public class PeopleController {
 
     @GetMapping("surnames/{surname}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<PersonSlimGetDTO> findSlimPersonBySurname(@PathVariable("surname") String surname) {
         return personListMapper.toPeopleSlimGetDTO(personService.findBySurname(surname));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<PersonSlimGetDTO> findAllSlimPeople(@RequestParam(value = "page", required = false) Integer page,
                                                     @RequestParam(value = "peoplePerPage", required = false) Integer peoplePerPage,
                                                     @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
@@ -117,7 +116,7 @@ public class PeopleController {
     }
 
     @GetMapping("/roles")
-    @AllPerople
+    @AllPeople
     public List<String> getAllPeopleRoles() {
         return Arrays.stream(PersonRoleEnum.values()).map(role -> role.name()).collect(Collectors.toList());
     }

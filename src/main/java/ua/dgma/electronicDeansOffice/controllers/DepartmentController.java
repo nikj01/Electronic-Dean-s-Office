@@ -38,21 +38,21 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public DepartmentGetDTO findDepartmentById(@PathVariable("id") Long id) {
         return departmentMapper.toDepartmentGetDTO(departmentService.findOne(id));
     }
 
     @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<DepartmentSlimGetDTO> findDepartmentByName(@PathVariable("name") String name) {
         return departmentListMapper.toDepartmentsSlimGetDTO(departmentService.findByName(name));
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<DepartmentSlimGetDTO> findAllSlimDepartments(@RequestParam(value = "page", required = false) Integer page,
                                                              @RequestParam(value = "departmentsPerPage", required = false) Integer departmentsPerPage,
                                                              @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,

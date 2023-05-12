@@ -89,7 +89,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private Specification getSpec(FindAllData data) {
-        return Specification.where(specifications.getDepartmentByFacultyCriteria(data.getFacultyId()).and(specifications.getObjectByDeletedCriteria(data.getDeleted())));
+        return specifications.getSpecForDepartments(data);
     }
 
     @Override

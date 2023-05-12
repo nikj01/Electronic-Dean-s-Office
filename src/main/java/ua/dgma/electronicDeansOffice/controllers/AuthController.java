@@ -2,16 +2,16 @@ package ua.dgma.electronicDeansOffice.controllers;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.dgma.electronicDeansOffice.security.annotations.AllPerople;
+import ua.dgma.electronicDeansOffice.security.annotations.AllPeople;
 
 @RestController
 public class AuthController {
     @PostMapping("/login")
-    @AllPerople
+    @AllPeople
     public void login() {
 
     };
     @PostMapping("/logout")
-    @AllPerople
+    @AllPeople
     public void logout() {};
 }

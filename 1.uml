@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>ua.dgma.electronicDeansOffice.models.DeaneryWorker</OriginalElement>
+  <nodes>
+    <node x="3.5" y="62.67236158192077">ua.dgma.electronicDeansOffice.models.Person</node>
+    <node x="-10.5" y="518.0">ua.dgma.electronicDeansOffice.models.Faculty</node>
+    <node x="170.96741734217642" y="1155.428790960452">ua.dgma.electronicDeansOffice.models.Teacher</node>
+    <node x="530.5" y="452.0">ua.dgma.electronicDeansOffice.models.EventData</node>
+    <node x="938.5" y="1142.9256045197735">ua.dgma.electronicDeansOffice.models.TeachersJournal</node>
+    <node x="-3.5" y="813.0">ua.dgma.electronicDeansOffice.models.Department</node>
+    <node x="892.4999999999999" y="813.0">ua.dgma.electronicDeansOffice.models.JournalPage</node>
+    <node x="263.5" y="518.0">ua.dgma.electronicDeansOffice.models.Student</node>
+    <node x="692.768115942029" y="190.0">ua.dgma.electronicDeansOffice.models.EventTypeEnum</node>
+    <node x="398.355404077622" y="190.0">ua.dgma.electronicDeansOffice.models.PersonRoleEnum</node>
+    <node x="42.5" y="389.3361807909604">ua.dgma.electronicDeansOffice.models.DeaneryWorker</node>
+    <node x="531.0" y="1064.0">ua.dgma.electronicDeansOffice.models.StudentGroup</node>
+    <node x="769.518115942029" y="496.0">ua.dgma.electronicDeansOffice.models.Event</node>
+    <node x="491.5" y="802.0">ua.dgma.electronicDeansOffice.models.Report</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="ua.dgma.electronicDeansOffice.models.Event" target="ua.dgma.electronicDeansOffice.models.StudentGroup" relationship="TO_MANY">
+      <point x="0.0" y="104.0" />
+      <point x="893.018115942029" y="780.0" />
+      <point x="827.0" y="780.0" />
+      <point x="827.0" y="1032.0" />
+      <point x="630.5" y="1032.0" />
+      <point x="0.0" y="-137.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.StudentGroup" target="ua.dgma.electronicDeansOffice.models.Event" relationship="TO_MANY">
+      <point x="0.0" y="-137.0" />
+      <point x="630.5" y="1032.0" />
+      <point x="827.0" y="1032.0" />
+      <point x="827.0" y="780.0" />
+      <point x="893.018115942029" y="780.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Student" target="ua.dgma.electronicDeansOffice.models.Person" relationship="GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="367.5" y="164.0" />
+      <point x="127.0" y="164.0" />
+      <point x="0.0" y="126.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Person" target="ua.dgma.electronicDeansOffice.models.PersonRoleEnum" relationship="TO_MANY">
+      <point x="0.0" y="-126.0" />
+      <point x="127.0" y="93.32650847457614" />
+      <point x="519.355404077622" y="93.32650847457614" />
+      <point x="0.0" y="82.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Teacher" target="ua.dgma.electronicDeansOffice.models.Person" relationship="GENERALIZATION">
+      <point x="-61.75" y="-38.0" />
+      <point x="232.71741734217642" y="1369.0" />
+      <point x="-21.0" y="1369.0" />
+      <point x="-21.0" y="164.0" />
+      <point x="127.0" y="164.0" />
+      <point x="0.0" y="126.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.StudentGroup" target="ua.dgma.electronicDeansOffice.models.Student" relationship="TO_MANY">
+      <point x="0.0" y="-137.0" />
+      <point x="630.5" y="1032.0" />
+      <point x="294.4674173421764" y="1032.0" />
+      <point x="294.4674173421764" y="802.0" />
+      <point x="367.5" y="802.0" />
+      <point x="0.0" y="27.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Student" target="ua.dgma.electronicDeansOffice.models.StudentGroup" relationship="TO_ONE">
+      <point x="93.37954350282484" y="27.0" />
+      <point x="460.87954350282484" y="1279.8149423728812" />
+      <point x="630.5" y="1279.8149423728812" />
+      <point x="0.0" y="-137.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Teacher" target="ua.dgma.electronicDeansOffice.models.StudentGroup" relationship="TO_MANY">
+      <point x="61.75" y="-38.0" />
+      <point x="356.2174173421764" y="1369.0" />
+      <point x="630.5" y="1369.0" />
+      <point x="0.0" y="137.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.StudentGroup" target="ua.dgma.electronicDeansOffice.models.JournalPage" relationship="TO_MANY">
+      <point x="0.0" y="-137.0" />
+      <point x="630.5" y="1032.0" />
+      <point x="1014.9999999999999" y="1032.0" />
+      <point x="0.0" y="93.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.JournalPage" target="ua.dgma.electronicDeansOffice.models.StudentGroup" relationship="TO_MANY">
+      <point x="0.0" y="93.0" />
+      <point x="1015.0" y="1032.0" />
+      <point x="630.5" y="1032.0" />
+      <point x="0.0" y="-137.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Event" target="ua.dgma.electronicDeansOffice.models.EventTypeEnum" relationship="TO_ONE">
+      <point x="0.0" y="-104.0" />
+      <point x="893.018115942029" y="425.0" />
+      <point x="771.268115942029" y="425.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Event" target="ua.dgma.electronicDeansOffice.models.JournalPage" relationship="TO_ONE">
+      <point x="0.0" y="104.0" />
+      <point x="893.018115942029" y="770.0" />
+      <point x="1015.0" y="770.0" />
+      <point x="0.0" y="-93.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.TeachersJournal" target="ua.dgma.electronicDeansOffice.models.Teacher" relationship="TO_ONE">
+      <point x="0.0" y="71.0" />
+      <point x="1038.0" y="1359.0" />
+      <point x="630.5" y="1359.0" />
+      <point x="630.5" y="1369.0" />
+      <point x="356.2174173421764" y="1369.0" />
+      <point x="61.75" y="-38.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.JournalPage" target="ua.dgma.electronicDeansOffice.models.Event" relationship="TO_MANY">
+      <point x="0.0" y="-93.0" />
+      <point x="1015.0" y="770.0" />
+      <point x="893.018115942029" y="770.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Report" target="ua.dgma.electronicDeansOffice.models.EventData" relationship="TO_ONE">
+      <point x="0.0" y="-104.0" />
+      <point x="0.0" y="148.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.StudentGroup" target="ua.dgma.electronicDeansOffice.models.Department" relationship="TO_ONE">
+      <point x="0.0" y="-137.0" />
+      <point x="630.5" y="1135.3364452519775" />
+      <point x="49.20393994124298" y="1135.3364452519775" />
+      <point x="-70.79606005875702" y="93.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.TeachersJournal" target="ua.dgma.electronicDeansOffice.models.JournalPage" relationship="TO_MANY">
+      <point x="0.0" y="71.0" />
+      <point x="1038.0" y="1185.8562485875702" />
+      <point x="1073.915209039548" y="1185.8562485875702" />
+      <point x="1073.915209039548" y="903.9390765703954" />
+      <point x="1014.9999999999999" y="903.9390765703954" />
+      <point x="0.0" y="-93.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Department" target="ua.dgma.electronicDeansOffice.models.StudentGroup" relationship="TO_MANY">
+      <point x="90.83961991954797" y="93.0" />
+      <point x="210.83961991954797" y="1095.1904245875705" />
+      <point x="630.5" y="1095.1904245875705" />
+      <point x="0.0" y="-137.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.JournalPage" target="ua.dgma.electronicDeansOffice.models.TeachersJournal" relationship="TO_ONE">
+      <point x="0.0" y="-93.0" />
+      <point x="1014.9999999999999" y="780.0" />
+      <point x="1185.9257672316382" y="780.0" />
+      <point x="1185.9257672316382" y="1213.9256045197735" />
+      <point x="1038.0" y="1213.9256045197735" />
+      <point x="0.0" y="71.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.StudentGroup" target="ua.dgma.electronicDeansOffice.models.Teacher" relationship="TO_ONE">
+      <point x="0.0" y="137.0" />
+      <point x="630.5" y="1369.0" />
+      <point x="356.2174173421764" y="1369.0" />
+      <point x="61.75" y="-38.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Report" target="ua.dgma.electronicDeansOffice.models.StudentGroup" relationship="TO_ONE">
+      <point x="0.0" y="104.0" />
+      <point x="0.0" y="-137.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.EventData" target="ua.dgma.electronicDeansOffice.models.Report" relationship="TO_MANY">
+      <point x="0.0" y="148.0" />
+      <point x="0.0" y="-104.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.DeaneryWorker" target="ua.dgma.electronicDeansOffice.models.Person" relationship="GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="120.0" y="202.5" />
+      <point x="127.0" y="202.5" />
+      <point x="0.0" y="126.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.StudentGroup" target="ua.dgma.electronicDeansOffice.models.Report" relationship="TO_MANY">
+      <point x="0.0" y="-137.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.DeaneryWorker" target="ua.dgma.electronicDeansOffice.models.Faculty" relationship="TO_ONE">
+      <point x="0.0" y="27.0" />
+      <point x="120.0" y="419.5" />
+      <point x="120.0" y="419.5" />
+      <point x="0.0" y="-82.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.EventData" target="ua.dgma.electronicDeansOffice.models.EventTypeEnum" relationship="TO_ONE">
+      <point x="0.0" y="-148.0" />
+      <point x="630.5" y="425.0" />
+      <point x="771.268115942029" y="425.0" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Faculty" target="ua.dgma.electronicDeansOffice.models.DeaneryWorker" relationship="TO_MANY">
+      <point x="0.0" y="-82.0" />
+      <point x="120.0" y="419.5" />
+      <point x="120.0" y="419.5" />
+      <point x="0.0" y="27.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Faculty" target="ua.dgma.electronicDeansOffice.models.Department" relationship="TO_MANY">
+      <point x="0.0" y="82.0" />
+      <point x="0.0" y="-93.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Teacher" target="ua.dgma.electronicDeansOffice.models.Department" relationship="TO_ONE">
+      <point x="61.75" y="-38.0" />
+      <point x="356.2174173421764" y="1369.0" />
+      <point x="630.5" y="1369.0" />
+      <point x="630.5" y="1359.0" />
+      <point x="120.0" y="1359.0" />
+      <point x="0.0" y="93.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Department" target="ua.dgma.electronicDeansOffice.models.Faculty" relationship="TO_ONE">
+      <point x="0.0" y="-93.0" />
+      <point x="0.0" y="82.0" />
+    </edge>
+    <edge source="ua.dgma.electronicDeansOffice.models.Department" target="ua.dgma.electronicDeansOffice.models.Teacher" relationship="TO_MANY">
+      <point x="0.0" y="93.0" />
+      <point x="120.0" y="1359.0" />
+      <point x="630.5" y="1359.0" />
+      <point x="630.5" y="1369.0" />
+      <point x="356.2174173421764" y="1369.0" />
+      <point x="61.75" y="-38.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="1.1137342944587638" showDependencies="true" x="591.3996485423725" y="789.3119999999997" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

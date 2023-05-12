@@ -46,21 +46,21 @@ public class StudentGroupsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public StudentGroupGetDTO findStudentGroupById(@PathVariable("id") Long id) {
         return studentGroupMapper.toStudentGroupGetDTO(studentGroupService.findOne(id));
     }
 
     @GetMapping("names/{name}")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<StudentGroupSlimGetDTO> findStudentGroupByName(@PathVariable("name") String name) {
         return studentGroupListMapper.toStudentGroupsSlimGetDTO(studentGroupService.findByName(name));
     }
 
     @GetMapping("{id}/attendance")
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public Map<Long, Double> showGroupAvgAttendance(@PathVariable("id") Long groupId,
                                                     @RequestParam(value = "from", required = false) String searchFrom,
                                                     @RequestParam(value = "to", required = false) String searchTo) {
@@ -69,7 +69,7 @@ public class StudentGroupsController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.FOUND)
-    @AllPerople
+    @AllPeople
     public List<StudentGroupSlimGetDTO> findAllSlimStudentGroups(@RequestParam(value = "page", required = false) Integer page,
                                                                  @RequestParam(value = "groupsPerPage", required = false) Integer groupsPerPage,
                                                                  @RequestParam(value = "deleted", required = false, defaultValue = "false") Boolean deleted,
